@@ -1,0 +1,3 @@
+class CreateCardPageArguments{
+  int deckId;
+}

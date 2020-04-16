@@ -12,7 +12,7 @@ makeLocaleGetRequest(String uri) async {
   String reply = await response.transform(utf8.decoder).join();
   var jsonCodec = json.decode(reply);
   print("CALL API $uri");
-//  print(jsonCodec);
+  print(jsonCodec);
   return jsonCodec;
 }
 
