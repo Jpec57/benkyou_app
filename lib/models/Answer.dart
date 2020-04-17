@@ -1,3 +1,5 @@
+import 'package:benkyou_app/utils/string.dart';
+
 class Answer{
   int id;
   String text;
@@ -20,4 +22,12 @@ List<Answer> decodeAnswerJsonArray(array){
     answers.add(Answer.fromJson(answer));
   }
   return answers;
+}
+
+List<String> getStringAnswers(List<Answer> answers){
+  List<String> parsedAnswers = [];
+  for (Answer answer in answers){
+    parsedAnswers.add(getAnswerWithoutInfo(answer.text));
+  }
+  return parsedAnswers;
 }
