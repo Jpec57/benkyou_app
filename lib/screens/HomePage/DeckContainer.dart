@@ -14,20 +14,13 @@ class DeckContainer extends StatelessWidget{
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
-        Navigator.pushReplacementNamed(
+        Navigator.pushNamed(
           context,
           DeckPage.routeName,
           arguments: DeckPageArguments(
               deck.id
           ),
         );
-//        Navigator.pushNamed(
-//          context,
-//          DeckPage.routeName,
-//          arguments: DeckPageArguments(
-//              deck.id
-//          ),
-//        );
       },
       child: Container(
         decoration: BoxDecoration(

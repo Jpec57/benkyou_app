@@ -12,7 +12,7 @@ void main() => runApp(MaterialApp(
   theme: ThemeData(
     primaryColor: Colors.orange,
   ),
-  initialRoute: '/',
+  initialRoute: HomePage.routeName,
   onGenerateRoute: (settings){
     if (settings.name == DeckPage.routeName) {
       final DeckPageArguments args = settings.arguments;

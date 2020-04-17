@@ -1,4 +1,6 @@
 import 'package:benkyou_app/models/UserCard.dart';
+import 'package:benkyou_app/screens/CreateCardPage/CreateCardPage.dart';
+import 'package:benkyou_app/screens/CreateCardPage/CreateCardPageArguments.dart';
 import 'package:benkyou_app/screens/ReviewPage/ReviewPage.dart';
 import 'package:benkyou_app/screens/ReviewPage/ReviewPageArguments.dart';
 import 'package:benkyou_app/services/api/cardRequests.dart';
@@ -23,7 +25,11 @@ class DeckPage extends StatefulWidget {
 class DeckPageState extends State<DeckPage> {
 
   void _createNewCard(){
-
+    Navigator.pushNamed(
+        context,
+        CreateCardPage.routeName,
+        arguments: CreateCardPageArguments(widget.id)
+    );
   }
 
   Widget _renderDeckPageContent(Deck deck){
@@ -51,8 +57,7 @@ class DeckPageState extends State<DeckPage> {
                           return RaisedButton(
                             child: Text("${cardsToReview.length} Reviews"),
                             onPressed: () {
-                              print("GOOOO");
-                              Navigator.pushReplacementNamed(
+                              Navigator.pushNamed(
                                   context,
                                   ReviewPage.routeName,
                                 arguments: ReviewPageArguments(cardsToReview)
