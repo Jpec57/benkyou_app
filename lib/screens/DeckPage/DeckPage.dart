@@ -19,65 +19,91 @@ class DeckPage extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => DeckPageState();
-
 }
 
 class DeckPageState extends State<DeckPage> {
+  Future<List<UserCard>> userCards;
+  Future<List<UserCard>> reviewCards;
+  Future<Deck> deck;
 
-  void _createNewCard(){
-    Navigator.pushNamed(
-        context,
-        CreateCardPage.routeName,
-        arguments: CreateCardPageArguments(widget.id)
-    );
+  @override
+  void initState() {
+    super.initState();
+    deck = getDeck(widget.id);
+    userCards = getUserCardsForDeck(widget.id);
+    reviewCards = getReviewCardsForDeck(widget.id);
   }
 
-  Widget _renderDeckPageContent(Deck deck){
-    if (deck != null){
+  void _createNewCard() {
+    Navigator.pushNamed(context, CreateCardPage.routeName,
+        arguments: CreateCardPageArguments(widget.id));
+  }
+
+  Widget _renderDeckPageContent(Deck deck) {
+    if (deck != null) {
       return Padding(
         padding: const EdgeInsets.all(8.0),
         child: FutureBuilder(
-          future: getUserCardsForDeck(deck.id),
-          builder: (BuildContext context, AsyncSnapshot<List<UserCard>> userCardSnapshot) {
-            if (userCardSnapshot.hasData){
-              List<UserCard> cards = userCardSnapshot.data;
-              return SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      'Deck page ${deck.title} with ${cards.length} cards',
-                    ),
-                    FutureBuilder(
-                      future: getReviewCardsForDeck(deck.id),
-                      builder: (BuildContext context, AsyncSnapshot<List<UserCard>> cardsToReviewSnapshot) {
-                        if (cardsToReviewSnapshot.hasData){
-                          List<UserCard> cardsToReview = cardsToReviewSnapshot.data;
-                          return RaisedButton(
-                            child: Text("${cardsToReview.length} Reviews"),
-                            onPressed: () {
-                              Navigator.pushNamed(
-                                  context,
-                                  ReviewPage.routeName,
-                                arguments: ReviewPageArguments(cardsToReview)
-                              );
-                            },
-                          );
-                        }
-                        return RaisedButton(
-                          child: Text("Loading..."),
-                          onPressed: () {
+          future: userCards,
+          builder: (BuildContext context,
+              AsyncSnapshot<List<UserCard>> userCardSnapshot) {
+            switch (userCardSnapshot.connectionState) {
+              case ConnectionState.waiting:
+                return Center(child: Text("Loading..."));
+              case ConnectionState.done:
+                if (userCardSnapshot.hasData) {
+                  List<UserCard> cards = userCardSnapshot.data;
+                  return SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          'Deck page ${deck.title} with ${cards.length} cards',
+                        ),
+                        FutureBuilder(
+                          future: reviewCards,
+                          builder: (BuildContext context,
+                              AsyncSnapshot<List<UserCard>>
+                                  cardsToReviewSnapshot) {
+                            switch (cardsToReviewSnapshot.connectionState) {
+                              case ConnectionState.waiting:
+                                return Text("Loading...");
+                              case ConnectionState.done:
+                                if (cardsToReviewSnapshot.hasData) {
+                                  List<UserCard> cardsToReview =
+                                      cardsToReviewSnapshot.data;
+                                  return RaisedButton(
+                                    child:
+                                        Text("${cardsToReview.length} Reviews"),
+                                    onPressed: () {
+                                      if (cardsToReview.length > 0){
+                                        Navigator.pushNamed(
+                                            context, ReviewPage.routeName,
+                                            arguments: ReviewPageArguments(
+                                                cardsToReview));
+                                      }
+                                    },
+                                  );
+                                }
+                                return RaisedButton(
+                                  child: Text("0 Review"),
+                                  onPressed: () {},
+                                );
+                              default:
+                                return Text("0 Review");
+                            }
                           },
-                        );
-                    },
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              );
+                  );
+                }
+                return Center(child: Text("The deck is empty. Please create a card."));
+              default:
+                return Center(child: Text("Loading..."));
             }
-            return Center(child: Text("Loading..."));
-        },
+          },
         ),
       );
     }
@@ -89,26 +115,43 @@ class DeckPageState extends State<DeckPage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: getDeck(widget.id),
+      future: deck,
       builder: (BuildContext context, AsyncSnapshot<Deck> deckSnapshot) {
-        Deck deck;
-        if (deckSnapshot.hasData) {
-          deck = deckSnapshot.data;
+        switch (deckSnapshot.connectionState) {
+          case ConnectionState.waiting:
+            return Scaffold(
+                drawer: MainDrawer(),
+                appBar: AppBar(
+                  title: Text(""),
+                ),
+                body: Center(child: Text("Loading...")));
+          case ConnectionState.done:
+            Deck deckData;
+            if (deckSnapshot.hasData) {
+              deckData = deckSnapshot.data;
+            }
+            return Scaffold(
+              drawer: MainDrawer(),
+              appBar: AppBar(
+                title: Text("Deck: ${deckData != null ? deckData.title : ''}"),
+              ),
+              body: _renderDeckPageContent(deckData),
+              floatingActionButton: FloatingActionButton(
+                onPressed: _createNewCard,
+                backgroundColor: Colors.orange,
+                tooltip: 'Add a deck',
+                child: Icon(Icons.add),
+              ),
+            );
+          default:
+            return Scaffold(
+                appBar: AppBar(
+                  title: Text(""),
+                ),
+                drawer: MainDrawer(),
+                body: Center(child: Text("There is no deck with id ${widget.id}"))
+            );
         }
-        return Scaffold(
-            drawer: MainDrawer(),
-            appBar: AppBar(
-              title: Text("Deck: ${deck != null ? deck.title : ''}"),
-            ),
-            body: _renderDeckPageContent(deck),
-            floatingActionButton: FloatingActionButton(
-            onPressed: _createNewCard,
-            backgroundColor: Colors.orange,
-            tooltip: 'Add a deck',
-            child: Icon(Icons.add),
-          ),
-
-        );
       },
     );
   }

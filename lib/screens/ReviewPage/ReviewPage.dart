@@ -1,17 +1,18 @@
 import 'dart:math';
 
 import 'package:benkyou_app/models/Answer.dart';
-import 'package:benkyou_app/models/Deck.dart';
 import 'package:benkyou_app/models/UserCard.dart';
 import 'package:benkyou_app/models/UserCardProcessedInfo.dart';
 import 'package:benkyou_app/screens/DeckPage/DeckPage.dart';
 import 'package:benkyou_app/screens/DeckPage/DeckPageArguments.dart';
+import 'package:benkyou_app/screens/ReviewPage/ReviewPageInfo.dart';
+import 'package:benkyou_app/services/api/cardRequests.dart';
 import 'package:benkyou_app/services/translator/TextConversion.dart';
 import 'package:benkyou_app/utils/string.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class ReviewPage extends StatefulWidget{
+class ReviewPage extends StatefulWidget {
   static const routeName = '/review';
 
   final List<UserCard> cards;
@@ -22,12 +23,14 @@ class ReviewPage extends StatefulWidget{
   State<StatefulWidget> createState() => ReviewPageState();
 }
 
-class ReviewPageState extends State<ReviewPage>{
+class ReviewPageState extends State<ReviewPage> {
   bool isAnswerVisible = false;
   TextEditingController _answerController;
   List<UserCard> _remainingCards;
   List<UserCardProcessedInfo> _processedCards;
   int currentIndex;
+  int nbErrors = 0;
+  int nbSuccess = 0;
   UserCard currentCard;
 
   @override
@@ -40,22 +43,21 @@ class ReviewPageState extends State<ReviewPage>{
     _answerController = new TextEditingController();
   }
 
-  int generateRandomIndex(List list){
+  int generateRandomIndex(List list) {
     Random random = new Random();
     return random.nextInt(list.length);
   }
 
-  List<Widget> _renderAnswers(List<Answer> answers){
+  List<Widget> _renderAnswers(List<Answer> answers) {
     List<Widget> answerWidgetList = [];
-    for (Answer answer in answers){
+    for (Answer answer in answers) {
       answerWidgetList.add(Text(answer.text));
     }
     return answerWidgetList;
   }
 
-
-  Widget _renderAnswerPart(){
-    if (!isAnswerVisible){
+  Widget _renderAnswerPart() {
+    if (!isAnswerVisible) {
       return Container();
     }
     return SingleChildScrollView(
@@ -63,33 +65,27 @@ class ReviewPageState extends State<ReviewPage>{
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Text(
-              "Possible answers"
-          ),
+          Text("Possible answers"),
           Divider(
             thickness: 1,
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 8.0, left: 8, right: 8, bottom: 30),
+            padding:
+                const EdgeInsets.only(top: 8.0, left: 8, right: 8, bottom: 30),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: _renderAnswers(currentCard.card.answers),
             ),
           ),
-
-          Text(
-              "User's note"
-          ),
+          Text("User's note"),
           Divider(
             thickness: 1,
           ),
           Container(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text(
-                  "Ici c'est les userNotes ${currentCard.userNote}"
-              ),
+              child: Text("Ici c'est les userNotes ${currentCard.userNote}"),
             ),
           )
         ],
@@ -97,80 +93,84 @@ class ReviewPageState extends State<ReviewPage>{
     );
   }
 
-  bool _isUserAnswerValid(String userAnswer){
+  bool _isUserAnswerValid(String userAnswer) {
     List<String> parsedAnswers = getStringAnswers(currentCard.card.answers);
-    for (String parsedAnswer in parsedAnswers){
-      if (isStringDistanceValid(parsedAnswer, userAnswer)
-          || getJapaneseTranslation(userAnswer) == parsedAnswer){
+    for (String parsedAnswer in parsedAnswers) {
+      if (isStringDistanceValid(parsedAnswer, userAnswer) ||
+          getJapaneseTranslation(userAnswer) == parsedAnswer) {
         return true;
       }
     }
     return false;
   }
 
-  _moveToNextQuestion(){
+  _sendReview(List<UserCardProcessedInfo> reviewedCards) async {
+    await postReview(reviewedCards);
+  }
+
+  _moveToNextQuestion() async {
     isAnswerVisible = false;
     int length = _remainingCards.length;
-    if (_remainingCards.isNotEmpty){
+    if (length > 1) {
       _remainingCards.removeAt(currentIndex);
-    }
-    if (length > 0){
       currentIndex = (length == 1) ? 0 : generateRandomIndex(_remainingCards);
       currentCard = _remainingCards[currentIndex];
     } else {
-      Navigator.pushReplacementNamed(
-          context,
-          DeckPage.routeName,
-          arguments: DeckPageArguments(currentCard.deck.id)
-      );
+      await _sendReview(_processedCards);
+      Navigator.pushReplacementNamed(context, DeckPage.routeName,
+          arguments: DeckPageArguments(currentCard.deck.id));
     }
     setState(() {
       _answerController.clear();
     });
   }
 
-  _processAnswer(){
-    if (isAnswerVisible){
+  _processAnswer() {
+    if (isAnswerVisible) {
       _moveToNextQuestion();
       return;
     }
     String userAnswer = _answerController.text;
     bool isUserAnswerValid = _isUserAnswerValid(userAnswer);
     print("valid ? $isUserAnswerValid");
-    _processedCards.add(new UserCardProcessedInfo(currentCard.id, isUserAnswerValid));
+    if (isUserAnswerValid){
+      nbSuccess++;
+    } else {
+      nbErrors++;
+    }
+    _processedCards
+        .add(new UserCardProcessedInfo(currentCard.id, currentCard.card.id, isUserAnswerValid));
     if (isUserAnswerValid) {
       //TODO test on bunny mode instead of dummy second condition
-      if (!isAnswerVisible && true){
-        setState(() {
-          isAnswerVisible = true;
-        });
-      } else{
-        _moveToNextQuestion();
-      }
-    } else {
-      if (!isAnswerVisible){
+      if (!isAnswerVisible && true) {
         setState(() {
           isAnswerVisible = true;
         });
       } else {
         _moveToNextQuestion();
       }
-
+    } else {
+      if (!isAnswerVisible) {
+        setState(() {
+          isAnswerVisible = true;
+        });
+      } else {
+        _moveToNextQuestion();
+      }
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-
-    bool toEnglish = currentCard != null ? currentCard.card.answerLanguageCode == 0 : false;
+    bool toEnglish =
+        currentCard != null ? currentCard.card.answerLanguageCode == 0 : false;
     return Scaffold(
-      resizeToAvoidBottomInset : false,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text('Review'),
       ),
       body: GestureDetector(
-        onTap: (){
+        onTap: () {
           FocusScopeNode currentFocus = FocusScope.of(context);
           if (!currentFocus.hasPrimaryFocus) {
             currentFocus.unfocus();
@@ -183,19 +183,31 @@ class ReviewPageState extends State<ReviewPage>{
               child: Container(
                 color: Colors.blue,
                 child: Stack(
-                  fit: StackFit.expand,
                   children: <Widget>[
+                    ReviewPageInfo(
+                      processedNumber: _processedCards != null ? _processedCards.length : 0,
+                      remainingNumber: _remainingCards != null ? _remainingCards.length : 0,
+                      nbSuccess: nbSuccess,
+                      nbErrors: nbErrors,
+                    ),
                     Container(
                       child: Center(
                           child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Text(currentCard != null ? (currentCard.card.hint ?? '') : ''),
-                              Text(currentCard != null ? currentCard.card.question : '',
-                                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 24),),
-                            ],
-                          )
-                      ),)
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text(currentCard != null
+                              ? (currentCard.card.hint ?? '')
+                              : ''),
+                          Text(
+                            currentCard != null
+                                ? currentCard.card.question
+                                : '',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 24),
+                          ),
+                        ],
+                      )),
+                    )
                   ],
                 ),
               ),
@@ -207,9 +219,7 @@ class ReviewPageState extends State<ReviewPage>{
                 child: Text(
                   toEnglish ? "ENGLISH" : "JAPANESE",
                   style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold
-                  ),
+                      color: Colors.white, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -222,17 +232,15 @@ class ReviewPageState extends State<ReviewPage>{
                     child: TextField(
                       controller: _answerController,
                       decoration: InputDecoration(
-                          hintText: toEnglish? 'Answer' : '答え',
-                          labelStyle: TextStyle(
-                          )
-                      ),
+                          hintText: toEnglish ? 'Answer' : '答え',
+                          labelStyle: TextStyle()),
                       textAlign: TextAlign.center,
                       autofocus: true,
                     ),
                   ),
                   GestureDetector(
-                    onTap: (){
-                      if (_answerController.text.isNotEmpty){
+                    onTap: () {
+                      if (_answerController.text.isNotEmpty) {
                         _processAnswer();
                       }
                     },
@@ -255,7 +263,8 @@ class ReviewPageState extends State<ReviewPage>{
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 10, right: 10, top: 8, bottom: 8),
+                    padding: const EdgeInsets.only(
+                        left: 10, right: 10, top: 8, bottom: 8),
                     child: _renderAnswerPart(),
                   ),
                 ),

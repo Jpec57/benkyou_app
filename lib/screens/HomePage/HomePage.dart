@@ -13,6 +13,13 @@ class HomePage extends StatefulWidget{
 }
 
 class HomePageState extends State<HomePage>{
+  Future<List<Deck>> personalDecks;
+
+  @override
+  void initState() {
+    super.initState();
+    personalDecks = getPersonalDecks();
+  }
 
   void _createNewDeck() async {
 
@@ -29,7 +36,7 @@ class HomePageState extends State<HomePage>{
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: FutureBuilder(
-          future: getPersonalDecks(),
+          future: personalDecks,
           builder: (BuildContext context, AsyncSnapshot<List<Deck>> deckSnapshot) {
             if (deckSnapshot.hasData){
               return GridView.count(

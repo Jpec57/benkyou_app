@@ -1,6 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
 
+handleErrors(int statusCode, jsonCodec){
+  if (300 > statusCode && statusCode >= 200){
+    return jsonCodec;
+  }
+  //TODO log correctly
+  print(jsonCodec);
+  return null;
+}
+
 makeLocaleGetRequest(String uri) async {
   HttpClient client = new HttpClient();
   client.badCertificateCallback = ((X509Certificate cert, String host, int port) => true);
@@ -11,9 +20,7 @@ makeLocaleGetRequest(String uri) async {
   HttpClientResponse response = await request.close();
   String reply = await response.transform(utf8.decoder).join();
   var jsonCodec = json.decode(reply);
-  print("CALL API $uri");
-  print(jsonCodec);
-  return jsonCodec;
+  return handleErrors(response.statusCode, jsonCodec);
 }
 
 makeLocalePostRequest(String uri, Map body) async{
