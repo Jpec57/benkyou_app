@@ -4,7 +4,7 @@ import 'User.dart';
 class Deck {
   int id;
   String title;
-  String author;
+  User author;
   String description;
   List<DeckCard> cards;
   List<User> users;
@@ -12,7 +12,7 @@ class Deck {
   Deck.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         title = json['title'],
-        author = json['author'],
+        author = User.fromJson(json['author']),
         description = json['description'],
         cards = decodeDeckCardJsonArray(json['cards']),
         users = decodeUserJsonArray(json['users'])

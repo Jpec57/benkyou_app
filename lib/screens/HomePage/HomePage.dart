@@ -1,3 +1,4 @@
+import 'package:benkyou_app/screens/HomePage/CreateDeckDialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../models/Deck.dart';
@@ -22,9 +23,15 @@ class HomePageState extends State<HomePage>{
   }
 
   void _createNewDeck() async {
-
+    showDialog(
+        context: context, builder: (BuildContext context) => CreateDeckDialog(callback: this.reloadDecks));
   }
 
+  void reloadDecks(){
+    setState(() {
+      personalDecks = getPersonalDecks();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
