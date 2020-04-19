@@ -6,14 +6,13 @@ import 'package:flutter/material.dart';
 class ReviewSchedule extends StatefulWidget {
   final double size;
   final List<Color> colors;
-  final int deckId;
   final List<UserCard> cards;
 
   const ReviewSchedule(
       {Key key,
         this.size = 100,
         this.colors = const [Colors.red],
-        this.deckId, this.cards})
+        @required this.cards})
       : super(key: key);
 
   @override
@@ -123,6 +122,10 @@ class ReviewScheduleState extends State<ReviewSchedule> {
     //We get the current round hour
     start = start.subtract(Duration(hours: start.hour, minutes: start.minute, seconds: start.second));
 
+    if (this.isWholeWeek){
+      tmp = start;
+    }
+
     List<TimeBar> bars = _getBarsFromCards(end);
     int i = 0;
     int j = 0;
@@ -131,6 +134,10 @@ class ReviewScheduleState extends State<ReviewSchedule> {
       if (maxSum < card.num){
         maxSum = card.num;
       }
+    }
+    //To prevent from having two bars for same day
+    if (this.isWholeWeek){
+      tmp = tmp.add(Duration(days: 1));
     }
     while (tmp.millisecondsSinceEpoch < end.millisecondsSinceEpoch){
       sum = 0;

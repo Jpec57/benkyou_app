@@ -25,6 +25,13 @@ class UserCard {
         card = DeckCard.fromJson(json['card']),
         userAnswers = decodeAnswerJsonArray(json['userAnswers'])
   ;
+
+  @override
+  String toString() {
+    return 'UserCard{id: $id, card: $card, deck: $deck, nbErrors: $nbErrors, nbSuccess: $nbSuccess, nextAvailable: $nextAvailable, userNote: $userNote, userAnswers: $userAnswers, lvl: $lvl}';
+  }
+
+
 }
 
 List<UserCard> decodeUserCardJsonArray(array){

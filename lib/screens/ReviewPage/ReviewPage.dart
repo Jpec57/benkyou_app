@@ -10,6 +10,8 @@ import 'package:benkyou_app/services/api/cardRequests.dart';
 import 'package:benkyou_app/services/translator/TextConversion.dart';
 import 'package:benkyou_app/utils/colors.dart';
 import 'package:benkyou_app/utils/string.dart';
+import 'package:flare_flutter/flare_actor.dart';
+import 'package:flare_flutter/flare_controls.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -26,8 +28,12 @@ class ReviewPage extends StatefulWidget {
 
 class ReviewPageState extends State<ReviewPage> {
   bool isAnswerVisible = false;
+  bool _isPlayingAnimation = false;
+  final FlareControls _validAnswerAnimControls = FlareControls();
+
   TextEditingController _answerController;
   List<UserCard> _remainingCards;
+  List<int> _processedCardIds;
   List<UserCardProcessedInfo> _processedCards;
   int currentIndex;
   int nbErrors = 0;
@@ -39,6 +45,7 @@ class ReviewPageState extends State<ReviewPage> {
     super.initState();
     _remainingCards = widget.cards;
     _processedCards = [];
+    _processedCardIds = [];
     currentIndex = generateRandomIndex(_remainingCards);
     currentCard = _remainingCards[currentIndex];
     _answerController = new TextEditingController();
@@ -113,14 +120,18 @@ class ReviewPageState extends State<ReviewPage> {
   }
 
   _sendReview(List<UserCardProcessedInfo> reviewedCards) async {
-    await postReview(reviewedCards);
+//    await postReview(reviewedCards);
   }
 
-  _moveToNextQuestion() async {
+  _moveToNextQuestion(bool isAnswerCorrect) async {
     isAnswerVisible = false;
+    _isPlayingAnimation = false;
     int length = _remainingCards.length;
     if (length > 1) {
-      _remainingCards.removeAt(currentIndex);
+      //Remove only if correct
+      if (isAnswerCorrect){
+        _remainingCards.removeAt(currentIndex);
+      }
       currentIndex = (length == 1) ? 0 : generateRandomIndex(_remainingCards);
       currentCard = _remainingCards[currentIndex];
     } else {
@@ -134,28 +145,37 @@ class ReviewPageState extends State<ReviewPage> {
   }
 
   _processAnswer() {
-    if (isAnswerVisible) {
-      _moveToNextQuestion();
-      return;
-    }
     String userAnswer = _answerController.text;
     bool isUserAnswerValid = _isUserAnswerValid(userAnswer);
-    print("valid ? $isUserAnswerValid");
+    if (isAnswerVisible) {
+      _moveToNextQuestion(isUserAnswerValid);
+      return;
+    }
     if (isUserAnswerValid){
       nbSuccess++;
     } else {
       nbErrors++;
     }
-    _processedCards
-        .add(new UserCardProcessedInfo(currentCard.id, currentCard.card.id, isUserAnswerValid));
+    //Test if not already answered badly
+    if (!_processedCardIds.contains(currentCard.id)){
+      _processedCardIds.add(currentCard.id);
+      _processedCards
+          .add(new UserCardProcessedInfo(currentCard.id, currentCard.card.id, isUserAnswerValid));
+    }
     if (isUserAnswerValid) {
       //TODO test on bunny mode instead of dummy second condition
       if (!isAnswerVisible && true) {
         setState(() {
           isAnswerVisible = true;
+          _isPlayingAnimation = true;
+          _validAnswerAnimControls.play("Validate");
         });
       } else {
-        _moveToNextQuestion();
+        setState(() {
+          _isPlayingAnimation = true;
+          _validAnswerAnimControls.play("Validate");
+        });
+        _moveToNextQuestion(isUserAnswerValid);
       }
     } else {
       if (!isAnswerVisible) {
@@ -163,7 +183,7 @@ class ReviewPageState extends State<ReviewPage> {
           isAnswerVisible = true;
         });
       } else {
-        _moveToNextQuestion();
+        _moveToNextQuestion(isUserAnswerValid);
       }
     }
   }
@@ -195,6 +215,7 @@ class ReviewPageState extends State<ReviewPage> {
                     ReviewPageInfo(
                       processedNumber: _processedCards != null ? _processedCards.length : 0,
                       remainingNumber: _remainingCards != null ? _remainingCards.length : 0,
+                      isAnswerVisible: isAnswerVisible,
                       nbSuccess: nbSuccess,
                       nbErrors: nbErrors,
                     ),
@@ -205,11 +226,14 @@ class ReviewPageState extends State<ReviewPage> {
                         children: <Widget>[
                           Text(currentCard != null
                               ? (currentCard.card.hint ?? '')
-                              : ''),
+                              : '',
+                            textAlign: TextAlign.center,
+                          ),
                           Text(
                             currentCard != null
                                 ? currentCard.card.question
                                 : '',
+                            textAlign: TextAlign.center,
                             style: TextStyle(
                                 fontWeight: FontWeight.w600, fontSize: 24),
                           ),
@@ -223,12 +247,39 @@ class ReviewPageState extends State<ReviewPage> {
             Container(
               color: Colors.black,
               height: 50,
-              child: Center(
-                child: Text(
-                  toEnglish ? "ENGLISH" : "JAPANESE",
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
-                ),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        toEnglish ? "ENGLISH" : "JAPANESE",
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  //TODO ANIM
+                  Visibility(
+                    visible: _isPlayingAnimation,
+                    child: SizedBox(
+                      height: 50,
+                      width: 50,
+                      child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            _validAnswerAnimControls.play("Validate");
+                          });
+                        },
+                        child: FlareActor(
+                            'lib/animations/checkmark_anim.flr',
+                          animation: "Validate",
+                          controller: _validAnswerAnimControls,
+                          shouldClip: false,
+                        ),
+                      ),
+                    ),
+                  )
+                ],
               ),
             ),
             Container(
@@ -284,3 +335,13 @@ class ReviewPageState extends State<ReviewPage> {
     );
   }
 }
+
+
+/*
+                  Container(
+                    child: InkWell(
+                      child: FlareActor('lib/animations/checkmark_anim.flr'
+                      ),
+                    ),
+                  )
+ */

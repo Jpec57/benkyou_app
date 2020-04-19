@@ -12,7 +12,7 @@ class CreateDeckDialog extends StatefulWidget {
 
 class CreateDeckDialogState extends State<CreateDeckDialog> {
   TextEditingController _titleController;
-
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -38,33 +38,42 @@ class CreateDeckDialogState extends State<CreateDeckDialog> {
           width: MediaQuery.of(context).size.height * 0.7,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text("Title"),
-                TextField(
-                  controller: _titleController,
-                  decoration: InputDecoration(
-                      hintText: 'Enter a title',
-                      labelStyle: TextStyle()),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 15.0),
-                  child: RaisedButton(
-                    child: Text(
-                      "Create deck"
-                    ),
-                    onPressed: () async {
-                      if (_titleController.text.isNotEmpty){
-                        await postDeck(_titleController.text);
-                        widget.callback();
-                        Navigator.pop(context);
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text("Title"),
+                  TextFormField(
+                    controller: _titleController,
+                    validator: (value) {
+                      if (value.length < 2) {
+                        return 'Your title must use at least 2 characters.';
                       }
+                      return null;
                     },
+                    decoration: InputDecoration(
+                        hintText: 'Enter a title',
+                        labelStyle: TextStyle()),
                   ),
-                )
-              ],
+                  Padding(
+                    padding: const EdgeInsets.only(top: 15.0),
+                    child: RaisedButton(
+                      child: Text(
+                        "Create deck"
+                      ),
+                      onPressed: () async {
+                        if (_titleController.text.isNotEmpty){
+                          await postDeck(_titleController.text);
+                          widget.callback();
+                          Navigator.pop(context);
+                        }
+                      },
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ),

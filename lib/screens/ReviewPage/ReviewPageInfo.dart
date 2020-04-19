@@ -6,9 +6,10 @@ class ReviewPageInfo extends StatelessWidget {
   final int nbErrors;
   final int remainingNumber;
   final int processedNumber;
+  final bool isAnswerVisible;
 
   const ReviewPageInfo({Key key, @required this.nbSuccess, @required this.nbErrors,
-    @required this.remainingNumber, @required this.processedNumber}) : super(key: key);
+    @required this.remainingNumber, @required this.processedNumber, @required this.isAnswerVisible}) : super(key: key);
 
 
   String getSuccessPercent(){
@@ -68,7 +69,7 @@ class ReviewPageInfo extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    "$remainingNumber",
+                    "${remainingNumber - (isAnswerVisible ? 1 : 0)}",
                     style: TextStyle(fontSize: 16),
                   ),
                   Icon(

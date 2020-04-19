@@ -54,24 +54,31 @@ class HomePageState extends State<HomePage>{
         child: FutureBuilder(
           future: personalDecks,
           builder: (BuildContext context, AsyncSnapshot<List<Deck>> deckSnapshot) {
-            if (deckSnapshot.hasData){
-              if (deckSnapshot.data.length == 0){
+            switch (deckSnapshot.connectionState){
+              case ConnectionState.none:
                 return Center(child: Text('No deck available. Please create one.'));
-              }
-              return GridView.count(
-                  crossAxisCount: 2,
-                  key: ValueKey('deck-grid'),
-                  children: List.generate(deckSnapshot.data.length, (index) {
-                    Deck deck = deckSnapshot.data[index];
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: DeckContainer(
-                        deck: deck,
-                      ),
-                    );
-                  }));
-          }
-            return Center(child: Text('No deck available. Please create one.'));
+              case ConnectionState.done:
+                if (deckSnapshot.hasData){
+                  if (deckSnapshot.data.length == 0){
+                    return Center(child: Text('No deck available. Please create one.'));
+                  }
+                  return GridView.count(
+                      crossAxisCount: 2,
+                      key: ValueKey('deck-grid'),
+                      children: List.generate(deckSnapshot.data.length, (index) {
+                        Deck deck = deckSnapshot.data[index];
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: DeckContainer(
+                            deck: deck,
+                          ),
+                        );
+                      }));
+                }
+                return Center(child: Text('No deck available. Please create one.'));
+              default:
+                return Center(child: Text('Loading...'));
+            }
         })
       ),
       floatingActionButton: FloatingActionButton(
