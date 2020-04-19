@@ -1,7 +1,9 @@
 import 'package:benkyou_app/screens/CreateCardPage/CreateCardPage.dart';
 import 'package:benkyou_app/screens/CreateCardPage/CreateCardPageArguments.dart';
+import 'package:benkyou_app/screens/CreateUserPage/CreateUserPage.dart';
 import 'package:benkyou_app/screens/ReviewPage/ReviewPage.dart';
 import 'package:benkyou_app/screens/ReviewPage/ReviewPageArguments.dart';
+import 'package:benkyou_app/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'screens/DeckPage/DeckPage.dart';
 import 'screens/DeckPage/DeckPageArguments.dart';
@@ -10,7 +12,7 @@ import 'screens/HomePage/HomePage.dart';
 void main() => runApp(MaterialApp(
   title: 'Benkyou',
   theme: ThemeData(
-    primaryColor: Colors.orange,
+    primaryColor: Color(COLOR_ORANGE),
   ),
   initialRoute: HomePage.routeName,
   onGenerateRoute: (settings){
@@ -51,5 +53,6 @@ void main() => runApp(MaterialApp(
   },
   routes: {
     HomePage.routeName: (context) => HomePage(),
+    CreateUserPage.routeName: (context) => CreateUserPage(),
   },
 ));

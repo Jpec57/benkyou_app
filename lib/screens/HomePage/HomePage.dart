@@ -1,6 +1,9 @@
 import 'package:benkyou_app/screens/HomePage/CreateDeckDialog.dart';
+import 'package:benkyou_app/utils/colors.dart';
+import 'package:benkyou_app/widgets/ConnectedActionDialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/Deck.dart';
 import '../../services/api/deckRequests.dart';
 import '../../widgets/MainDrawer.dart';
@@ -23,6 +26,12 @@ class HomePageState extends State<HomePage>{
   }
 
   void _createNewDeck() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    if (sharedPreferences.get('userId') == null){
+      showDialog(
+          context: context, builder: (BuildContext context) => ConnectedActionDialog(action: "to create a deck.",));
+      return;
+    }
     showDialog(
         context: context, builder: (BuildContext context) => CreateDeckDialog(callback: this.reloadDecks));
   }
@@ -46,6 +55,9 @@ class HomePageState extends State<HomePage>{
           future: personalDecks,
           builder: (BuildContext context, AsyncSnapshot<List<Deck>> deckSnapshot) {
             if (deckSnapshot.hasData){
+              if (deckSnapshot.data.length == 0){
+                return Center(child: Text('No deck available. Please create one.'));
+              }
               return GridView.count(
                   crossAxisCount: 2,
                   key: ValueKey('deck-grid'),
@@ -59,12 +71,12 @@ class HomePageState extends State<HomePage>{
                     );
                   }));
           }
-            return Center(child: Text("No deck available."));
+            return Center(child: Text('No deck available. Please create one.'));
         })
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _createNewDeck,
-        backgroundColor: Colors.orange,
+        backgroundColor: Color(COLOR_ORANGE),
         tooltip: 'Add a deck',
         child: Icon(Icons.add),
       ),

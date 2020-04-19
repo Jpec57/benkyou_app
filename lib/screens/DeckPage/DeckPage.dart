@@ -4,6 +4,7 @@ import 'package:benkyou_app/screens/CreateCardPage/CreateCardPageArguments.dart'
 import 'package:benkyou_app/screens/ReviewPage/ReviewPage.dart';
 import 'package:benkyou_app/screens/ReviewPage/ReviewPageArguments.dart';
 import 'package:benkyou_app/services/api/cardRequests.dart';
+import 'package:benkyou_app/utils/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -138,7 +139,7 @@ class DeckPageState extends State<DeckPage> {
               body: _renderDeckPageContent(deckData),
               floatingActionButton: FloatingActionButton(
                 onPressed: _createNewCard,
-                backgroundColor: Colors.orange,
+                backgroundColor: Color(COLOR_ORANGE),
                 tooltip: 'Add a deck',
                 child: Icon(Icons.add),
               ),

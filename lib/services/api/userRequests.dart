@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../rest.dart';
@@ -14,6 +16,15 @@ Future<bool> loginRequest(String username, String password) async {
   sharedPreferences.setString('email', token["user"]["email"]);
   return true;
 }
+
+Future<HttpClientResponse> registerRequest(String email, String username, String password) async {
+  Map map = new Map();
+  map.putIfAbsent("username", () => username);
+  map.putIfAbsent("email", () => email);
+  map.putIfAbsent("password", () => password);
+  return await getLocalePostRequestResponse("/register", map);
+}
+
 
 Future<bool> logoutRequest() async {
   await makeLocaleGetRequest("/logout");

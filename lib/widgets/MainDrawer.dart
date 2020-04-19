@@ -41,6 +41,10 @@ class MainDrawerState extends State<MainDrawer>{
                 onTap: () async {
                   await logoutRequest();
                   Navigator.pop(context);
+                  Navigator.pushNamed(
+                    context,
+                    HomePage.routeName,
+                  );
                 },
               );
             }
@@ -50,8 +54,6 @@ class MainDrawerState extends State<MainDrawer>{
                 Navigator.pop(context);
                 showDialog(
                     context: context, builder: (BuildContext context) => LoginDialog());
-                // Update the state of the app.
-                // ...
               },
             );
           default:
@@ -73,28 +75,61 @@ class MainDrawerState extends State<MainDrawer>{
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      // Add a ListView to the drawer. This ensures the user can scroll
-      // through the options in the drawer if there isn't enough vertical
-      // space to fit everything.
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
           DrawerHeader(
             child: Align(
               alignment: Alignment.bottomLeft,
-                //TODO youkoso for not logged in user
-                child: Text(
-                    '今日は！ようこそ!',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    shadows: <Shadow>[
-                      Shadow(
-                        offset: Offset(2.0, 2.0),
-                        blurRadius: 3.0,
-                        color: Colors.grey,
-                      ),
-                    ],
-                  ),
+                child: FutureBuilder(
+                  future: isUserConnected,
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    switch (snapshot.connectionState){
+                      case ConnectionState.done:
+                        if (snapshot.hasData){
+                          return Text(
+                            snapshot.data ? '今日は！' : 'ようこそ!',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              shadows: <Shadow>[
+                                Shadow(
+                                  offset: Offset(2.0, 2.0),
+                                  blurRadius: 3.0,
+                                  color: Colors.grey,
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                        return Text(
+                          'ようこそ!',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            shadows: <Shadow>[
+                              Shadow(
+                                offset: Offset(2.0, 2.0),
+                                blurRadius: 3.0,
+                                color: Colors.grey,
+                              ),
+                            ],
+                          ),
+                        );
+                      default:
+                        return Text(
+                          'ようこそ!',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            shadows: <Shadow>[
+                              Shadow(
+                                offset: Offset(2.0, 2.0),
+                                blurRadius: 3.0,
+                                color: Colors.grey,
+                              ),
+                            ],
+                          ),
+                        );
+                    }
+                  },
                 )),
             decoration: BoxDecoration(
                 image: DecorationImage(

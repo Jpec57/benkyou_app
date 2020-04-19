@@ -1,3 +1,5 @@
+import 'package:benkyou_app/screens/CreateUserPage/CreateUserPage.dart';
+import 'package:benkyou_app/screens/HomePage/HomePage.dart';
 import 'package:benkyou_app/services/api/userRequests.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -90,13 +92,31 @@ class LoginDialogState extends State<LoginDialog>{
                     padding: const EdgeInsets.only(top: 15.0),
                     child: RaisedButton(
                       child: Text(
+                          "Not a member yet ? Register here"
+                      ),
+                      onPressed: () async {
+                        Navigator.pushNamed(
+                          context,
+                          CreateUserPage.routeName,
+                        );
+                      },
+                    ),
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.only(top: 5.0),
+                    child: RaisedButton(
+                      child: Text(
                           "Login"
                       ),
                       onPressed: () async {
-                        print("pd fetch");
                         if (_formKey.currentState.validate()) {
                           await loginRequest(_usernameController.text, _passwordController.text);
                           Navigator.pop(context);
+                          Navigator.pushNamed(
+                            context,
+                            HomePage.routeName,
+                          );
                           //TODO show a confirmation and reload
 //                          Scaffold
 //                              .of(context)

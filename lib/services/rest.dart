@@ -13,6 +13,26 @@ handleErrors(int statusCode, jsonCodec){
 }
 
 makeLocaleGetRequest(String uri) async {
+  HttpClientResponse response = await getLocaleGetRequestResponse(uri);
+  String reply = await response.transform(utf8.decoder).join();
+  var jsonCodec = json.decode(reply);
+  print(jsonCodec);
+  return handleErrors(response.statusCode, jsonCodec);
+}
+
+makeLocalePostRequest(String uri, Map body) async{
+  HttpClientResponse response = await getLocalePostRequestResponse(uri, body);
+  String reply = await response.transform(utf8.decoder).join();
+  if (response.statusCode > 299){
+    print(reply);
+    return null;
+  }
+  var jsonCodec = json.decode(reply);
+  print(jsonCodec);
+  return jsonCodec;
+}
+
+Future<HttpClientResponse> getLocaleGetRequestResponse(String uri) async {
   HttpClient client = new HttpClient();
   client.badCertificateCallback = ((X509Certificate cert, String host, int port) => true);
   String url = 'https://10.0.2.2:8000$uri';
@@ -24,14 +44,10 @@ makeLocaleGetRequest(String uri) async {
     request.headers.set(HttpHeaders.authorizationHeader, 'Bearer $apiToken');
   }
   request.headers.set(HttpHeaders.contentTypeHeader, 'application/json');
-  HttpClientResponse response = await request.close();
-  String reply = await response.transform(utf8.decoder).join();
-  var jsonCodec = json.decode(reply);
-  print(jsonCodec);
-  return handleErrors(response.statusCode, jsonCodec);
+  return await request.close();
 }
 
-makeLocalePostRequest(String uri, Map body) async{
+Future<HttpClientResponse> getLocalePostRequestResponse(String uri, Map body) async{
   HttpClient client = new HttpClient();
   client.badCertificateCallback = ((X509Certificate cert, String host, int port) => true);
   String url = 'https://10.0.2.2:8000$uri';
@@ -47,13 +63,5 @@ makeLocalePostRequest(String uri, Map body) async{
   List<int> parsedBody = utf8.encode(json.encode(body));
   request.headers.set(HttpHeaders.contentLengthHeader, parsedBody.length);
   request.add(parsedBody);
-  HttpClientResponse response = await request.close();
-  String reply = await response.transform(utf8.decoder).join();
-  if (response.statusCode > 299){
-    print(reply);
-    return null;
-  }
-  var jsonCodec = json.decode(reply);
-  print(jsonCodec);
-  return jsonCodec;
+  return await request.close();
 }

@@ -1,3 +1,4 @@
+import 'package:benkyou_app/utils/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -25,7 +26,7 @@ class DeckContainer extends StatelessWidget{
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5.0),
-          color: Colors.orange
+          color: Color(COLOR_MID_DARK_GREY)
         ),
         child: Center(
             child: Padding(
