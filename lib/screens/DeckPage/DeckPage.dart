@@ -5,6 +5,7 @@ import 'package:benkyou_app/screens/ReviewPage/ReviewPage.dart';
 import 'package:benkyou_app/screens/ReviewPage/ReviewPageArguments.dart';
 import 'package:benkyou_app/services/api/cardRequests.dart';
 import 'package:benkyou_app/utils/colors.dart';
+import 'package:benkyou_app/widgets/ReviewSchedule.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -42,70 +43,103 @@ class DeckPageState extends State<DeckPage> {
 
   Widget _renderDeckPageContent(Deck deck) {
     if (deck != null) {
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: FutureBuilder(
-          future: userCards,
-          builder: (BuildContext context,
-              AsyncSnapshot<List<UserCard>> userCardSnapshot) {
-            switch (userCardSnapshot.connectionState) {
-              case ConnectionState.waiting:
-                return Center(child: Text("Loading..."));
-              case ConnectionState.done:
-                if (userCardSnapshot.hasData) {
-                  List<UserCard> cards = userCardSnapshot.data;
-                  return SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          'Deck page ${deck.title} with ${cards.length} cards',
-                        ),
-                        FutureBuilder(
-                          future: reviewCards,
-                          builder: (BuildContext context,
-                              AsyncSnapshot<List<UserCard>>
-                                  cardsToReviewSnapshot) {
-                            switch (cardsToReviewSnapshot.connectionState) {
-                              case ConnectionState.waiting:
-                                return Text("Loading...");
-                              case ConnectionState.done:
-                                if (cardsToReviewSnapshot.hasData) {
-                                  List<UserCard> cardsToReview =
-                                      cardsToReviewSnapshot.data;
-                                  return RaisedButton(
-                                    child:
-                                        Text("${cardsToReview.length} Reviews"),
-                                    onPressed: () {
-                                      if (cardsToReview.length > 0){
-                                        Navigator.pushNamed(
-                                            context, ReviewPage.routeName,
-                                            arguments: ReviewPageArguments(
-                                                cardsToReview));
-                                      }
-                                    },
-                                  );
-                                }
-                                return RaisedButton(
-                                  child: Text("0 Review"),
-                                  onPressed: () {},
-                                );
-                              default:
-                                return Text("0 Review");
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                  );
-                }
-                return Center(child: Text("The deck is empty. Please create a card."));
-              default:
-                return Center(child: Text("Loading..."));
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          FutureBuilder(
+              future: userCards,
+              builder: (BuildContext context, AsyncSnapshot<List<UserCard>> userCardSnapshot) {
+              switch (userCardSnapshot.connectionState) {
+                case ConnectionState.waiting:
+                  return Container();
+                case ConnectionState.done:
+                  if (userCardSnapshot.hasData) {
+                    List<UserCard> cards = userCardSnapshot.data;
+                    if (cards.isEmpty){
+                      return Container();
+                    }
+                    return ReviewSchedule(cards: cards, colors: [Color(COLOR_ORANGE)],);
+                  }
+                  return Container();
+                default:
+                  return Container();
+              }
             }
-          },
-        ),
+            ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: FutureBuilder(
+              future: userCards,
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<UserCard>> userCardSnapshot) {
+                switch (userCardSnapshot.connectionState) {
+                  case ConnectionState.waiting:
+                    return Center(child: Text("Loading..."));
+                  case ConnectionState.done:
+                    if (userCardSnapshot.hasData) {
+                      List<UserCard> cards = userCardSnapshot.data;
+                      return SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              'Deck page ${deck.title} with ${cards.length} cards',
+                            ),
+                            FutureBuilder(
+                              future: reviewCards,
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<List<UserCard>>
+                                      cardsToReviewSnapshot) {
+                                switch (cardsToReviewSnapshot.connectionState) {
+                                  case ConnectionState.waiting:
+                                    return Text("Loading...");
+                                  case ConnectionState.done:
+                                    if (cardsToReviewSnapshot.hasData) {
+                                      List<UserCard> cardsToReview =
+                                          cardsToReviewSnapshot.data;
+                                      int length = cardsToReview.length;
+                                      return RaisedButton(
+                                        child:
+                                            Text("$length Review${length > 0 ? 's' : ''}"),
+                                        onPressed: () {
+                                          if (length > 0){
+                                            Navigator.pushNamed(
+                                                context, ReviewPage.routeName,
+                                                arguments: ReviewPageArguments(
+                                                    cardsToReview));
+                                          } else {
+                                            Scaffold.of(context).showSnackBar(
+                                                SnackBar(content: Text('There is nothing to review, you have to wait ;)'))
+                                            );
+                                          }
+                                        },
+                                      );
+                                    }
+                                    return RaisedButton(
+                                      child: Text("0 Review"),
+                                      onPressed: () {},
+                                    );
+                                  default:
+                                    return RaisedButton(
+                                      child: Text("0 Review"),
+                                      onPressed: () {},
+                                    );
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                    return Center(child: Text("The deck is empty. Please create a card."));
+                  default:
+    return Center(child: Text("The deck is empty. Please create a card."));
+                }
+              },
+            ),
+          ),
+        ],
       );
     }
     return Center(

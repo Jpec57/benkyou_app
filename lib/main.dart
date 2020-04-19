@@ -12,7 +12,7 @@ import 'screens/HomePage/HomePage.dart';
 void main() => runApp(MaterialApp(
   title: 'Benkyou',
   theme: ThemeData(
-    primaryColor: Color(COLOR_ORANGE),
+    primaryColor: Color(COLOR_DARK_BLUE),
   ),
   initialRoute: HomePage.routeName,
   onGenerateRoute: (settings){

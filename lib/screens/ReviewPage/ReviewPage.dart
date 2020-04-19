@@ -8,6 +8,7 @@ import 'package:benkyou_app/screens/DeckPage/DeckPageArguments.dart';
 import 'package:benkyou_app/screens/ReviewPage/ReviewPageInfo.dart';
 import 'package:benkyou_app/services/api/cardRequests.dart';
 import 'package:benkyou_app/services/translator/TextConversion.dart';
+import 'package:benkyou_app/utils/colors.dart';
 import 'package:benkyou_app/utils/string.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -56,6 +57,13 @@ class ReviewPageState extends State<ReviewPage> {
     return answerWidgetList;
   }
 
+  Widget _renderUserNotes(String userNote){
+    if (userNote != null){
+      return Text(currentCard.userNote);
+    }
+    return Text('Add a note');
+  }
+
   Widget _renderAnswerPart() {
     if (!isAnswerVisible) {
       return Container();
@@ -85,7 +93,7 @@ class ReviewPageState extends State<ReviewPage> {
           Container(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text("Ici c'est les userNotes ${currentCard.userNote}"),
+              child: _renderUserNotes(currentCard.userNote),
             ),
           )
         ],
@@ -181,7 +189,7 @@ class ReviewPageState extends State<ReviewPage> {
             Expanded(
               flex: 1,
               child: Container(
-                color: Colors.blue,
+                color: Color(COLOR_GREY),
                 child: Stack(
                   children: <Widget>[
                     ReviewPageInfo(
@@ -245,7 +253,7 @@ class ReviewPageState extends State<ReviewPage> {
                       }
                     },
                     child: Container(
-                      color: Colors.deepOrange,
+                      color: Color(COLOR_ORANGE),
                       child: Padding(
                         padding: const EdgeInsets.only(left: 15, right: 15),
                         child: Icon(Icons.arrow_forward_ios),
@@ -254,12 +262,12 @@ class ReviewPageState extends State<ReviewPage> {
                   )
                 ],
               ),
-              color: Colors.white,
+              color: Color(COLOR_GREY),
             ),
             Expanded(
               flex: 3,
               child: Container(
-                color: Colors.green,
+                color: Colors.white,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Padding(

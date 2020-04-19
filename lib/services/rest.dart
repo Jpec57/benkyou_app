@@ -21,6 +21,7 @@ makeLocaleGetRequest(String uri) async {
 }
 
 makeLocalePostRequest(String uri, Map body) async{
+  print(body);
   HttpClientResponse response = await getLocalePostRequestResponse(uri, body);
   String reply = await response.transform(utf8.decoder).join();
   if (response.statusCode > 299){
