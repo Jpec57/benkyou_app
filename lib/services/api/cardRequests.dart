@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:benkyou_app/models/DeckCard.dart';
 import 'package:benkyou_app/models/UserCard.dart';
 import 'package:benkyou_app/models/UserCardProcessedInfo.dart';
+import 'package:benkyou_app/models/UserCardReviewCount.dart';
 import 'package:benkyou_app/services/rest.dart';
 
 Future<List<UserCard>> getUserCardsForDeck(int deckId) async {
@@ -9,6 +10,13 @@ Future<List<UserCard>> getUserCardsForDeck(int deckId) async {
   var cards = await getJsonFromHttpResponse(cardResponse);
   List<UserCard> parsedCards = decodeUserCardJsonArray(cards);
   return parsedCards;
+}
+
+Future<List<UserCardReviewCount>> getReviewCardCountsForAllDecks() async {
+  HttpClientResponse countResponse = await getLocaleGetRequestResponse("/decks/user-card/counts");
+  var counts = await getJsonFromHttpResponse(countResponse);
+  List<UserCardReviewCount> parsedCounts = decodeUserCardReviewCountJsonArray(counts);
+  return parsedCounts;
 }
 
 Future<List<UserCard>> getReviewCardsForDeck(int deckId) async {
