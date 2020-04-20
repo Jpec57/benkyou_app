@@ -37,8 +37,10 @@ Future<bool> postReview(List<UserCardProcessedInfo> cards) async {
 ///  DECK CARDS
 
 Future<DeckCard> postCard(int deckId, Map body) async {
+  print(body);
   HttpClientResponse cardResponse = await getLocalePostRequestResponse("/cards", body);
   var cards = await getJsonFromHttpResponse(cardResponse);
+  print(cards);
   DeckCard parsedCards = DeckCard.fromJson(cards);
   return parsedCards;
 }

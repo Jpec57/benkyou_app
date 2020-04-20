@@ -116,7 +116,9 @@ class CreateCardPageState extends State<CreateCardPage> {
       map.putIfAbsent('question', () => question);
       map.putIfAbsent('hint', () => hint);
       map.putIfAbsent('deck', () => widget.deckId);
-      map.putIfAbsent('isReversible', () => _isReversible);
+      if (_isReversible){
+        map.putIfAbsent('isReversible', () => true);
+      }
       map.putIfAbsent('answers', () => answers);
       postCard(widget.deckId, map);
 
