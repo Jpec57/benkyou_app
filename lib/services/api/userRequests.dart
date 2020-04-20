@@ -8,7 +8,8 @@ Future<bool> loginRequest(String username, String password) async {
   Map map = new Map();
   map.putIfAbsent("email", () => username);
   map.putIfAbsent("password", () => password);
-  var token = await makeLocalePostRequest("/login", map);
+  HttpClientResponse tokenResponse = await getLocalePostRequestResponse("/login", map);
+  var token = await getJsonFromHttpResponse(tokenResponse);
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   sharedPreferences.setString('apiToken', token["token"]);
   sharedPreferences.setString('username', token["user"]["username"]);
@@ -27,7 +28,7 @@ Future<HttpClientResponse> registerRequest(String email, String username, String
 
 
 Future<bool> logoutRequest() async {
-  await makeLocaleGetRequest("/logout");
+  await getLocaleGetRequestResponse("/logout");
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   sharedPreferences.remove('apiToken');
   sharedPreferences.remove('username');

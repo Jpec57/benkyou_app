@@ -1,4 +1,5 @@
 import 'package:benkyou_app/screens/CreateUserPage/CreateUserPage.dart';
+import 'package:benkyou_app/utils/colors.dart';
 import 'package:benkyou_app/widgets/LoginDialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,24 +32,39 @@ class ConnectedActionDialog extends StatelessWidget{
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
                   Expanded(
-                    child: RaisedButton(
-                      child: Text('Login'),
-                      onPressed: () {
-                      Navigator.pop(context);
-                      showDialog(
-                          context: context, builder: (BuildContext context) => LoginDialog());
-                    },),
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 5.0),
+                      child: RaisedButton(
+                        color: Color(COLOR_DARK_BLUE),
+                        child: Text('Login',
+                          style: TextStyle(
+                              color: Colors.white
+                          ),
+                        ),
+                        onPressed: () {
+                        Navigator.pop(context);
+                        showDialog(
+                            context: context, builder: (BuildContext context) => LoginDialog());
+                      },),
+                    ),
                   ),
                   Expanded(
-                    child: RaisedButton(
-                      child: Text('Register'),
-                      onPressed: () {
-                        Navigator.pop(context);
-                        Navigator.pushNamed(
-                          context,
-                          CreateUserPage.routeName,
-                        );
-                      },),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 5.0),
+                      child: RaisedButton(
+                        color: Color(COLOR_DARK_BLUE),
+                        child: Text('Register',
+                          style: TextStyle(
+                              color: Colors.white
+                          ),),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.pushNamed(
+                            context,
+                            CreateUserPage.routeName,
+                          );
+                        },),
+                    ),
                   ),
                 ],
               )

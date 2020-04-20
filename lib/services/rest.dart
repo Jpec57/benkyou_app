@@ -1,36 +1,21 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:benkyou_app/services/api/userRequests.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-handleErrors(int statusCode, jsonCodec){
-  if (300 > statusCode && statusCode >= 200){
-    return jsonCodec;
+Future<HttpClientResponse> handleGenericErrors(HttpClientResponse response) async {
+  int statusCode = response.statusCode;
+  //Token expired
+  if (statusCode == 401){
+    print('TOKEN EXPIRED');
+    await logoutRequest();
   }
-  //TODO log correctly
-  print(jsonCodec);
-  return null;
+  return response;
 }
 
-makeLocaleGetRequest(String uri) async {
-  HttpClientResponse response = await getLocaleGetRequestResponse(uri);
+getJsonFromHttpResponse(HttpClientResponse response) async{
   String reply = await response.transform(utf8.decoder).join();
-  var jsonCodec = json.decode(reply);
-  print(jsonCodec);
-  return handleErrors(response.statusCode, jsonCodec);
-}
-
-makeLocalePostRequest(String uri, Map body) async{
-  print(body);
-  HttpClientResponse response = await getLocalePostRequestResponse(uri, body);
-  String reply = await response.transform(utf8.decoder).join();
-  if (response.statusCode > 299){
-    print(reply);
-    return null;
-  }
-  var jsonCodec = json.decode(reply);
-  print(jsonCodec);
-  return jsonCodec;
+  return json.decode(reply);
 }
 
 Future<HttpClientResponse> getLocaleGetRequestResponse(String uri) async {
@@ -45,7 +30,9 @@ Future<HttpClientResponse> getLocaleGetRequestResponse(String uri) async {
     request.headers.set(HttpHeaders.authorizationHeader, 'Bearer $apiToken');
   }
   request.headers.set(HttpHeaders.contentTypeHeader, 'application/json');
-  return await request.close();
+  HttpClientResponse response = await request.close();
+  handleGenericErrors(response);
+  return response;
 }
 
 Future<HttpClientResponse> getLocalePostRequestResponse(String uri, Map body) async{
@@ -64,5 +51,7 @@ Future<HttpClientResponse> getLocalePostRequestResponse(String uri, Map body) as
   List<int> parsedBody = utf8.encode(json.encode(body));
   request.headers.set(HttpHeaders.contentLengthHeader, parsedBody.length);
   request.add(parsedBody);
-  return await request.close();
+  HttpClientResponse response = await request.close();
+  handleGenericErrors(response);
+  return response;
 }

@@ -1,6 +1,7 @@
 import 'package:benkyou_app/screens/CreateUserPage/CreateUserPage.dart';
 import 'package:benkyou_app/screens/HomePage/HomePage.dart';
 import 'package:benkyou_app/services/api/userRequests.dart';
+import 'package:benkyou_app/utils/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -91,8 +92,12 @@ class LoginDialogState extends State<LoginDialog>{
                   Padding(
                     padding: const EdgeInsets.only(top: 15.0),
                     child: RaisedButton(
+                      color: Color(COLOR_DARK_BLUE),
                       child: Text(
-                          "Not a member yet ? Register here"
+                          "Not a member yet ? Register here",
+                          style: TextStyle(
+                          color: Colors.white
+                      ),
                       ),
                       onPressed: () async {
                         Navigator.pushNamed(
@@ -106,8 +111,12 @@ class LoginDialogState extends State<LoginDialog>{
                   Padding(
                     padding: const EdgeInsets.only(top: 5.0),
                     child: RaisedButton(
+                      color: Color(COLOR_DARK_BLUE),
                       child: Text(
-                          "Login"
+                          "Login",
+                        style: TextStyle(
+                          color: Colors.white
+                        ),
                       ),
                       onPressed: () async {
                         if (_formKey.currentState.validate()) {

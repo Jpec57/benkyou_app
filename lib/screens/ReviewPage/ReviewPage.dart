@@ -28,8 +28,10 @@ class ReviewPage extends StatefulWidget {
 
 class ReviewPageState extends State<ReviewPage> {
   bool isAnswerVisible = false;
+  bool isAnswerCorrect = false;
   bool _isPlayingAnimation = false;
   final FlareControls _validAnswerAnimControls = FlareControls();
+  final FlareControls _incorrectAnswerAnimControls = FlareControls();
 
   TextEditingController _answerController;
   List<UserCard> _remainingCards;
@@ -120,7 +122,7 @@ class ReviewPageState extends State<ReviewPage> {
   }
 
   _sendReview(List<UserCardProcessedInfo> reviewedCards) async {
-//    await postReview(reviewedCards);
+    await postReview(reviewedCards);
   }
 
   _moveToNextQuestion(bool isAnswerCorrect) async {
@@ -151,6 +153,7 @@ class ReviewPageState extends State<ReviewPage> {
       _moveToNextQuestion(isUserAnswerValid);
       return;
     }
+    isAnswerCorrect =  isUserAnswerValid;
     if (isUserAnswerValid){
       nbSuccess++;
     } else {
@@ -162,18 +165,18 @@ class ReviewPageState extends State<ReviewPage> {
       _processedCards
           .add(new UserCardProcessedInfo(currentCard.id, currentCard.card.id, isUserAnswerValid));
     }
+    _isPlayingAnimation = true;
+
     if (isUserAnswerValid) {
       //TODO test on bunny mode instead of dummy second condition
       if (!isAnswerVisible && true) {
         setState(() {
           isAnswerVisible = true;
-          _isPlayingAnimation = true;
-          _validAnswerAnimControls.play("Validate");
+          _validAnswerAnimControls.play("Untitled");
         });
       } else {
         setState(() {
-          _isPlayingAnimation = true;
-          _validAnswerAnimControls.play("Validate");
+          _validAnswerAnimControls.play("Untitled");
         });
         _moveToNextQuestion(isUserAnswerValid);
       }
@@ -181,6 +184,7 @@ class ReviewPageState extends State<ReviewPage> {
       if (!isAnswerVisible) {
         setState(() {
           isAnswerVisible = true;
+          _incorrectAnswerAnimControls.play("Error");
         });
       } else {
         _moveToNextQuestion(isUserAnswerValid);
@@ -258,22 +262,41 @@ class ReviewPageState extends State<ReviewPage> {
                       ),
                     ),
                   ),
-                  //TODO ANIM
-                  Visibility(
-                    visible: _isPlayingAnimation,
+                  Opacity(
+                    opacity: _isPlayingAnimation && isAnswerCorrect ? 1 : 0,
                     child: SizedBox(
                       height: 50,
                       width: 50,
                       child: InkWell(
                         onTap: () {
                           setState(() {
-                            _validAnswerAnimControls.play("Validate");
+                            _validAnswerAnimControls.play("Untitled");
                           });
                         },
                         child: FlareActor(
-                            'lib/animations/checkmark_anim.flr',
-                          animation: "Validate",
+                             'lib/animations/correct_check.flr',
+                          animation: "Untitled",
                           controller: _validAnswerAnimControls,
+                          shouldClip: false,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Opacity(
+                    opacity: _isPlayingAnimation  && !isAnswerCorrect ? 1 : 0,
+                    child: SizedBox(
+                      height: 50,
+                      width: 50,
+                      child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            _incorrectAnswerAnimControls.play("Error");
+                          });
+                        },
+                        child: FlareActor(
+                          'lib/animations/wrong_answer.flr',
+                          animation: "Error",
+                          controller: _incorrectAnswerAnimControls,
                           shouldClip: false,
                         ),
                       ),

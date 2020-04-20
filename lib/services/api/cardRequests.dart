@@ -1,16 +1,19 @@
+import 'dart:io';
 import 'package:benkyou_app/models/DeckCard.dart';
 import 'package:benkyou_app/models/UserCard.dart';
 import 'package:benkyou_app/models/UserCardProcessedInfo.dart';
 import 'package:benkyou_app/services/rest.dart';
 
 Future<List<UserCard>> getUserCardsForDeck(int deckId) async {
-  var cards = await makeLocaleGetRequest("/users/decks/$deckId");
+  HttpClientResponse cardResponse = await getLocaleGetRequestResponse("/users/decks/$deckId");
+  var cards = await getJsonFromHttpResponse(cardResponse);
   List<UserCard> parsedCards = decodeUserCardJsonArray(cards);
   return parsedCards;
 }
 
 Future<List<UserCard>> getReviewCardsForDeck(int deckId) async {
-  var cards = await makeLocaleGetRequest("/users/decks/$deckId/review");
+  HttpClientResponse cardResponse = await getLocaleGetRequestResponse("/users/decks/$deckId/review");
+  var cards = await getJsonFromHttpResponse(cardResponse);
   List<UserCard> parsedCards = decodeUserCardJsonArray(cards);
   return parsedCards;
 }
@@ -18,7 +21,7 @@ Future<List<UserCard>> getReviewCardsForDeck(int deckId) async {
 Future<bool> postReview(List<UserCardProcessedInfo> cards) async {
   Map body = new Map();
   body.putIfAbsent("cards", ()=> convertUserCardProcessedInfoListToJson(cards));
-  await makeLocalePostRequest("/review", body);
+  HttpClientResponse response = await getLocalePostRequestResponse("/review", body);
   return true;
 }
 
@@ -26,7 +29,8 @@ Future<bool> postReview(List<UserCardProcessedInfo> cards) async {
 ///  DECK CARDS
 
 Future<DeckCard> postCard(int deckId, Map body) async {
-  var cards = await makeLocalePostRequest("/cards", body);
+  HttpClientResponse cardResponse = await getLocalePostRequestResponse("/cards", body);
+  var cards = await getJsonFromHttpResponse(cardResponse);
   DeckCard parsedCards = DeckCard.fromJson(cards);
   return parsedCards;
 }
@@ -34,7 +38,8 @@ Future<DeckCard> postCard(int deckId, Map body) async {
 Future<List<DeckCard>> getCardsByQuestionInDeck(int deckId, String question) async {
   Map map = new Map();
   map.putIfAbsent('question', () => question);
-  List<dynamic> cards = await makeLocalePostRequest("/decks/$deckId/cards/question", map);
+  HttpClientResponse cardResponse = await getLocalePostRequestResponse("/decks/$deckId/cards/question", map);
+  List<dynamic> cards = await getJsonFromHttpResponse(cardResponse);
   List<DeckCard> parsedCards = decodeDeckCardJsonArray(cards);
   return parsedCards;
 }
