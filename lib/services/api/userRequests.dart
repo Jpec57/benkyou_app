@@ -9,6 +9,9 @@ Future<bool> loginRequest(String username, String password) async {
   map.putIfAbsent("email", () => username);
   map.putIfAbsent("password", () => password);
   HttpClientResponse tokenResponse = await getLocalePostRequestResponse("/login", map);
+  if (!isRequestValid(tokenResponse.statusCode)){
+    return false;
+  }
   var token = await getJsonFromHttpResponse(tokenResponse);
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   sharedPreferences.setString('apiToken', token["token"]);
@@ -26,14 +29,21 @@ Future<HttpClientResponse> registerRequest(String email, String username, String
   return await getLocalePostRequestResponse("/register", map);
 }
 
-
-Future<bool> logoutRequest() async {
-  await getLocaleGetRequestResponse("/logout");
+Future<void> _resetSharedPreferences() async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   sharedPreferences.remove('apiToken');
   sharedPreferences.remove('username');
   sharedPreferences.remove('userId');
   sharedPreferences.remove('email');
+}
+
+Future<bool> logoutRequest() async {
+  HttpClientResponse response = await getLocaleGetRequestResponse("/logout", canHandleGenericErrors: false);
+  await _resetSharedPreferences();
+  if (!isRequestValid(response.statusCode)){
+    print(await getJsonFromHttpResponse(response));
+    return false;
+  }
   return true;
 }
 

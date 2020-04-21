@@ -1,3 +1,6 @@
+import 'package:benkyou_app/screens/BrowseDeckPage/BrowseDeckPage.dart';
+import 'package:benkyou_app/screens/ListCardPage/ListCardPage.dart';
+import 'package:benkyou_app/screens/ListCardPage/ListCardPageArguments.dart';
 import 'package:benkyou_app/services/api/userRequests.dart';
 import 'package:benkyou_app/widgets/LoginDialog.dart';
 import 'package:flutter/cupertino.dart';
@@ -143,6 +146,25 @@ class MainDrawerState extends State<MainDrawer>{
               Navigator.pushNamed(
                 context,
                 HomePage.routeName,
+              );
+            },
+          ),
+          ListTile(
+            title: Text('Browse decks'),
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                BrowseDeckPage.routeName,
+              );
+            },
+          ),
+          ListTile(
+            title: Text('My cards'),
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                ListCardPage.routeName,
+                arguments: ListCardPageArguments()
               );
             },
           ),

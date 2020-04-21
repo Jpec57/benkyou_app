@@ -4,6 +4,7 @@ import 'package:benkyou_app/screens/DeckPage/DeckPage.dart';
 import 'package:benkyou_app/screens/DeckPage/DeckPageArguments.dart';
 import 'package:benkyou_app/services/api/cardRequests.dart';
 import 'package:benkyou_app/services/translator/TextConversion.dart';
+import 'package:benkyou_app/utils/colors.dart';
 import 'package:benkyou_app/widgets/AddAnswerCardWidget.dart';
 import 'package:benkyou_app/widgets/JishoList.dart';
 import 'package:benkyou_app/widgets/MainDrawer.dart';
@@ -385,7 +386,7 @@ class CreateCardPageState extends State<CreateCardPage> {
           },
           child: Container(
             height: MediaQuery.of(context).size.height * 0.08,
-            decoration: BoxDecoration(color: Color(0xff646461)),
+            decoration: BoxDecoration(color: Color(COLOR_DARK_BLUE)),
             child: Center(
               child: Text(
                 'CREATE ANOTHER CARD',
@@ -424,7 +425,7 @@ class CreateCardPageState extends State<CreateCardPage> {
               },
               child: Container(
                 height: MediaQuery.of(context).size.height * 0.1,
-                decoration: BoxDecoration(color: Color(0xff248CCB)),
+                decoration: BoxDecoration(color: Color(COLOR_ORANGE)),
                 child: Center(
                   child: Text(
                     _bottomButtonLabel,

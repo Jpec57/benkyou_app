@@ -1,27 +1,44 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:benkyou_app/services/api/userRequests.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+const bool DEBUG = false;
 
 Future<HttpClientResponse> handleGenericErrors(HttpClientResponse response) async {
   int statusCode = response.statusCode;
   //Token expired
   if (statusCode == 401){
-    print('TOKEN EXPIRED');
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    if (sharedPreferences.get('apiToken') != null){
+      sharedPreferences.remove('apiToken');
+      Get.snackbar('API Token expired', 'Your token has expired. Please log in again.');
+    }
     await logoutRequest();
   }
   return response;
 }
 
+bool isRequestValid(int statusCode){
+  return (statusCode >= 200 && statusCode < 300);
+}
+
 getJsonFromHttpResponse(HttpClientResponse response) async{
   String reply = await response.transform(utf8.decoder).join();
+  print(reply);
   return json.decode(reply);
 }
 
-Future<HttpClientResponse> getLocaleGetRequestResponse(String uri) async {
+Future<HttpClientResponse> getLocaleGetRequestResponse(String uri, {canHandleGenericErrors = true}) async {
   HttpClient client = new HttpClient();
   client.badCertificateCallback = ((X509Certificate cert, String host, int port) => true);
-  String url = 'https://10.0.2.2:8000$uri';
+  String url;
+  if (DEBUG){
+    url = 'https://10.0.2.2:8000$uri';
+  } else {
+    url = 'http://51.158.152.165:8000$uri';
+  }
   HttpClientRequest request = await client.getUrl(Uri.parse(url));
 
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -31,14 +48,21 @@ Future<HttpClientResponse> getLocaleGetRequestResponse(String uri) async {
   }
   request.headers.set(HttpHeaders.contentTypeHeader, 'application/json');
   HttpClientResponse response = await request.close();
-  handleGenericErrors(response);
+  if (canHandleGenericErrors){
+    response = await handleGenericErrors(response);
+  }
   return response;
 }
 
-Future<HttpClientResponse> getLocalePostRequestResponse(String uri, Map body) async{
+Future<HttpClientResponse> getLocalePostRequestResponse(String uri, Map body, {canHandleGenericErrors = true}) async{
   HttpClient client = new HttpClient();
   client.badCertificateCallback = ((X509Certificate cert, String host, int port) => true);
-  String url = 'https://10.0.2.2:8000$uri';
+  String url;
+  if (DEBUG){
+    url = 'https://10.0.2.2:8000$uri';
+  } else {
+    url = 'http://51.158.152.165:8000$uri';
+  }
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   String apiToken = sharedPreferences.get('apiToken');
 
@@ -46,12 +70,14 @@ Future<HttpClientResponse> getLocalePostRequestResponse(String uri, Map body) as
   if (apiToken != null){
     request.headers.set(HttpHeaders.authorizationHeader, 'Bearer $apiToken');
   }
-  //  request.headers.set(HttpHeaders.authorizationHeader, 'Bearer ADMIN_TOKEN_DEBUG');
+//    request.headers.set(HttpHeaders.authorizationHeader, 'Bearer ADMIN_TOKEN_DEBUG');
   request.headers.set(HttpHeaders.contentTypeHeader, 'application/json');
   List<int> parsedBody = utf8.encode(json.encode(body));
   request.headers.set(HttpHeaders.contentLengthHeader, parsedBody.length);
   request.add(parsedBody);
   HttpClientResponse response = await request.close();
-  handleGenericErrors(response);
+  if (canHandleGenericErrors){
+    response = await handleGenericErrors(response);
+  }
   return response;
 }

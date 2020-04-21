@@ -1,4 +1,5 @@
 import 'package:benkyou_app/services/api/deckRequests.dart';
+import 'package:benkyou_app/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 class CreateDeckDialog extends StatefulWidget {
@@ -60,11 +61,13 @@ class CreateDeckDialogState extends State<CreateDeckDialog> {
                   Padding(
                     padding: const EdgeInsets.only(top: 15.0),
                     child: RaisedButton(
+                      color: Color(COLOR_DARK_BLUE),
                       child: Text(
-                        "Create deck"
+                        "Create deck",
+                        style: TextStyle(color: Colors.white),
                       ),
                       onPressed: () async {
-                        if (_titleController.text.isNotEmpty){
+                        if (_formKey.currentState.validate()){
                           await postDeck(_titleController.text);
                           widget.callback();
                           Navigator.pop(context);
