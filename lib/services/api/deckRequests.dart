@@ -2,6 +2,20 @@ import '../../models/Deck.dart';
 import '../rest.dart';
 import 'dart:io';
 
+Future<List<Deck>> getPublicDecks() async {
+  List<Deck> parsedDecks = [];
+  HttpClientResponse response = await getLocaleGetRequestResponse("/decks");
+  if (!isRequestValid(response.statusCode)){
+    return null;
+  }
+  List<dynamic> decks = await getJsonFromHttpResponse(response);
+  for (Map<String, dynamic> deck in decks){
+    parsedDecks.add(Deck.fromJson(deck));
+  }
+
+  return parsedDecks;
+}
+
 Future<List<Deck>> getPersonalDecks() async {
   List<Deck> parsedDecks = [];
   HttpClientResponse response = await getLocaleGetRequestResponse("/decks/me");
@@ -24,9 +38,10 @@ Future<Deck> getDeck(int id) async {
   return Deck.fromJson(deck);
 }
 
-Future<Deck> postDeck(String title) async {
+Future<Deck> postDeck(String title, String description) async {
   Map map = new Map();
   map.putIfAbsent('title', ()=> title);
+  map.putIfAbsent('description', ()=> description);
   HttpClientResponse response = await getLocalePostRequestResponse("/decks", map);
   if (!isRequestValid(response.statusCode)){
     print(await getJsonFromHttpResponse(response));

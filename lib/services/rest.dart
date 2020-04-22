@@ -4,7 +4,7 @@ import 'package:benkyou_app/services/api/userRequests.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const bool DEBUG = false;
+const bool DEBUG = true;
 
 Future<HttpClientResponse> handleGenericErrors(HttpClientResponse response) async {
   int statusCode = response.statusCode;
@@ -35,7 +35,7 @@ Future<HttpClientResponse> getLocaleGetRequestResponse(String uri, {canHandleGen
   client.badCertificateCallback = ((X509Certificate cert, String host, int port) => true);
   String url;
   if (DEBUG){
-    url = 'https://10.0.2.2:8000$uri';
+    url = 'http://10.0.2.2:8000$uri';
   } else {
     url = 'http://51.158.152.165:8000$uri';
   }
@@ -59,7 +59,7 @@ Future<HttpClientResponse> getLocalePostRequestResponse(String uri, Map body, {c
   client.badCertificateCallback = ((X509Certificate cert, String host, int port) => true);
   String url;
   if (DEBUG){
-    url = 'https://10.0.2.2:8000$uri';
+    url = 'http://10.0.2.2:8000$uri';
   } else {
     url = 'http://51.158.152.165:8000$uri';
   }

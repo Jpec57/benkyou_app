@@ -228,7 +228,6 @@ class DeckPageState extends State<DeckPage> {
             if (deckSnapshot.hasData && deckSnapshot.data != null) {
               deckData = deckSnapshot.data;
               return Scaffold(
-                drawer: MainDrawer(),
                 appBar: AppBar(
                   title:
                       Text("Deck: ${deckData != null ? deckData.title : ''}"),
@@ -246,7 +245,6 @@ class DeckPageState extends State<DeckPage> {
                 appBar: AppBar(
                   title: Text(""),
                 ),
-                drawer: MainDrawer(),
                 body: Center(
                     child: Text("There is no deck with id ${widget.id}")));
           default:
@@ -254,7 +252,6 @@ class DeckPageState extends State<DeckPage> {
                 appBar: AppBar(
                   title: Text(""),
                 ),
-                drawer: MainDrawer(),
                 body: Center(
                     child: Text("There is no deck with id ${widget.id}")));
         }

@@ -4,6 +4,8 @@ import 'package:benkyou_app/screens/CreateCardPage/CreateCardPageArguments.dart'
 import 'package:benkyou_app/screens/CreateUserPage/CreateUserPage.dart';
 import 'package:benkyou_app/screens/ListCardPage/ListCardPage.dart';
 import 'package:benkyou_app/screens/ListCardPage/ListCardPageArguments.dart';
+import 'package:benkyou_app/screens/PreviewPublicDeckPage/PreviewPublicDeckPage.dart';
+import 'package:benkyou_app/screens/PreviewPublicDeckPage/PreviewPublicDeckPageArguments.dart';
 import 'package:benkyou_app/screens/ReviewPage/ReviewPage.dart';
 import 'package:benkyou_app/screens/ReviewPage/ReviewPageArguments.dart';
 import 'package:benkyou_app/utils/colors.dart';
@@ -59,6 +61,17 @@ void main() => runApp(MaterialApp(
       return MaterialPageRoute(
         builder: (context) {
           return ListCardPage(
+            deckId: args.deckId,
+          );
+        },
+      );
+    }
+
+    if (settings.name == PreviewPublicDeckPage.routeName){
+      final PreviewPublicDeckPageArguments args = settings.arguments;
+      return MaterialPageRoute(
+        builder: (context) {
+          return PreviewPublicDeckPage(
             deckId: args.deckId,
           );
         },

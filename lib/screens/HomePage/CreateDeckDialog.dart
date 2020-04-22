@@ -13,12 +13,14 @@ class CreateDeckDialog extends StatefulWidget {
 
 class CreateDeckDialogState extends State<CreateDeckDialog> {
   TextEditingController _titleController;
+  TextEditingController _descriptionController;
   final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
     _titleController = new TextEditingController();
+    _descriptionController = new TextEditingController();
   }
 
   @override
@@ -26,7 +28,7 @@ class CreateDeckDialogState extends State<CreateDeckDialog> {
     return AlertDialog(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(32.0))),
-      contentPadding: EdgeInsets.all(15.0),
+      contentPadding: EdgeInsets.all(10.0),
       title: Text('Create a deck'),
       content: GestureDetector(
         onTap: () {
@@ -45,7 +47,7 @@ class CreateDeckDialogState extends State<CreateDeckDialog> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text("Title"),
+                  Text("Title*"),
                   TextFormField(
                     controller: _titleController,
                     validator: (value) {
@@ -60,6 +62,19 @@ class CreateDeckDialogState extends State<CreateDeckDialog> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 15.0),
+                    child: Text("Description"),
+                  ),
+                  TextFormField(
+                    maxLines: 3,
+                    textAlign: TextAlign.justify,
+                    controller: _descriptionController,
+                    decoration: InputDecoration(
+                        hintText: 'Enter a description',
+                        labelStyle: TextStyle(
+                        )),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 15.0),
                     child: RaisedButton(
                       color: Color(COLOR_DARK_BLUE),
                       child: Text(
@@ -68,7 +83,7 @@ class CreateDeckDialogState extends State<CreateDeckDialog> {
                       ),
                       onPressed: () async {
                         if (_formKey.currentState.validate()){
-                          await postDeck(_titleController.text);
+                          await postDeck(_titleController.text, _descriptionController.text);
                           widget.callback();
                           Navigator.pop(context);
                         }

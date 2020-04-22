@@ -56,6 +56,43 @@ class ListCardPageState extends State<ListCardPage> {
     return Text("${deckCard.hint}", style: TextStyle(fontSize: 14, color: Colors.grey));
   }
 
+  Widget _renderCardList(){
+    return FutureBuilder(
+      future: cards,
+      builder: (BuildContext context,
+          AsyncSnapshot<List<UserCard>> cardSnapshot) {
+        switch (cardSnapshot.connectionState) {
+          case ConnectionState.waiting:
+            return Center(child: Text('Loading...'));
+          case ConnectionState.done:
+            if (cardSnapshot.hasData) {
+              return ListView.separated(
+                shrinkWrap: true,
+                physics: const AlwaysScrollableScrollPhysics(),
+                itemCount: cardSnapshot.data.length,
+                itemBuilder: (BuildContext context, int index) {
+                  DeckCard card = cardSnapshot.data[index].card;
+                  return ExpansionTile(
+                    children: <Widget>[
+                      _renderCardAnswers(cardSnapshot.data[index]),
+                    ],
+                    title: Text("${card.question}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400)),
+                    subtitle: _renderCardSubtitle(card),
+                  );
+                },
+                separatorBuilder: (context, index) => Divider(
+                  color: Colors.grey,
+                ),
+              );
+            }
+            return Center(child: Text('There is no card yet. Create one.'));
+          default:
+            return Container();
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,42 +100,7 @@ class ListCardPageState extends State<ListCardPage> {
         title: Text('My cards'),
       ),
       drawer: MainDrawer(),
-      body: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: FutureBuilder(
-          future: cards,
-          builder: (BuildContext context,
-              AsyncSnapshot<List<UserCard>> cardSnapshot) {
-            switch (cardSnapshot.connectionState) {
-              case ConnectionState.waiting:
-                return Center(child: Text('Loading...'));
-              case ConnectionState.done:
-                if (cardSnapshot.hasData) {
-                  return ListView.separated(
-                    shrinkWrap: true,
-                    itemCount: cardSnapshot.data.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      DeckCard card = cardSnapshot.data[index].card;
-                      return ExpansionTile(
-                        children: <Widget>[
-                          _renderCardAnswers(cardSnapshot.data[index]),
-                        ],
-                        title: Text("${card.question}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400)),
-                        subtitle: _renderCardSubtitle(card),
-                      );
-                    },
-                    separatorBuilder: (context, index) => Divider(
-                      color: Colors.grey,
-                    ),
-                  );
-                }
-                return Center(child: Text('There is no card yet. Create one.'));
-              default:
-                return Container();
-            }
-          },
-        ),
-      ),
+      body: _renderCardList(),
     );
   }
 }
