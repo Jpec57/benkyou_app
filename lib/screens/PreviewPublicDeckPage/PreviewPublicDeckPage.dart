@@ -1,9 +1,13 @@
 import 'package:benkyou_app/models/Deck.dart';
+import 'package:benkyou_app/screens/DeckPage/DeckPage.dart';
+import 'package:benkyou_app/screens/DeckPage/DeckPageArguments.dart';
 import 'package:benkyou_app/services/api/deckRequests.dart';
 import 'package:benkyou_app/utils/colors.dart';
 import 'package:benkyou_app/widgets/DeckCardList.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PreviewPublicDeckPage extends StatefulWidget{
   static const routeName = '/preview/deck';
@@ -96,7 +100,7 @@ class PreviewPublicDeckPageState extends State<PreviewPublicDeckPage>{
                                 ),
                                 GestureDetector(
                                   onTap: (){
-
+                                    //TODO login
                                   },
                                   child: Text("by ${deck.author.username}", style: TextStyle(
                                       shadows: <Shadow>[
@@ -147,9 +151,18 @@ class PreviewPublicDeckPageState extends State<PreviewPublicDeckPage>{
                         )
                     ),
                     GestureDetector(
-                      onTap: (){
-
-
+                      onTap: () async {
+                        SharedPreferences shared = await SharedPreferences.getInstance();
+                        if (shared.get('username') != deck.author.username){
+                          Deck importedDeck = await importDeck(deck.id);
+                          Navigator.pushNamed(
+                              context,
+                              DeckPage.routeName,
+                              arguments: DeckPageArguments(importedDeck.id)
+                          );
+                        } else {
+                          Get.snackbar('Error', 'You cannot import your own deck...', snackPosition: SnackPosition.BOTTOM);
+                        }
                       },
                       child: Container(
                         height: MediaQuery.of(context).size.height * 0.1,

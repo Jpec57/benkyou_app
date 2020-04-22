@@ -34,7 +34,6 @@ class SRSPreviewState extends State<SRSPreview> {
       SRSLevel("Pro"),
     ];
     for (UserCard card in widget.cards) {
-      print(card.toString());
       switch (card.lvl) {
         case 0:
         case 1:

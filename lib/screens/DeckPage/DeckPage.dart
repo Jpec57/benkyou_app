@@ -5,10 +5,12 @@ import 'package:benkyou_app/screens/ReviewPage/ReviewPage.dart';
 import 'package:benkyou_app/screens/ReviewPage/ReviewPageArguments.dart';
 import 'package:benkyou_app/services/api/cardRequests.dart';
 import 'package:benkyou_app/utils/colors.dart';
+import 'package:benkyou_app/widgets/PublishDeckDialog.dart';
 import 'package:benkyou_app/widgets/ReviewSchedule.dart';
 import 'package:benkyou_app/widgets/SRSPreview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../models/Deck.dart';
 import '../../services/api/deckRequests.dart';
@@ -120,6 +122,7 @@ class DeckPageState extends State<DeckPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           RichText(
+                            textAlign: TextAlign.center,
                             text: new TextSpan(
                               // Note: Styles for TextSpans must be explicitly defined.
                               // Child text spans will inherit styles from parent
@@ -231,6 +234,24 @@ class DeckPageState extends State<DeckPage> {
                 appBar: AppBar(
                   title:
                       Text("Deck: ${deckData != null ? deckData.title : ''}"),
+                  actions: <Widget>[
+                    // action button
+                    IconButton(
+                      icon: Icon(Icons.public),
+                      color: deckData.isPublic ? Color(COLOR_ORANGE) : Color(COLOR_GREY),
+                      onPressed: () {
+                        if (deckData.cards.length == 0){
+                          Get.snackbar('Empty deck', 'Your deck must have at least one card to be published.', snackPosition: SnackPosition.BOTTOM);
+                          return;
+                        }
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) => PublishDeckDialog(
+                              deck: deckData,
+                            ));
+                      },
+                    ),
+                  ],
                 ),
                 body: SingleChildScrollView(child: _renderDeckPageContent(deckData)),
                 floatingActionButton: FloatingActionButton(

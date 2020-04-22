@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,6 +11,9 @@ Future<bool> loginRequest(String username, String password) async {
   map.putIfAbsent("password", () => password);
   HttpClientResponse tokenResponse = await getLocalePostRequestResponse("/login", map);
   if (!isRequestValid(tokenResponse.statusCode)){
+    print(tokenResponse.statusCode);
+    String reply = await tokenResponse.transform(utf8.decoder).join();
+    print(reply);
     return false;
   }
   var token = await getJsonFromHttpResponse(tokenResponse);

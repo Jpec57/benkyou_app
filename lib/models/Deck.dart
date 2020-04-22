@@ -8,6 +8,7 @@ class Deck {
   String description;
   List<DeckCard> cards;
   List<User> users;
+  bool isPublic;
 
   Deck.fromJson(Map<String, dynamic> json)
       : id = json['id'],
@@ -15,7 +16,8 @@ class Deck {
         author = User.fromJson(json['author']),
         description = json['description'],
         cards = decodeDeckCardJsonArray(json['cards']),
-        users = decodeUserJsonArray(json['users'])
+        users = decodeUserJsonArray(json['users']),
+        isPublic = json['isPublic']
   ;
 
   @override

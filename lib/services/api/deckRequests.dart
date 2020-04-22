@@ -2,6 +2,34 @@ import '../../models/Deck.dart';
 import '../rest.dart';
 import 'dart:io';
 
+Future<Deck> publishDeck(int id, bool makePublic) async {
+  Map map = new Map();
+  if (makePublic){
+    map.putIfAbsent('isPublic', () => makePublic);
+  }
+  HttpClientResponse response = await getLocalePostRequestResponse("/decks/$id/publish", map);
+  if (!isRequestValid(response.statusCode)){
+    print("publish Deck error");
+    print(await getJsonFromHttpResponse(response));
+    return null;
+  }
+  Map<String, dynamic> deck = await getJsonFromHttpResponse(response);
+  return Deck.fromJson(deck);
+}
+
+Future<Deck> importDeck(int id) async {
+  print(id);
+  HttpClientResponse response = await getLocaleGetRequestResponse("/decks/$id/import");
+  if (!isRequestValid(response.statusCode)){
+    print("import Deck error");
+    print(await getJsonFromHttpResponse(response));
+    return null;
+  }
+  Map<String, dynamic> deck = await getJsonFromHttpResponse(response);
+  print(deck);
+  return Deck.fromJson(deck);
+}
+
 Future<List<Deck>> getPublicDecks() async {
   List<Deck> parsedDecks = [];
   HttpClientResponse response = await getLocaleGetRequestResponse("/decks");

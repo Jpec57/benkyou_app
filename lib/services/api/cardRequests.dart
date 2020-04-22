@@ -24,7 +24,6 @@ Future<List<UserCard>> getUserCardsGroupByDeck() async {
     print(cards);
     return null;
   }
-  print(cards);
   List<UserCard> parsedCards = decodeUserCardJsonArray(cards);
   return parsedCards;
 }

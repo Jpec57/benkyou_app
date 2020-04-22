@@ -4,6 +4,8 @@ import 'package:benkyou_app/services/api/userRequests.dart';
 import 'package:benkyou_app/utils/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginDialog extends StatefulWidget{
   @override
@@ -92,7 +94,7 @@ class LoginDialogState extends State<LoginDialog>{
                   Padding(
                     padding: const EdgeInsets.only(top: 15.0),
                     child: RaisedButton(
-                      color: Color(COLOR_DARK_BLUE),
+                      color: Color(COLOR_ORANGE),
                       child: Text(
                           "Not a member yet ? Register here",
                           style: TextStyle(
@@ -120,16 +122,18 @@ class LoginDialogState extends State<LoginDialog>{
                       ),
                       onPressed: () async {
                         if (_formKey.currentState.validate()) {
-                          await loginRequest(_usernameController.text, _passwordController.text);
-                          Navigator.pop(context);
-                          Navigator.pushNamed(
-                            context,
-                            HomePage.routeName,
-                          );
-                          //TODO show a confirmation and reload
-//                          Scaffold
-//                              .of(context)
-//                              .showSnackBar(SnackBar(content: Text('Welcome back!')));
+                          bool res = await loginRequest(_usernameController.text, _passwordController.text);
+                          if (!res){
+                            Get.snackbar('Error', 'An error occurred. Please contact the support for any help.', snackPosition: SnackPosition.BOTTOM);
+                          } else{
+                            Navigator.pop(context);
+                            Navigator.pushReplacementNamed(
+                              context,
+                              HomePage.routeName,
+                            );
+                            SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+                            String username = sharedPreferences.getString('username');
+                            Get.snackbar('Welcome back $username!', '久しぶりだな麦わら', snackPosition: SnackPosition.BOTTOM);}
                         }
                       },
                     ),
