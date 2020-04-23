@@ -17,7 +17,7 @@ class Deck {
         description = json['description'],
         cards = decodeDeckCardJsonArray(json['cards']),
         users = decodeUserJsonArray(json['users']),
-        isPublic = json['isPublic']
+        isPublic = json['isPublic'] ?? false
   ;
 
   @override

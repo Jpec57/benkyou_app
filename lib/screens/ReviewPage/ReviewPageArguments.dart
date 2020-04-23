@@ -1,4 +1,4 @@
-import 'package:benkyou_app/models/UserCard.dart';
+import 'package:benkyou/models/UserCard.dart';
 
 class ReviewPageArguments {
   List<UserCard> cards;

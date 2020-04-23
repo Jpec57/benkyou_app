@@ -1,9 +1,9 @@
 import 'dart:io';
-import 'package:benkyou_app/models/DeckCard.dart';
-import 'package:benkyou_app/models/UserCard.dart';
-import 'package:benkyou_app/models/UserCardProcessedInfo.dart';
-import 'package:benkyou_app/models/UserCardReviewCount.dart';
-import 'package:benkyou_app/services/rest.dart';
+import 'package:benkyou/models/DeckCard.dart';
+import 'package:benkyou/models/UserCard.dart';
+import 'package:benkyou/models/UserCardProcessedInfo.dart';
+import 'package:benkyou/models/UserCardReviewCount.dart';
+import 'package:benkyou/services/rest.dart';
 
 Future<List<UserCard>> getUserCardsForDeck(int deckId) async {
   print("/users/decks/$deckId");

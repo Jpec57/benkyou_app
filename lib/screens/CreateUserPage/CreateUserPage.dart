@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:benkyou_app/screens/HomePage/HomePage.dart';
-import 'package:benkyou_app/services/api/userRequests.dart';
-import 'package:benkyou_app/widgets/MainDrawer.dart';
+import 'package:benkyou/screens/HomePage/HomePage.dart';
+import 'package:benkyou/services/api/userRequests.dart';
+import 'package:benkyou/widgets/MainDrawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

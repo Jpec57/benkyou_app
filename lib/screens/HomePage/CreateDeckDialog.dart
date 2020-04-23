@@ -1,5 +1,5 @@
-import 'package:benkyou_app/services/api/deckRequests.dart';
-import 'package:benkyou_app/utils/colors.dart';
+import 'package:benkyou/services/api/deckRequests.dart';
+import 'package:benkyou/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 class CreateDeckDialog extends StatefulWidget {

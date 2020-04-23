@@ -1,13 +1,13 @@
-import 'package:benkyou_app/models/DeckCard.dart';
-import 'package:benkyou_app/models/JishoTranslation.dart';
-import 'package:benkyou_app/screens/DeckPage/DeckPage.dart';
-import 'package:benkyou_app/screens/DeckPage/DeckPageArguments.dart';
-import 'package:benkyou_app/services/api/cardRequests.dart';
-import 'package:benkyou_app/services/translator/TextConversion.dart';
-import 'package:benkyou_app/utils/colors.dart';
-import 'package:benkyou_app/widgets/AddAnswerCardWidget.dart';
-import 'package:benkyou_app/widgets/JishoList.dart';
-import 'package:benkyou_app/widgets/MainDrawer.dart';
+import 'package:benkyou/models/DeckCard.dart';
+import 'package:benkyou/models/JishoTranslation.dart';
+import 'package:benkyou/screens/DeckPage/DeckPage.dart';
+import 'package:benkyou/screens/DeckPage/DeckPageArguments.dart';
+import 'package:benkyou/services/api/cardRequests.dart';
+import 'package:benkyou/services/translator/TextConversion.dart';
+import 'package:benkyou/utils/colors.dart';
+import 'package:benkyou/widgets/AddAnswerCardWidget.dart';
+import 'package:benkyou/widgets/JishoList.dart';
+import 'package:benkyou/widgets/MainDrawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

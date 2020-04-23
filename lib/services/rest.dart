@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:benkyou_app/main.dart';
-import 'package:benkyou_app/services/api/userRequests.dart';
+import 'package:benkyou/main.dart';
+import 'package:benkyou/services/api/userRequests.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

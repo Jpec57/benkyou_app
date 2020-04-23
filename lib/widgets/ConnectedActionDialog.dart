@@ -1,6 +1,6 @@
-import 'package:benkyou_app/screens/CreateUserPage/CreateUserPage.dart';
-import 'package:benkyou_app/utils/colors.dart';
-import 'package:benkyou_app/widgets/LoginDialog.dart';
+import 'package:benkyou/screens/CreateUserPage/CreateUserPage.dart';
+import 'package:benkyou/utils/colors.dart';
+import 'package:benkyou/widgets/LoginDialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

@@ -1,7 +1,7 @@
-import 'package:benkyou_app/screens/CreateUserPage/CreateUserPage.dart';
-import 'package:benkyou_app/screens/HomePage/HomePage.dart';
-import 'package:benkyou_app/services/api/userRequests.dart';
-import 'package:benkyou_app/utils/colors.dart';
+import 'package:benkyou/screens/CreateUserPage/CreateUserPage.dart';
+import 'package:benkyou/screens/HomePage/HomePage.dart';
+import 'package:benkyou/services/api/userRequests.dart';
+import 'package:benkyou/utils/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

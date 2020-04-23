@@ -1,8 +1,8 @@
-import 'package:benkyou_app/models/UserCardReviewCount.dart';
-import 'package:benkyou_app/screens/HomePage/CreateDeckDialog.dart';
-import 'package:benkyou_app/services/api/cardRequests.dart';
-import 'package:benkyou_app/utils/colors.dart';
-import 'package:benkyou_app/widgets/ConnectedActionDialog.dart';
+import 'package:benkyou/models/UserCardReviewCount.dart';
+import 'package:benkyou/screens/HomePage/CreateDeckDialog.dart';
+import 'package:benkyou/services/api/cardRequests.dart';
+import 'package:benkyou/utils/colors.dart';
+import 'package:benkyou/widgets/ConnectedActionDialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -62,6 +62,58 @@ class HomePageState extends State<HomePage> {
     );
   }
 
+
+  Widget _renderDeckWithReviewCount(Deck deck, int count){
+    return Stack(
+      children: <Widget>[
+        _renderDeck(deck),
+        Align(
+          alignment: Alignment.topRight,
+          child: Container(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                '$count',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Color(COLOR_ORANGE),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _renderDeckStack(Deck deck) {
+    return FutureBuilder(
+      future: personalDeckCounts,
+      builder: (BuildContext context,
+          AsyncSnapshot<List<UserCardReviewCount>> countSnapshot) {
+        switch (countSnapshot.connectionState) {
+          case ConnectionState.done:
+            if (countSnapshot.hasData) {
+              for (UserCardReviewCount userCardReviewCount in countSnapshot.data) {
+                if (deck.id == userCardReviewCount.deckId) {
+                  int count = userCardReviewCount.count;
+                  if (count > 0) {
+                    return _renderDeckWithReviewCount(deck, count);
+                  }
+                }
+              }
+            }
+            return _renderDeck(deck);
+          default:
+            return _renderDeck(deck);
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,59 +144,7 @@ class HomePageState extends State<HomePage> {
                           children:
                               List.generate(deckSnapshot.data.length, (index) {
                             Deck deck = deckSnapshot.data[index];
-                            return FutureBuilder(
-                              future: personalDeckCounts,
-                              builder: (BuildContext context,
-                                  AsyncSnapshot<List<UserCardReviewCount>>
-                                      countSnapshot) {
-                                switch (countSnapshot.connectionState) {
-                                  case ConnectionState.done:
-                                    if (countSnapshot.hasData) {
-                                      for (UserCardReviewCount userCardReviewCount
-                                          in countSnapshot.data) {
-                                        if (deck.id ==
-                                            userCardReviewCount.deckId) {
-                                          int count = userCardReviewCount.count;
-                                          if (count > 0) {
-                                            return Stack(
-                                              children: <Widget>[
-                                                _renderDeck(deck),
-                                                Align(
-                                                  alignment: Alignment.topRight,
-                                                  child: Container(
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
-                                                      child: Text(
-                                                        '$count',
-                                                        style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                    ),
-                                                    decoration: BoxDecoration(
-                                                      shape: BoxShape.circle,
-                                                      color:
-                                                          Color(COLOR_ORANGE),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            );
-                                          }
-                                        }
-                                        break;
-                                      }
-                                    }
-                                    return _renderDeck(deck);
-                                  default:
-                                    return _renderDeck(deck);
-                                }
-                              },
-                            );
+                            return _renderDeckStack(deck);
                           }));
                     }
                     return Center(

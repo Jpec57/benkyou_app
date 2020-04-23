@@ -1,9 +1,9 @@
-import 'package:benkyou_app/models/Deck.dart';
-import 'package:benkyou_app/screens/PreviewPublicDeckPage/PreviewPublicDeckPage.dart';
-import 'package:benkyou_app/screens/PreviewPublicDeckPage/PreviewPublicDeckPageArguments.dart';
-import 'package:benkyou_app/services/api/deckRequests.dart';
-import 'package:benkyou_app/utils/colors.dart';
-import 'package:benkyou_app/widgets/MainDrawer.dart';
+import 'package:benkyou/models/Deck.dart';
+import 'package:benkyou/screens/PreviewPublicDeckPage/PreviewPublicDeckPage.dart';
+import 'package:benkyou/screens/PreviewPublicDeckPage/PreviewPublicDeckPageArguments.dart';
+import 'package:benkyou/services/api/deckRequests.dart';
+import 'package:benkyou/utils/colors.dart';
+import 'package:benkyou/widgets/MainDrawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

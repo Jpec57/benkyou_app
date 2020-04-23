@@ -1,4 +1,4 @@
-import 'package:benkyou_app/models/JishoTranslation.dart';
+import 'package:benkyou/models/JishoTranslation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

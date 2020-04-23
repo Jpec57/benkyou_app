@@ -1,4 +1,4 @@
-import 'package:benkyou_app/utils/colors.dart';
+import 'package:benkyou/utils/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

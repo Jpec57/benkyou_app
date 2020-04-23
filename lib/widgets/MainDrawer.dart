@@ -1,8 +1,8 @@
-import 'package:benkyou_app/screens/BrowseDeckPage/BrowseDeckPage.dart';
-import 'package:benkyou_app/screens/ListCardPage/ListCardPage.dart';
-import 'package:benkyou_app/screens/ListCardPage/ListCardPageArguments.dart';
-import 'package:benkyou_app/services/api/userRequests.dart';
-import 'package:benkyou_app/widgets/LoginDialog.dart';
+import 'package:benkyou/screens/BrowseDeckPage/BrowseDeckPage.dart';
+import 'package:benkyou/screens/ListCardPage/ListCardPage.dart';
+import 'package:benkyou/screens/ListCardPage/ListCardPageArguments.dart';
+import 'package:benkyou/services/api/userRequests.dart';
+import 'package:benkyou/widgets/LoginDialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';

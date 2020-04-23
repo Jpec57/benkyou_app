@@ -1,5 +1,5 @@
-import 'package:benkyou_app/models/Answer.dart';
-import 'package:benkyou_app/models/DeckCard.dart';
+import 'package:benkyou/models/Answer.dart';
+import 'package:benkyou/models/DeckCard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

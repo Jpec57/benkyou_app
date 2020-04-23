@@ -13,6 +13,11 @@ class UserCardReviewCount{
     'deckId': deckId,
     'count': count,
   };
+
+  @override
+  String toString() {
+    return 'UserCardReviewCount{deckId: $deckId, count: $count}';
+  }
 }
 
 List<UserCardReviewCount> decodeUserCardReviewCountJsonArray(array){

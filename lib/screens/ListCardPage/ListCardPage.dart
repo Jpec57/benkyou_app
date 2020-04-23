@@ -1,9 +1,9 @@
-import 'package:benkyou_app/models/Answer.dart';
-import 'package:benkyou_app/models/DeckCard.dart';
-import 'package:benkyou_app/models/UserCard.dart';
-import 'package:benkyou_app/services/api/cardRequests.dart';
-import 'package:benkyou_app/utils/colors.dart';
-import 'package:benkyou_app/widgets/MainDrawer.dart';
+import 'package:benkyou/models/Answer.dart';
+import 'package:benkyou/models/DeckCard.dart';
+import 'package:benkyou/models/UserCard.dart';
+import 'package:benkyou/services/api/cardRequests.dart';
+import 'package:benkyou/utils/colors.dart';
+import 'package:benkyou/widgets/MainDrawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

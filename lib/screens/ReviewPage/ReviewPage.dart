@@ -1,15 +1,15 @@
 import 'dart:math';
 
-import 'package:benkyou_app/models/Answer.dart';
-import 'package:benkyou_app/models/UserCard.dart';
-import 'package:benkyou_app/models/UserCardProcessedInfo.dart';
-import 'package:benkyou_app/screens/DeckPage/DeckPage.dart';
-import 'package:benkyou_app/screens/DeckPage/DeckPageArguments.dart';
-import 'package:benkyou_app/screens/ReviewPage/ReviewPageInfo.dart';
-import 'package:benkyou_app/services/api/cardRequests.dart';
-import 'package:benkyou_app/services/translator/TextConversion.dart';
-import 'package:benkyou_app/utils/colors.dart';
-import 'package:benkyou_app/utils/string.dart';
+import 'package:benkyou/models/Answer.dart';
+import 'package:benkyou/models/UserCard.dart';
+import 'package:benkyou/models/UserCardProcessedInfo.dart';
+import 'package:benkyou/screens/DeckPage/DeckPage.dart';
+import 'package:benkyou/screens/DeckPage/DeckPageArguments.dart';
+import 'package:benkyou/screens/ReviewPage/ReviewPageInfo.dart';
+import 'package:benkyou/services/api/cardRequests.dart';
+import 'package:benkyou/services/translator/TextConversion.dart';
+import 'package:benkyou/utils/colors.dart';
+import 'package:benkyou/utils/string.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flare_flutter/flare_controls.dart';
 import 'package:flutter/cupertino.dart';

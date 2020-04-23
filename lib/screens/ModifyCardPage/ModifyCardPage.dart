@@ -1,4 +1,4 @@
-import 'package:benkyou_app/widgets/MainDrawer.dart';
+import 'package:benkyou/widgets/MainDrawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

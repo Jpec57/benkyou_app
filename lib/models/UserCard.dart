@@ -1,4 +1,4 @@
-import 'package:benkyou_app/models/DeckCard.dart';
+import 'package:benkyou/models/DeckCard.dart';
 
 import 'Answer.dart';
 import 'Deck.dart';

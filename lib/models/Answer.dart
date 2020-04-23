@@ -1,4 +1,4 @@
-import 'package:benkyou_app/utils/string.dart';
+import 'package:benkyou/utils/string.dart';
 
 class Answer{
   int id;
