@@ -4,7 +4,7 @@ import 'package:benkyou_app/services/api/userRequests.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const bool DEBUG = true;
+const bool DEBUG = false;
 
 Future<HttpClientResponse> handleGenericErrors(HttpClientResponse response) async {
   int statusCode = response.statusCode;
