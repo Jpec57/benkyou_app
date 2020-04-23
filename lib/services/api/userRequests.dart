@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../rest.dart';
@@ -13,7 +14,7 @@ Future<bool> loginRequest(String username, String password) async {
   if (!isRequestValid(tokenResponse.statusCode)){
     print(tokenResponse.statusCode);
     String reply = await tokenResponse.transform(utf8.decoder).join();
-    print(reply);
+    Get.snackbar('Error', reply, snackPosition: SnackPosition.BOTTOM, duration: Duration(seconds: 5));
     return false;
   }
   var token = await getJsonFromHttpResponse(tokenResponse);
