@@ -1,6 +1,7 @@
 import 'package:benkyou/models/UserCard.dart';
 import 'package:benkyou/screens/CreateCardPage/CreateCardPage.dart';
 import 'package:benkyou/screens/CreateCardPage/CreateCardPageArguments.dart';
+import 'package:benkyou/screens/HomePage/HomePage.dart';
 import 'package:benkyou/screens/ReviewPage/ReviewPage.dart';
 import 'package:benkyou/screens/ReviewPage/ReviewPageArguments.dart';
 import 'package:benkyou/services/api/cardRequests.dart';
@@ -166,7 +167,7 @@ class DeckPageState extends State<DeckPage> {
                                               Navigator.pushNamed(
                                                   context, ReviewPage.routeName,
                                                   arguments: ReviewPageArguments(
-                                                      cardsToReview));
+                                                      cards: cardsToReview, deckId: widget.id));
                                             } else {
                                               Scaffold.of(context).showSnackBar(
                                                   SnackBar(
@@ -234,6 +235,13 @@ class DeckPageState extends State<DeckPage> {
                 appBar: AppBar(
                   title:
                       Text("Deck: ${deckData != null ? deckData.title : ''}"),
+                  automaticallyImplyLeading: false,
+                  leading: IconButton(
+                    onPressed: (){
+                      Navigator.pushReplacementNamed(context, HomePage.routeName);
+                      },
+                    icon: Icon(Icons.arrow_back),
+                  ),
                   actions: <Widget>[
                     // action button
                     IconButton(

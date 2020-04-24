@@ -18,7 +18,6 @@ Future<Deck> publishDeck(int id, bool makePublic) async {
 }
 
 Future<Deck> importDeck(int id) async {
-  print(id);
   HttpClientResponse response = await getLocaleGetRequestResponse("/decks/$id/import");
   if (!isRequestValid(response.statusCode)){
     print("import Deck error");

@@ -4,6 +4,7 @@ import 'package:benkyou/screens/DeckPage/DeckPageArguments.dart';
 import 'package:benkyou/services/api/deckRequests.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/DeckCardList.dart';
+import 'package:benkyou/widgets/LoadingCircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -154,7 +155,9 @@ class PreviewPublicDeckPageState extends State<PreviewPublicDeckPage>{
                       onTap: () async {
                         SharedPreferences shared = await SharedPreferences.getInstance();
                         if (shared.get('username') != deck.author.username){
+                          showLoadingDialog(context);
                           Deck importedDeck = await importDeck(deck.id);
+                          Navigator.pop(context);
                           Navigator.pushNamed(
                               context,
                               DeckPage.routeName,

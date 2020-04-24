@@ -36,23 +36,6 @@ class ConnectedActionDialog extends StatelessWidget{
                       padding: const EdgeInsets.only(right: 5.0),
                       child: RaisedButton(
                         color: Color(COLOR_DARK_BLUE),
-                        child: Text('Login',
-                          style: TextStyle(
-                              color: Colors.white
-                          ),
-                        ),
-                        onPressed: () {
-                        Navigator.pop(context);
-                        showDialog(
-                            context: context, builder: (BuildContext context) => LoginDialog());
-                      },),
-                    ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 5.0),
-                      child: RaisedButton(
-                        color: Color(COLOR_DARK_BLUE),
                         child: Text('Register',
                           style: TextStyle(
                               color: Colors.white
@@ -63,6 +46,23 @@ class ConnectedActionDialog extends StatelessWidget{
                             context,
                             CreateUserPage.routeName,
                           );
+                        },),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 5.0),
+                      child: RaisedButton(
+                        color: Color(COLOR_ORANGE),
+                        child: Text('Login',
+                          style: TextStyle(
+                              color: Colors.white
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          showDialog(
+                              context: context, builder: (BuildContext context) => LoginDialog());
                         },),
                     ),
                   ),

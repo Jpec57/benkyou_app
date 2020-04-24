@@ -2,6 +2,7 @@ import 'package:benkyou/screens/BrowseDeckPage/BrowseDeckPage.dart';
 import 'package:benkyou/screens/ListCardPage/ListCardPage.dart';
 import 'package:benkyou/screens/ListCardPage/ListCardPageArguments.dart';
 import 'package:benkyou/services/api/userRequests.dart';
+import 'package:benkyou/widgets/LoadingCircle.dart';
 import 'package:benkyou/widgets/LoginDialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -42,6 +43,7 @@ class MainDrawerState extends State<MainDrawer>{
               return ListTile(
                 title: Text('Log out'),
                 onTap: () async {
+                  showLoadingDialog(context);
                   await logoutRequest();
                   Navigator.pop(context);
                   Navigator.pushNamed(

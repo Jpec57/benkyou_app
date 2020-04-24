@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:benkyou/screens/HomePage/HomePage.dart';
 import 'package:benkyou/services/api/userRequests.dart';
+import 'package:benkyou/utils/colors.dart';
+import 'package:benkyou/widgets/LoadingCircle.dart';
 import 'package:benkyou/widgets/MainDrawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -155,25 +157,29 @@ class CreateUserPageState extends State<CreateUserPage> {
                     Padding(
                       padding: const EdgeInsets.only(top: 15.0),
                       child: RaisedButton(
-                        child: Text("Register"),
+                        color: Color(COLOR_ORANGE),
+                        child: Text("Register".toUpperCase(), style: TextStyle(color: Colors.white),),
                         onPressed: () async {
                           _globalError = '';
                           if (_formKey.currentState.validate()) {
+                            showLoadingDialog(context);
                             HttpClientResponse response = await registerRequest(_emailController.text, _usernameController.text, _passwordController.text);
                             if (response.statusCode == 201){
                               await loginRequest(_emailController.text, _passwordController.text);
-                              Navigator.pushNamed(
+                              Navigator.pop(context);
+                              Navigator.pushReplacementNamed(
                                 context,
                                 HomePage.routeName,
                               );
                             } else {
+                              Navigator.pop(context);
                               String error = await response.transform(utf8.decoder).join();
                               var jsonCodec = json.decode(error);
                               _globalError = jsonCodec['message'];
+                              setState(() {
+
+                              });
                             }
-//                          Scaffold
-//                              .of(context)
-//                              .showSnackBar(SnackBar(content: Text('Welcome back!')));
                           }
                         },
                       ),

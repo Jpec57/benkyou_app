@@ -13,8 +13,10 @@ Future<bool> loginRequest(String username, String password) async {
   HttpClientResponse tokenResponse = await getLocalePostRequestResponse("/login", map);
   if (!isRequestValid(tokenResponse.statusCode)){
     print(tokenResponse.statusCode);
+    if (tokenResponse.statusCode == 404){
+      Get.snackbar('Incorrect credentials', 'The username or password is incorrect.');
+    }
     String reply = await tokenResponse.transform(utf8.decoder).join();
-    Get.snackbar('Error', reply, snackPosition: SnackPosition.BOTTOM, duration: Duration(seconds: 5));
     return false;
   }
   var token = await getJsonFromHttpResponse(tokenResponse);

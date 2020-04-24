@@ -5,11 +5,13 @@ import 'package:benkyou/models/UserCard.dart';
 import 'package:benkyou/models/UserCardProcessedInfo.dart';
 import 'package:benkyou/screens/DeckPage/DeckPage.dart';
 import 'package:benkyou/screens/DeckPage/DeckPageArguments.dart';
+import 'package:benkyou/screens/ReviewPage/LeaveReviewDialog.dart';
 import 'package:benkyou/screens/ReviewPage/ReviewPageInfo.dart';
 import 'package:benkyou/services/api/cardRequests.dart';
 import 'package:benkyou/services/translator/TextConversion.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/utils/string.dart';
+import 'package:benkyou/widgets/LoadingCircle.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flare_flutter/flare_controls.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,8 +21,9 @@ class ReviewPage extends StatefulWidget {
   static const routeName = '/review';
 
   final List<UserCard> cards;
+  final int deckId;
 
-  const ReviewPage({Key key, @required this.cards}) : super(key: key);
+  const ReviewPage({Key key, @required this.cards, this.deckId}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => ReviewPageState();
@@ -122,7 +125,9 @@ class ReviewPageState extends State<ReviewPage> {
   }
 
   _sendReview(List<UserCardProcessedInfo> reviewedCards) async {
+    showLoadingDialog(context);
     await postReview(reviewedCards);
+    Navigator.pop(context);
   }
 
   _moveToNextQuestion(bool isAnswerCorrect) async {
@@ -192,6 +197,8 @@ class ReviewPageState extends State<ReviewPage> {
     }
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     bool toEnglish =
@@ -200,6 +207,12 @@ class ReviewPageState extends State<ReviewPage> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text('Review'),
+        leading: IconButton(
+          onPressed: (){
+            showDialog(context: context, builder: (BuildContext context) => LeaveReviewDialog(processedCards: _processedCards, deckId: widget.deckId));
+          },
+          icon: Icon(Icons.arrow_back),
+        ),
       ),
       body: GestureDetector(
         onTap: () {
