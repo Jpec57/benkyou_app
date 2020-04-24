@@ -25,6 +25,7 @@ Future<bool> loginRequest(String username, String password) async {
   sharedPreferences.setString('username', token["user"]["username"]);
   sharedPreferences.setInt('userId', token["user"]["id"]);
   sharedPreferences.setString('email', token["user"]["email"]);
+  sharedPreferences.setString('previousUsername', username);
   return true;
 }
 

@@ -1,3 +1,4 @@
+import 'package:benkyou/screens/HomePage/CreateDeckDialog.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,9 @@ class DeckContainer extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      onLongPress: (){
+        showDialog(context: context, builder: (BuildContext context) => CreateDeckDialog(isEditing: true, deck: deck));
+      },
       onTap: (){
         Navigator.pushNamed(
           context,

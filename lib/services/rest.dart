@@ -25,6 +25,7 @@ bool isRequestValid(int statusCode){
 
 getJsonFromHttpResponse(HttpClientResponse response) async{
   String reply = await response.transform(utf8.decoder).join();
+  print(reply);
   return json.decode(reply);
 }
 
@@ -68,11 +69,34 @@ Future<HttpClientResponse> getLocalePostRequestResponse(String uri, Map body, {c
   if (apiToken != null){
     request.headers.set(HttpHeaders.authorizationHeader, 'Bearer $apiToken');
   }
-//    request.headers.set(HttpHeaders.authorizationHeader, 'Bearer ADMIN_TOKEN_DEBUG');
   request.headers.set(HttpHeaders.contentTypeHeader, 'application/json');
   List<int> parsedBody = utf8.encode(json.encode(body));
   request.headers.set(HttpHeaders.contentLengthHeader, parsedBody.length);
   request.add(parsedBody);
+  HttpClientResponse response = await request.close();
+  if (canHandleGenericErrors){
+    response = await handleGenericErrors(response);
+  }
+  return response;
+}
+
+Future<HttpClientResponse> getLocaleDeleteRequestResponse(String uri, {canHandleGenericErrors = true}) async {
+  HttpClient client = new HttpClient();
+  client.badCertificateCallback = ((X509Certificate cert, String host, int port) => true);
+  String url;
+  if (DEBUG){
+    url = 'https://10.0.2.2:8000$uri';
+  } else {
+    url = 'http://51.158.152.165:8000$uri';
+  }
+  HttpClientRequest request = await client.deleteUrl(Uri.parse(url));
+
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  String apiToken = sharedPreferences.get('apiToken');
+  if (apiToken != null){
+    request.headers.set(HttpHeaders.authorizationHeader, 'Bearer $apiToken');
+  }
+  request.headers.set(HttpHeaders.contentTypeHeader, 'application/json');
   HttpClientResponse response = await request.close();
   if (canHandleGenericErrors){
     response = await handleGenericErrors(response);

@@ -22,6 +22,7 @@ import 'dsn.dart';
 final SentryClient _sentry = new SentryClient(dsn: DSN);
 
 const bool DEBUG = false;
+const bool SENTRY = true;
 
 void main() {
   // This captures errors reported by the Flutter framework.
@@ -111,11 +112,15 @@ void main() {
         ),
     onError: (Object error, StackTrace stackTrace) {
       try {
-        _sentry.captureException(
-          exception: error,
-          stackTrace: stackTrace,
-        );
-        print('Error sent to sentry.io: $error');
+        if (SENTRY){
+          _sentry.captureException(
+            exception: error,
+            stackTrace: stackTrace,
+          );
+          print('Error sent to sentry.io: $error');
+        } else {
+          print(error);
+        }
       } catch (e) {
         print('Sending report to sentry.io failed: $e');
         print('Original error: $error');

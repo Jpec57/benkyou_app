@@ -25,6 +25,14 @@ class LoginDialogState extends State<LoginDialog>{
     super.initState();
     _usernameController = new TextEditingController();
     _passwordController = new TextEditingController();
+    WidgetsBinding.instance.addPostFrameCallback((_) async{
+      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+      String previousUsername = sharedPreferences.get('previousUsername');
+      _usernameController = new TextEditingController(text: previousUsername != null ? previousUsername : '');
+      setState(() {
+
+      });
+    });
   }
 
   @override
@@ -108,8 +116,7 @@ class LoginDialogState extends State<LoginDialog>{
                             Navigator.pop(context);
                             if (!res){
                               Get.snackbar('Error', 'An error occurred. Please contact the support for any help.', snackPosition: SnackPosition.BOTTOM);
-                            } else{
-                              Navigator.pop(context);
+                            } else {
                               Navigator.pushReplacementNamed(
                                 context,
                                 HomePage.routeName,

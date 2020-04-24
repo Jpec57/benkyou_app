@@ -44,15 +44,19 @@ Future<List<Deck>> getPublicDecks() async {
 }
 
 Future<List<Deck>> getPersonalDecks() async {
+  print('start');
   List<Deck> parsedDecks = [];
-  HttpClientResponse response = await getLocaleGetRequestResponse("/decks/me");
+  HttpClientResponse response = await getLocaleGetRequestResponse("/users/decks");
   if (!isRequestValid(response.statusCode)){
+    print(await getJsonFromHttpResponse(response));
     return null;
   }
+
   List<dynamic> decks = await getJsonFromHttpResponse(response);
   for (Map<String, dynamic> deck in decks){
     parsedDecks.add(Deck.fromJson(deck));
   }
+  print(parsedDecks);
   return parsedDecks;
 }
 
@@ -65,8 +69,11 @@ Future<Deck> getDeck(int id) async {
   return Deck.fromJson(deck);
 }
 
-Future<Deck> postDeck(String title, String description) async {
+Future<Deck> postDeck(String title, String description, {int deckId}) async {
   Map map = new Map();
+  if (deckId != null){
+    map.putIfAbsent('id', ()=> deckId);
+  }
   map.putIfAbsent('title', ()=> title);
   map.putIfAbsent('description', ()=> description);
   HttpClientResponse response = await getLocalePostRequestResponse("/decks", map);
@@ -75,5 +82,15 @@ Future<Deck> postDeck(String title, String description) async {
     return null;
   }
   Map<String, dynamic> deck = await getJsonFromHttpResponse(response);
+  print(deck);
   return Deck.fromJson(deck);
+}
+
+Future<bool> deleteDeck(int deckId) async {
+  HttpClientResponse response = await getLocaleDeleteRequestResponse("/decks/$deckId");
+  if (!isRequestValid(response.statusCode)){
+    print(await getJsonFromHttpResponse(response));
+    return false;
+  }
+  return true;
 }
