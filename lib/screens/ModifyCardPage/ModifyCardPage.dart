@@ -1,5 +1,8 @@
 import 'package:benkyou/models/DeckCard.dart';
 import 'package:benkyou/models/UserCard.dart';
+import 'package:benkyou/screens/ListCardPage/ListCardPage.dart';
+import 'package:benkyou/screens/ListCardPage/ListCardPageArguments.dart';
+import 'package:benkyou/services/api/cardRequests.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/AddAnswerCardWidget.dart';
 import 'package:flutter/cupertino.dart';
@@ -40,6 +43,7 @@ class ModifyCardPageState extends State<ModifyCardPage>{
         padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
+
           children: <Widget>[
            Expanded(
              flex: 2,
@@ -50,18 +54,31 @@ class ModifyCardPageState extends State<ModifyCardPage>{
            ),
             Expanded(
                 flex: 8,
-                child: AddAnswerCardWidget(key: answerWidgetKey)),
+                child: SingleChildScrollView(
+                  physics: NeverScrollableScrollPhysics(),
+                    child: AddAnswerCardWidget(key: answerWidgetKey))),
             Expanded(
               flex: 1,
-                child: Container(
-                  color: Color(COLOR_DARK_BLUE),
-                  child: Center(child: Text('Delete'.toUpperCase(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18))),)),
+                child: GestureDetector(
+                  onTap: () async {
+                    int deckId = widget.userCard.deck.id;
+                    await deleteUserCard(widget.userCard.id);
+                    Navigator.pushReplacementNamed(context, ListCardPage.routeName, arguments: ListCardPageArguments(deckId: deckId));
+                  },
+                  child: Container(
+                    color: Color(COLOR_DARK_BLUE),
+                    child: Center(child: Text('Delete'.toUpperCase(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18))),),
+                )),
             Expanded(
                 flex: 1,
                 child: GestureDetector(
-                  onTap: (){
+                  onTap: () async{
+                    //TODO
                     print('Update');
-                    print(answerWidgetKey.currentState.getAnswerStrings());
+                    int deckId = widget.userCard.deck.id;
+                    await updateCardAnswers(widget.userCard.id, answerWidgetKey.currentState.getAnswerStrings());
+                    Navigator.pushNamed(context, ListCardPage.routeName, arguments: ListCardPageArguments(deckId: deckId));
+
                   },
                   child: Container(
                     color: Color(COLOR_ORANGE),

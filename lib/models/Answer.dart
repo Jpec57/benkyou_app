@@ -10,6 +10,25 @@ class Answer{
         text = json['text'],
         type = json['type']
   ;
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'text': text,
+    'type': type,
+  };
+
+  @override
+  String toString() {
+    return 'Answer{id: $id, text: $text, type: $type}';
+  }
+
+  List<Map> encodeAnswerJsonArray(array){
+    List<Map> mapArray = [];
+    for (Answer answer in array){
+      mapArray.add(answer.toJson());
+    }
+    return mapArray;
+  }
 }
 
 List<Answer> decodeAnswerJsonArray(array){

@@ -26,6 +26,10 @@ class UserCard {
         userAnswers = decodeAnswerJsonArray(json['userAnswers'])
   ;
 
+  UserCard.fromId(Map<String, dynamic> json)
+      : id = json['id']
+  ;
+
   @override
   String toString() {
     return 'UserCard{id: $id, card: $card, deck: $deck, nbErrors: $nbErrors, nbSuccess: $nbSuccess, nextAvailable: $nextAvailable, userNote: $userNote, userAnswers: $userAnswers, lvl: $lvl}';

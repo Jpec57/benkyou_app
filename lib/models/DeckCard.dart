@@ -21,6 +21,11 @@ class DeckCard {
         answerLanguageCode = json['answerLanguageCode'],
         isReversible = json['isReversible'] == 'true'
   ;
+
+  @override
+  String toString() {
+    return 'DeckCard{id: $id, answers: $answers, question: $question, hint: $hint, languageCode: $languageCode, answerLanguageCode: $answerLanguageCode, isReversible: $isReversible}';
+  }
 }
 
 List<DeckCard> decodeDeckCardJsonArray(array){

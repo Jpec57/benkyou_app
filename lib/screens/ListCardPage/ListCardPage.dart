@@ -131,6 +131,9 @@ class ListCardPageState extends State<ListCardPage> {
 
 
   Widget _renderCardList(List<UserCard> cards, String textFilter) {
+    if (cards == null){
+
+    }
     if (textFilter != null && textFilter.isNotEmpty){
       filteredCards = _filterCards(cards, textFilter);
     } else {
@@ -210,10 +213,15 @@ class ListCardPageState extends State<ListCardPage> {
               case ConnectionState.waiting:
                 return Center(child: Text('Loading...'));
               case ConnectionState.done:
-                return Column(
-                  children: <Widget>[
-                    Expanded(child: _renderCardList(cardSnapshot.data, _textEditingController.text)),
-                  ],
+                if (cardSnapshot.hasData && cardSnapshot.data.isNotEmpty){
+                  return Column(
+                    children: <Widget>[
+                      Expanded(child: _renderCardList(cardSnapshot.data, _textEditingController.text)),
+                    ],
+                  );
+                }
+                return Center(
+                  child: Text('There is no card. Please create one.'),
                 );
               default:
                 return Center(

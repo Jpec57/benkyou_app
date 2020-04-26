@@ -5,8 +5,39 @@ import 'package:benkyou/models/UserCardProcessedInfo.dart';
 import 'package:benkyou/models/UserCardReviewCount.dart';
 import 'package:benkyou/services/rest.dart';
 
+
+Future<bool> deleteUserCard(int userCardId) async {
+  print("/users/cards/$userCardId");
+  HttpClientResponse cardResponse = await getLocaleDeleteRequestResponse("/users/cards/$userCardId");
+  var cards = await getJsonFromHttpResponse(cardResponse);
+  if (!isRequestValid(cardResponse.statusCode)){
+    print(cards);
+    return false;
+  }
+  return true;
+}
+
+Future<UserCard> updateCardAnswers(int userCardId, List<String> answers) async {
+  Map map = new Map();
+  List<Map> answerArray = [];
+
+  for (String answer in answers){
+    answerArray.add({
+      'text': answer
+    });
+  }
+  map.putIfAbsent('id', ()=> userCardId);
+  map.putIfAbsent('userAnswers', ()=> answerArray);
+  HttpClientResponse cardResponse = await getLocalePostRequestResponse("/users/cards", map);
+  var card = await getJsonFromHttpResponse(cardResponse);
+  if (!isRequestValid(cardResponse.statusCode)){
+    print(card);
+    return null;
+  }
+  return UserCard.fromId(card);
+}
+
 Future<List<UserCard>> getUserCardsForDeck(int deckId) async {
-  print("/users/decks/$deckId");
   HttpClientResponse cardResponse = await getLocaleGetRequestResponse("/users/decks/$deckId");
   var cards = await getJsonFromHttpResponse(cardResponse);
   if (!isRequestValid(cardResponse.statusCode)){
