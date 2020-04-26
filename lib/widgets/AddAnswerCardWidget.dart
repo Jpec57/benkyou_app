@@ -1,12 +1,12 @@
-import 'package:benkyou/models/Answer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AddAnswerCardWidget extends StatefulWidget {
   final String hint;
   final int cardId;
+  final bool isScrollable;
 
-  const AddAnswerCardWidget({@required Key key, this.hint, this.cardId}) : super(key: key);
+  const AddAnswerCardWidget({@required Key key, this.hint, this.cardId, this.isScrollable = true}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => AddAnswerCardWidgetState();
@@ -99,7 +99,7 @@ class AddAnswerCardWidgetState extends State<AddAnswerCardWidget> {
         Padding(
           padding: EdgeInsets.only(bottom: 50),
           child:  ListView.builder(
-              physics: const AlwaysScrollableScrollPhysics(),
+              physics: widget.isScrollable ? const AlwaysScrollableScrollPhysics() : const NeverScrollableScrollPhysics(),
               itemCount: textEditingControllers.length + 1,
               shrinkWrap: true,
               itemBuilder: (context, index) {

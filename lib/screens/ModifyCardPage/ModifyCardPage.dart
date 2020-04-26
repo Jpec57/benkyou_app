@@ -43,7 +43,6 @@ class ModifyCardPageState extends State<ModifyCardPage>{
         padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-
           children: <Widget>[
            Expanded(
              flex: 2,
@@ -53,37 +52,36 @@ class ModifyCardPageState extends State<ModifyCardPage>{
              ),
            ),
             Expanded(
-                flex: 8,
-                child: SingleChildScrollView(
-                  physics: NeverScrollableScrollPhysics(),
-                    child: AddAnswerCardWidget(key: answerWidgetKey))),
+              flex: 8,
+              child: SingleChildScrollView(
+                  physics: ScrollPhysics(),
+                  child: AddAnswerCardWidget(key: answerWidgetKey, isScrollable: false,)),
+            ),
             Expanded(
-              flex: 1,
-                child: GestureDetector(
-                  onTap: () async {
-                    int deckId = widget.userCard.deck.id;
-                    await deleteUserCard(widget.userCard.id);
-                    Navigator.pushReplacementNamed(context, ListCardPage.routeName, arguments: ListCardPageArguments(deckId: deckId));
-                  },
-                  child: Container(
-                    color: Color(COLOR_DARK_BLUE),
-                    child: Center(child: Text('Delete'.toUpperCase(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18))),),
-                )),
+              child: GestureDetector(
+                onTap: () async {
+                  int deckId = widget.userCard.deck.id;
+                  await deleteUserCard(widget.userCard.id);
+                  Navigator.pushReplacementNamed(context, ListCardPage.routeName, arguments: ListCardPageArguments(deckId: deckId));
+                },
+                child: Container(
+                  color: Color(COLOR_DARK_BLUE),
+                  child: Center(child: Text('Delete'.toUpperCase(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18))),),
+              ),
+            ),
             Expanded(
-                flex: 1,
-                child: GestureDetector(
-                  onTap: () async{
-                    //TODO
-                    print('Update');
-                    int deckId = widget.userCard.deck.id;
-                    await updateCardAnswers(widget.userCard.id, answerWidgetKey.currentState.getAnswerStrings());
-                    Navigator.pushNamed(context, ListCardPage.routeName, arguments: ListCardPageArguments(deckId: deckId));
+              child: GestureDetector(
+                onTap: () async{
+                  int deckId = widget.userCard.deck.id;
+                  await updateCardAnswers(widget.userCard.id, answerWidgetKey.currentState.getAnswerStrings());
+                  Navigator.pushNamed(context, ListCardPage.routeName, arguments: ListCardPageArguments(deckId: deckId));
 
-                  },
-                  child: Container(
-                    color: Color(COLOR_ORANGE),
-                    child: Center(child: Text('Update'.toUpperCase(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),)),),
-                )),
+                },
+                child: Container(
+                  color: Color(COLOR_ORANGE),
+                  child: Center(child: Text('Update'.toUpperCase(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),)),),
+              ),
+            ),
           ],
         ),
       ),
