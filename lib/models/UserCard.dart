@@ -31,6 +31,17 @@ class UserCard {
     return 'UserCard{id: $id, card: $card, deck: $deck, nbErrors: $nbErrors, nbSuccess: $nbSuccess, nextAvailable: $nextAvailable, userNote: $userNote, userAnswers: $userAnswers, lvl: $lvl}';
   }
 
+  List<String> getAllAnswersAsString(){
+    List<String> stringAnswers = [];
+    for (Answer answer in userAnswers){
+      stringAnswers.add(answer.text);
+    }
+    for (Answer answer in card.answers){
+      stringAnswers.add(answer.text);
+    }
+    return stringAnswers;
+  }
+
 
 }
 

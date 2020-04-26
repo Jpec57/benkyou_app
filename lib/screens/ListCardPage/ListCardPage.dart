@@ -1,7 +1,10 @@
 import 'package:benkyou/models/Answer.dart';
 import 'package:benkyou/models/DeckCard.dart';
 import 'package:benkyou/models/UserCard.dart';
+import 'package:benkyou/screens/ModifyCardPage/ModifyCardPage.dart';
+import 'package:benkyou/screens/ModifyCardPage/ModifyCardPageArguments.dart';
 import 'package:benkyou/services/api/cardRequests.dart';
+import 'package:benkyou/services/translator/TextConversion.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/utils/string.dart';
 import 'package:benkyou/widgets/MainDrawer.dart';
@@ -52,19 +55,29 @@ class ListCardPageState extends State<ListCardPage> {
   Widget _renderCardAnswers(UserCard userCard) {
     List<Answer> answers = List.of(userCard.card.answers)
       ..addAll(userCard.userAnswers);
-    return ListView.separated(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: answers.length,
-      itemBuilder: (BuildContext context, int index) {
-        Answer answer = answers[index];
-        return ListTile(title: Center(child: Text("${answer.text}", style: TextStyle(fontSize: 14),)));
-      },
-      separatorBuilder: (BuildContext context, int index) {
-        return Divider(
-          color: Colors.grey,
+    return GestureDetector(
+      onTap: (){
+        print(userCard.toString());
+        Navigator.pushNamed(
+            context,
+            ModifyCardPage.routeName,
+          arguments: ModifyCardPageArguments(userCard)
         );
       },
+      child: ListView.separated(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: answers.length,
+        itemBuilder: (BuildContext context, int index) {
+          Answer answer = answers[index];
+          return ListTile(title: Center(child: Text("${answer.text}", style: TextStyle(fontSize: 14),)));
+        },
+        separatorBuilder: (BuildContext context, int index) {
+          return Divider(
+            color: Colors.grey,
+          );
+        },
+      ),
     );
   }
 
@@ -84,7 +97,15 @@ class ListCardPageState extends State<ListCardPage> {
       deckCard.question,
       deckCard.hint,
     ];
+    if (deckCard.languageCode == LANGUAGE_CODE_JAPANESE){
+      String possibleKanaString = deckCard.hint == null ? deckCard.question: deckCard.hint;
+      cardStrings.add(getRomConversion(possibleKanaString));
+    }
+
     for (Answer answer in answers){
+      if (deckCard.answerLanguageCode == LANGUAGE_CODE_JAPANESE){
+        cardStrings.add(getRomConversion(answer.text));
+      }
       cardStrings.add(answer.text);
     }
 
@@ -122,6 +143,7 @@ class ListCardPageState extends State<ListCardPage> {
       itemBuilder: (BuildContext context, int index) {
         DeckCard card = filteredCards[index].card;
         return ExpansionTile(
+          backgroundColor: Color(COLOR_GREY),
           children: <Widget>[
             _renderCardAnswers(filteredCards[index]),
           ],

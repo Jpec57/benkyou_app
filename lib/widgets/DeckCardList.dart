@@ -1,5 +1,6 @@
 import 'package:benkyou/models/Answer.dart';
 import 'package:benkyou/models/DeckCard.dart';
+import 'package:benkyou/utils/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -49,6 +50,7 @@ class DeckCardListState extends State<DeckCardList>{
       itemBuilder: (BuildContext context, int index) {
         DeckCard card = widget.cards[index];
         return ExpansionTile(
+          backgroundColor: Color(COLOR_GREY),
           children: <Widget>[
             _renderCardAnswers(card.answers),
           ],

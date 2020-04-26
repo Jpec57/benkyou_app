@@ -103,13 +103,12 @@ class CreateCardPageState extends State<CreateCardPage> {
         question = _kanjiEditingController.text;
       }
       List<Map> answers = [];
-      for (var answerController
-      in answerWidgetKey.currentState.textEditingControllers) {
-        if (answerController.text.isNotEmpty) {
-          Map innerMap = new Map();
-          innerMap.putIfAbsent('text', () => answerController.text.toLowerCase());
-          answers.add(innerMap);
-        }
+      List<String> answerStrings =
+          answerWidgetKey.currentState.getAnswerStrings();
+      for (String string in answerStrings) {
+        Map innerMap = new Map();
+        innerMap.putIfAbsent('text', () => string);
+        answers.add(innerMap);
       }
       //End formatting
 
@@ -117,7 +116,7 @@ class CreateCardPageState extends State<CreateCardPage> {
       map.putIfAbsent('question', () => question);
       map.putIfAbsent('hint', () => hint);
       map.putIfAbsent('deck', () => widget.deckId);
-      if (_isReversible){
+      if (_isReversible) {
         map.putIfAbsent('isReversible', () => true);
       }
       map.putIfAbsent('answers', () => answers);
@@ -131,11 +130,8 @@ class CreateCardPageState extends State<CreateCardPage> {
       _pageController.animateToPage(1,
           duration: Duration(milliseconds: 500), curve: Curves.easeIn);
     } else {
-      Navigator.pushNamed(
-          context,
-          DeckPage.routeName,
-          arguments: DeckPageArguments(widget.deckId)
-      );
+      Navigator.pushNamed(context, DeckPage.routeName,
+          arguments: DeckPageArguments(widget.deckId));
     }
     return true;
   }
@@ -161,7 +157,7 @@ class CreateCardPageState extends State<CreateCardPage> {
     //At least one answer must not be blank
     List<String> answers = [];
     for (var answerController
-    in answerWidgetKey.currentState.textEditingControllers) {
+        in answerWidgetKey.currentState.textEditingControllers) {
       if (answerController.text.isNotEmpty) {
         answers.add(answerController.text.toLowerCase());
       }
@@ -172,8 +168,9 @@ class CreateCardPageState extends State<CreateCardPage> {
     }
 
     //Check if card already exists
-    List<DeckCard> questionCards = await getCardsByQuestionInDeck(widget.deckId, question);
-    if (questionCards.isNotEmpty){
+    List<DeckCard> questionCards =
+        await getCardsByQuestionInDeck(widget.deckId, question);
+    if (questionCards.isNotEmpty) {
       return ERR_ALREADY_EXISTING;
     }
     return null;
@@ -181,7 +178,7 @@ class CreateCardPageState extends State<CreateCardPage> {
 
   //TODO WORK ABOVE
 
-  void insertTranslationsCallback(JishoTranslation translation){
+  void insertTranslationsCallback(JishoTranslation translation) {
     setState(() {
       _kanjiEditingController.text = translation.kanji;
       _kanaEditingController.text = translation.reading;
@@ -212,7 +209,7 @@ class CreateCardPageState extends State<CreateCardPage> {
       children: <Widget>[
         Expanded(
           child: GestureDetector(
-            onTap: (){
+            onTap: () {
               FocusScopeNode currentFocus = FocusScope.of(context);
               if (!currentFocus.hasPrimaryFocus) {
                 currentFocus.unfocus();
@@ -304,8 +301,11 @@ class CreateCardPageState extends State<CreateCardPage> {
                                     padding: const EdgeInsets.only(top: 5.0),
                                     child: Text(
                                       'Another card inverting japanese and english will be created',
-                                      style: TextStyle(fontStyle: FontStyle.italic, fontSize: 12),
-                                    overflow: TextOverflow.ellipsis,),
+                                      style: TextStyle(
+                                          fontStyle: FontStyle.italic,
+                                          fontSize: 12),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -321,7 +321,6 @@ class CreateCardPageState extends State<CreateCardPage> {
                           ],
                         ),
                       ),
-
                       Padding(
                         padding: const EdgeInsets.only(top: 10.0),
                         child: AddAnswerCardWidget(key: answerWidgetKey),
@@ -350,7 +349,7 @@ class CreateCardPageState extends State<CreateCardPage> {
     );
   }
 
-  void _resetFormFields(){
+  void _resetFormFields() {
     _kanjiEditingController.clear();
     _kanaEditingController.clear();
     setState(() {
@@ -413,10 +412,7 @@ class CreateCardPageState extends State<CreateCardPage> {
               controller: _pageController,
               pageSnapping: false,
               physics: NeverScrollableScrollPhysics(),
-              children: <Widget>[
-                _renderForm(),
-                _renderAgainOrLeave()
-              ],
+              children: <Widget>[_renderForm(), _renderAgainOrLeave()],
             ),
           ),
           GestureDetector(

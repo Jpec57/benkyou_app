@@ -1,12 +1,12 @@
+import 'package:benkyou/models/Answer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AddAnswerCardWidget extends StatefulWidget {
   final String hint;
-  final bool isUpdate;
   final int cardId;
 
-  const AddAnswerCardWidget({@required Key key, this.hint, this.isUpdate = false, this.cardId}) : super(key: key);
+  const AddAnswerCardWidget({@required Key key, this.hint, this.cardId}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => AddAnswerCardWidgetState();
@@ -41,6 +41,16 @@ class AddAnswerCardWidgetState extends State<AddAnswerCardWidget> {
     super.dispose();
   }
 
+  List<String> getAnswerStrings(){
+    List<String> answers = [];
+    for (TextEditingController controller in textEditingControllers){
+      if (controller.text.isNotEmpty){
+        answers.add(controller.text);
+      }
+    }
+    return answers;
+  }
+
   void setNewAnswers(List<String> answers) {
     List<int> availableControllers = new List<int>();
     for (var i = 0; i < textEditingControllers.length; i++) {
@@ -59,15 +69,6 @@ class AddAnswerCardWidgetState extends State<AddAnswerCardWidget> {
       addAnswer(value: answers[i]);
       i++;
     }
-  }
-
-  void _deleteAnswerFromDatabase(String content) async{
-    //TODO
-//    AppDatabase database = await DBProvider.db.database;
-//    Answer answer = await database.answerDao.findAnswerForCardWithTitle(widget.cardId, content);
-//    if (answer != null){
-//      await database.answerDao.deleteAnswer(answer.id);
-//    }
   }
 
   @override
@@ -125,9 +126,6 @@ class AddAnswerCardWidgetState extends State<AddAnswerCardWidget> {
                       if (dx < 0) dx = -dx;
 
                       if (velocity > 0) {
-                        if (widget.isUpdate){
-                          _deleteAnswerFromDatabase(textEditingControllers[index].text);
-                        }
                         textEditingControllers.removeAt(index);
                         setState(() {});
                       }

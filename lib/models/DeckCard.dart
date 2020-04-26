@@ -1,5 +1,8 @@
 import 'Answer.dart';
 
+const LANGUAGE_CODE_ENGLISH = 0;
+const LANGUAGE_CODE_JAPANESE = 1;
+
 class DeckCard {
   int id;
   List<Answer> answers;
