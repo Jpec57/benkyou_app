@@ -34,7 +34,7 @@ class DeckCardListState extends State<DeckCardList>{
     if (deckCard.hint == null){
       return null;
     }
-    return Text("${deckCard.hint}", style: TextStyle(fontSize: 14, color: Colors.grey));
+    return Text("${deckCard.hint}", style: TextStyle(fontSize: 12, color: Colors.grey));
   }
 
   @override
@@ -52,7 +52,7 @@ class DeckCardListState extends State<DeckCardList>{
           children: <Widget>[
             _renderCardAnswers(card.answers),
           ],
-          title: Text("${card.question}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400)),
+          title: Text("${card.question}", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400)),
           subtitle: _renderCardSubtitle(card),
         );
       },

@@ -1,4 +1,5 @@
 import 'package:benkyou/models/Deck.dart';
+import 'package:benkyou/screens/BrowseDeckPage/BrowseDeckPage.dart';
 import 'package:benkyou/screens/DeckPage/DeckPage.dart';
 import 'package:benkyou/screens/DeckPage/DeckPageArguments.dart';
 import 'package:benkyou/services/api/deckRequests.dart';
@@ -56,6 +57,13 @@ class PreviewPublicDeckPageState extends State<PreviewPublicDeckPage>{
     return Scaffold(
       appBar: AppBar(
         title: Text('Preview deck'),
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pushNamed(context, BrowseDeckPage.routeName);
+          },
+          icon: Icon(Icons.arrow_back),
+        ),
       ),
       body: FutureBuilder(
         future: deckFuture,
