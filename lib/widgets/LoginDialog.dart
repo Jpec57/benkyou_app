@@ -1,5 +1,5 @@
 import 'package:benkyou/screens/CreateUserPage/CreateUserPage.dart';
-import 'package:benkyou/screens/HomePage/HomePage.dart';
+import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
 import 'package:benkyou/services/api/userRequests.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/LoadingCircle.dart';
@@ -119,7 +119,7 @@ class LoginDialogState extends State<LoginDialog>{
                             } else {
                               Navigator.pushReplacementNamed(
                                 context,
-                                HomePage.routeName,
+                                DeckHomePage.routeName,
                               );
                               SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
                               String username = sharedPreferences.getString('username');

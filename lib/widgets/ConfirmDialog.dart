@@ -46,11 +46,11 @@ class ConfirmDialog extends StatelessWidget{
                               style: TextStyle(
                                   color: Colors.white
                               ),),
-                            onPressed: () {
-                              Navigator.pop(context);
+                            onPressed: () async{
                               if (negativeCallback != null){
                                 negativeCallback();
                               }
+                              Navigator.pop(context);
                             },),
                         ),
                       ),
@@ -64,9 +64,9 @@ class ConfirmDialog extends StatelessWidget{
                                   color: Colors.white
                               ),
                             ),
-                            onPressed: () {
-                              Navigator.pop(context);
+                            onPressed: () async {
                               positiveCallback();
+                              Navigator.pop(context);
                             },),
                         ),
                       ),

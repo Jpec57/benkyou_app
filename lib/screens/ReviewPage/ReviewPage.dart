@@ -16,6 +16,7 @@ import 'package:flare_flutter/flare_actor.dart';
 import 'package:flare_flutter/flare_controls.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 class ReviewPage extends StatefulWidget {
   static const routeName = '/review';
@@ -44,6 +45,8 @@ class ReviewPageState extends State<ReviewPage> {
   int nbErrors = 0;
   int nbSuccess = 0;
   UserCard currentCard;
+  FlutterTts _flutterTts;
+  bool isPlaying = false;
 
   @override
   void initState() {
@@ -53,7 +56,64 @@ class ReviewPageState extends State<ReviewPage> {
     _processedCardIds = [];
     currentIndex = generateRandomIndex(_remainingCards);
     currentCard = _remainingCards[currentIndex];
+    //first card
+    initializeTts();
+
     _answerController = new TextEditingController();
+  }
+
+  initializeTts() {
+    _flutterTts = FlutterTts();
+
+    _flutterTts.setStartHandler(() {
+      setState(() {
+        isPlaying = true;
+      });
+    });
+
+    _flutterTts.setCompletionHandler(() {
+      setState(() {
+        isPlaying = false;
+      });
+    });
+
+    _flutterTts.setErrorHandler((err) {
+      setState(() {
+        print("error occurred: " + err);
+        isPlaying = false;
+      });
+    });
+    bool toEnglish = currentCard.card.answerLanguageCode == 0;
+    _speak(currentCard.card.question, toEnglish ? "ja-JP": "en-GB");
+  }
+
+  Future _speak(String text, String languageCode) async {
+    await setTtsLanguage(languageCode);
+    if (text != null && text.isNotEmpty) {
+      var result = await _flutterTts.speak(text);
+      if (result == 1)
+        setState(() {
+          isPlaying = true;
+        });
+    }
+  }
+
+  Future<void> setTtsLanguage(String languageCode) async {
+    await _flutterTts.setLanguage(languageCode);
+  }
+
+  Future _stop() async {
+    var result = await _flutterTts.stop();
+    if (result == 1)
+      setState(() {
+        isPlaying = false;
+      });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _flutterTts.stop();
   }
 
   int generateRandomIndex(List list) {
@@ -141,6 +201,8 @@ class ReviewPageState extends State<ReviewPage> {
       }
       currentIndex = (length == 1) ? 0 : generateRandomIndex(_remainingCards);
       currentCard = _remainingCards[currentIndex];
+      bool toEnglish = currentCard.card.answerLanguageCode == 0;
+      _speak(currentCard.card.question, toEnglish ? "ja-JP": "en-GB");
     } else {
       await _sendReview(_processedCards);
       Navigator.pushReplacementNamed(context, DeckPage.routeName,
@@ -229,6 +291,20 @@ class ReviewPageState extends State<ReviewPage> {
                 color: Color(COLOR_GREY),
                 child: Stack(
                   children: <Widget>[
+                    Align(
+                      child: GestureDetector(
+                        onTap: (){
+                          isPlaying ? _stop() : _speak(currentCard != null
+                              ? currentCard.card.question
+                              : '', toEnglish ? "ja-JP" : "en-GB");
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Icon(Icons.volume_up, size: 35,),
+                        ),
+                      ),
+                      alignment: Alignment.bottomRight,
+                    ),
                     ReviewPageInfo(
                       processedNumber: _processedCards != null ? _processedCards.length : 0,
                       remainingNumber: _remainingCards != null ? _remainingCards.length : 0,

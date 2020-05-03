@@ -1,4 +1,4 @@
-import 'package:benkyou/screens/HomePage/CreateDeckDialog.dart';
+import 'package:benkyou/screens/DeckHomePage/CreateDeckDialog.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

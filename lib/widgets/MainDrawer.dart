@@ -1,4 +1,5 @@
 import 'package:benkyou/screens/BrowseDeckPage/BrowseDeckPage.dart';
+import 'package:benkyou/screens/HomePage/HomePage.dart';
 import 'package:benkyou/screens/ListCardPage/ListCardPage.dart';
 import 'package:benkyou/screens/ListCardPage/ListCardPageArguments.dart';
 import 'package:benkyou/services/api/userRequests.dart';
@@ -7,7 +8,7 @@ import 'package:benkyou/widgets/LoginDialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../screens/HomePage/HomePage.dart';
+import '../screens/DeckHomePage/DeckHomePage.dart';
 
 class MainDrawer extends StatefulWidget{
   @override
@@ -48,7 +49,7 @@ class MainDrawerState extends State<MainDrawer>{
                   Navigator.pop(context);
                   Navigator.pushNamed(
                     context,
-                    HomePage.routeName,
+                    DeckHomePage.routeName,
                   );
                 },
               );
@@ -152,7 +153,16 @@ class MainDrawerState extends State<MainDrawer>{
             },
           ),
           ListTile(
-            title: Text('Browse decks'),
+            title: Text('My decks'),
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                DeckHomePage.routeName,
+              );
+            },
+          ),
+          ListTile(
+            title: Text('Browse online decks'),
             onTap: () {
               Navigator.pushNamed(
                 context,

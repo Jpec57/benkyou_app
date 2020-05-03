@@ -3,6 +3,8 @@ import 'package:benkyou/screens/BrowseDeckPage/BrowseDeckPage.dart';
 import 'package:benkyou/screens/CreateCardPage/CreateCardPage.dart';
 import 'package:benkyou/screens/CreateCardPage/CreateCardPageArguments.dart';
 import 'package:benkyou/screens/CreateUserPage/CreateUserPage.dart';
+import 'package:benkyou/screens/DialogPage/DialogPage.dart';
+import 'package:benkyou/screens/HomePage/HomePage.dart';
 import 'package:benkyou/screens/ListCardPage/ListCardPage.dart';
 import 'package:benkyou/screens/ListCardPage/ListCardPageArguments.dart';
 import 'package:benkyou/screens/ModifyCardPage/ModifyCardPage.dart';
@@ -17,7 +19,7 @@ import 'package:get/get.dart';
 import 'package:sentry/io_client.dart';
 import 'screens/DeckPage/DeckPage.dart';
 import 'screens/DeckPage/DeckPageArguments.dart';
-import 'screens/HomePage/HomePage.dart';
+import 'screens/DeckHomePage/DeckHomePage.dart';
 
 import 'dsn.dart';
 
@@ -119,6 +121,8 @@ void main() {
           },
           routes: {
             HomePage.routeName: (context) => HomePage(),
+            DialogPage.routeName: (context) => DialogPage(),
+            DeckHomePage.routeName: (context) => DeckHomePage(),
             CreateUserPage.routeName: (context) => CreateUserPage(),
             BrowseDeckPage.routeName: (context) => BrowseDeckPage(),
           },)

@@ -1,7 +1,7 @@
 import 'package:benkyou/models/UserCardProcessedInfo.dart';
 import 'package:benkyou/screens/DeckPage/DeckPage.dart';
 import 'package:benkyou/screens/DeckPage/DeckPageArguments.dart';
-import 'package:benkyou/screens/HomePage/HomePage.dart';
+import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
 import 'package:benkyou/services/api/cardRequests.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/LoadingCircle.dart';
@@ -83,7 +83,7 @@ class LeaveReviewDialogState extends State<LeaveReviewDialog>{
                                 if (widget.deckId != null){
                                   Navigator.pushReplacementNamed(context, DeckPage.routeName, arguments: DeckPageArguments(widget.deckId));
                                 } else {
-                                  Navigator.pushReplacementNamed(context, HomePage.routeName);
+                                  Navigator.pushReplacementNamed(context, DeckHomePage.routeName);
                                 }
                               },
                             ),

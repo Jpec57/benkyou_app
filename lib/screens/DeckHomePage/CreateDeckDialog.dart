@@ -1,9 +1,10 @@
 import 'package:benkyou/models/Deck.dart';
-import 'package:benkyou/screens/HomePage/HomePage.dart';
+import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
 import 'package:benkyou/services/api/deckRequests.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/ConfirmDialog.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class CreateDeckDialog extends StatefulWidget {
   final Function callback;
@@ -51,14 +52,13 @@ class CreateDeckDialogState extends State<CreateDeckDialog> {
         ),
         onPressed: () async {
           if (_formKey.currentState.validate()){
-            showDialog(context: context, builder: (BuildContext context) => ConfirmDialog(
+            Get.dialog(ConfirmDialog(
               action: "Are you sure you want to delete this deck ?",
               positiveCallback: () async {
                 await deleteDeck(widget.deck.id);
-                Navigator.pushReplacementNamed(context, HomePage.routeName);
+                Navigator.pushNamed(context, DeckHomePage.routeName);
               },
             ));
-
           }
         },
       ),
@@ -136,9 +136,8 @@ class CreateDeckDialogState extends State<CreateDeckDialog> {
                             if (widget.callback != null){
                               widget.callback();
                             } else {
-                              Navigator.pushReplacementNamed(context, HomePage.routeName);
+                              Navigator.pushReplacementNamed(context, DeckHomePage.routeName);
                             }
-
                           }
                         },
                       ),

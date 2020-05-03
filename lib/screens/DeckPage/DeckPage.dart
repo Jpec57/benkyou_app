@@ -1,7 +1,7 @@
 import 'package:benkyou/models/UserCard.dart';
 import 'package:benkyou/screens/CreateCardPage/CreateCardPage.dart';
 import 'package:benkyou/screens/CreateCardPage/CreateCardPageArguments.dart';
-import 'package:benkyou/screens/HomePage/HomePage.dart';
+import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
 import 'package:benkyou/screens/ReviewPage/ReviewPage.dart';
 import 'package:benkyou/screens/ReviewPage/ReviewPageArguments.dart';
 import 'package:benkyou/services/api/cardRequests.dart';
@@ -238,7 +238,7 @@ class DeckPageState extends State<DeckPage> {
                   automaticallyImplyLeading: false,
                   leading: IconButton(
                     onPressed: (){
-                      Navigator.pushReplacementNamed(context, HomePage.routeName);
+                      Navigator.pushReplacementNamed(context, DeckHomePage.routeName);
                       },
                     icon: Icon(Icons.arrow_back),
                   ),

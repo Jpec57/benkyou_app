@@ -1,5 +1,5 @@
 import 'package:benkyou/models/Deck.dart';
-import 'package:benkyou/screens/HomePage/HomePage.dart';
+import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
 import 'package:benkyou/screens/PreviewPublicDeckPage/PreviewPublicDeckPage.dart';
 import 'package:benkyou/screens/PreviewPublicDeckPage/PreviewPublicDeckPageArguments.dart';
 import 'package:benkyou/services/api/deckRequests.dart';

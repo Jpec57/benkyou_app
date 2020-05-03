@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:benkyou/screens/HomePage/HomePage.dart';
+import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
 import 'package:benkyou/services/api/userRequests.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/LoadingCircle.dart';
@@ -169,7 +169,7 @@ class CreateUserPageState extends State<CreateUserPage> {
                               Navigator.pop(context);
                               Navigator.pushReplacementNamed(
                                 context,
-                                HomePage.routeName,
+                                DeckHomePage.routeName,
                               );
                             } else {
                               Navigator.pop(context);
