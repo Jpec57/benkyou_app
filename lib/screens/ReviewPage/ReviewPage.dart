@@ -193,12 +193,12 @@ class ReviewPageState extends State<ReviewPage> {
   _moveToNextQuestion(bool isAnswerCorrect) async {
     isAnswerVisible = false;
     _isPlayingAnimation = false;
+    //Remove only if correct
+    if (isAnswerCorrect){
+      _remainingCards.removeAt(currentIndex);
+    }
     int length = _remainingCards.length;
-    if (length > 1) {
-      //Remove only if correct
-      if (isAnswerCorrect){
-        _remainingCards.removeAt(currentIndex);
-      }
+    if (length > 0) {
       currentIndex = (length == 1) ? 0 : generateRandomIndex(_remainingCards);
       currentCard = _remainingCards[currentIndex];
       bool toEnglish = currentCard.card.answerLanguageCode == 0;
@@ -260,6 +260,18 @@ class ReviewPageState extends State<ReviewPage> {
   }
 
 
+  Color _setFieldColor(){
+    if (isAnswerVisible){
+      if (isAnswerCorrect){
+        return Colors.green;
+      } else {
+        return Colors.red;
+      }
+    }
+    return Colors.transparent;
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -306,7 +318,6 @@ class ReviewPageState extends State<ReviewPage> {
                       alignment: Alignment.bottomRight,
                     ),
                     ReviewPageInfo(
-                      processedNumber: _processedCards != null ? _processedCards.length : 0,
                       remainingNumber: _remainingCards != null ? _remainingCards.length : 0,
                       isAnswerVisible: isAnswerVisible,
                       nbSuccess: nbSuccess,
@@ -400,13 +411,18 @@ class ReviewPageState extends State<ReviewPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Expanded(
-                    child: TextField(
-                      controller: _answerController,
-                      decoration: InputDecoration(
-                          hintText: toEnglish ? 'Answer' : '答え',
-                          labelStyle: TextStyle()),
-                      textAlign: TextAlign.center,
-                      autofocus: true,
+                    child: Container(
+                      color: _setFieldColor(),
+                      child: TextField(
+                        controller: _answerController,
+                        decoration: InputDecoration(
+                            hintText: toEnglish ? 'Answer' : '答え',
+                            labelStyle: TextStyle(),
+//                          fillColor: Colors.green
+                        ),
+                        textAlign: TextAlign.center,
+                        autofocus: true,
+                      ),
                     ),
                   ),
                   GestureDetector(

@@ -1,5 +1,6 @@
 import 'package:benkyou/models/DeckCard.dart';
 import 'package:benkyou/models/JishoTranslation.dart';
+import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
 import 'package:benkyou/screens/DeckPage/DeckPage.dart';
 import 'package:benkyou/screens/DeckPage/DeckPageArguments.dart';
 import 'package:benkyou/services/api/cardRequests.dart';
@@ -10,6 +11,7 @@ import 'package:benkyou/widgets/JishoList.dart';
 import 'package:benkyou/widgets/MainDrawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 const ERR_KANA = 'There is no kana in your question.';
 const ERR_ANSWER = 'You must provide at least one answer.';
@@ -400,36 +402,42 @@ class CreateCardPageState extends State<CreateCardPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: MainDrawer(),
-      appBar: AppBar(
-        title: Text("Create a card"),
-      ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: PageView(
-              controller: _pageController,
-              pageSnapping: false,
-              physics: NeverScrollableScrollPhysics(),
-              children: <Widget>[_renderForm(), _renderAgainOrLeave()],
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.of(context).pushReplacementNamed(DeckHomePage.routeName);
+        return false;
+      },
+      child: Scaffold(
+        drawer: MainDrawer(),
+        appBar: AppBar(
+          title: Text("Create a card"),
+        ),
+        body: Column(
+          children: <Widget>[
+            Expanded(
+              child: PageView(
+                controller: _pageController,
+                pageSnapping: false,
+                physics: NeverScrollableScrollPhysics(),
+                children: <Widget>[_renderForm(), _renderAgainOrLeave()],
+              ),
             ),
-          ),
-          GestureDetector(
-              onTap: () async {
-                _createCardOrLeave();
-              },
-              child: Container(
-                height: MediaQuery.of(context).size.height * 0.1,
-                decoration: BoxDecoration(color: Color(COLOR_ORANGE)),
-                child: Center(
-                  child: Text(
-                    _bottomButtonLabel,
-                    style: TextStyle(fontSize: 30, color: Colors.white),
+            GestureDetector(
+                onTap: () async {
+                  _createCardOrLeave();
+                },
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.1,
+                  decoration: BoxDecoration(color: Color(COLOR_ORANGE)),
+                  child: Center(
+                    child: Text(
+                      _bottomButtonLabel,
+                      style: TextStyle(fontSize: 30, color: Colors.white),
+                    ),
                   ),
-                ),
-              ))
-        ],
+                ))
+          ],
+        ),
       ),
     );
   }

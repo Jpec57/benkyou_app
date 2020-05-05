@@ -4,6 +4,7 @@ import 'package:benkyou/screens/CreateCardPage/CreateCardPage.dart';
 import 'package:benkyou/screens/CreateCardPage/CreateCardPageArguments.dart';
 import 'package:benkyou/screens/CreateUserPage/CreateUserPage.dart';
 import 'package:benkyou/screens/DialogPage/DialogPage.dart';
+import 'package:benkyou/screens/DialogPage/InDialogPage.dart';
 import 'package:benkyou/screens/HomePage/HomePage.dart';
 import 'package:benkyou/screens/ListCardPage/ListCardPage.dart';
 import 'package:benkyou/screens/ListCardPage/ListCardPageArguments.dart';
@@ -15,6 +16,7 @@ import 'package:benkyou/screens/ReviewPage/ReviewPage.dart';
 import 'package:benkyou/screens/ReviewPage/ReviewPageArguments.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:sentry/io_client.dart';
 import 'screens/DeckPage/DeckPage.dart';
@@ -44,6 +46,16 @@ void main() {
   runZoned(
         () =>
         runApp(MaterialApp(
+          localizationsDelegates: [
+            // ... app-specific localization delegate[s] here
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: [
+            const Locale('en'),
+            const Locale('fr'),
+          ],
           title: 'Benkyou',
           navigatorKey: Get.key,
           theme: ThemeData(
@@ -121,6 +133,7 @@ void main() {
           },
           routes: {
             HomePage.routeName: (context) => HomePage(),
+            InDialogPage.routeName: (context) => InDialogPage(),
             DialogPage.routeName: (context) => DialogPage(),
             DeckHomePage.routeName: (context) => DeckHomePage(),
             CreateUserPage.routeName: (context) => CreateUserPage(),

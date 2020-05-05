@@ -1,11 +1,10 @@
 import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
-import 'package:benkyou/screens/DialogPage/DialogPage.dart';
+import 'package:benkyou/screens/DialogPage/InDialogPage.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/MainDrawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:get/get.dart';
 
 class HomePage extends StatefulWidget{
   static const routeName = '/';
@@ -44,8 +43,7 @@ class HomePageState extends State<HomePage>{
                         alignment: Alignment.bottomCenter,
                         child: Padding(
                           padding: const EdgeInsets.all(35.0),
-                          child: Center(child: Text('BLABLAzelnf zelnfzenfkzenfl zenfelz eknbbikjk l', textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 20))),
-                        ),
+                          child: Center(child: Text('Hello こんにちは', textAlign: TextAlign.center, style: TextStyle(fontFamily: 'Chalk', color: Colors.white, fontSize: 26))),),
                       ),
                     ),
                   ),
@@ -82,7 +80,7 @@ class HomePageState extends State<HomePage>{
                 Expanded(
                   child: GestureDetector(
                     onTap: (){
-                      Navigator.of(context).pushNamed(DialogPage.routeName);
+                      Navigator.of(context).pushNamed(InDialogPage.routeName);
                     },
                     child: Container(
                       decoration: BoxDecoration(

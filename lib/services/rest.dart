@@ -28,6 +28,18 @@ getJsonFromHttpResponse(HttpClientResponse response) async{
   return json.decode(reply);
 }
 
+Future<HttpClientResponse> getRemoteGetRequestResponse(String url, {canHandleGenericErrors = true}) async {
+  HttpClient client = new HttpClient();
+  client.badCertificateCallback = ((X509Certificate cert, String host, int port) => true);
+  HttpClientRequest request = await client.getUrl(Uri.parse(url));
+  request.headers.set(HttpHeaders.contentTypeHeader, 'application/json');
+  HttpClientResponse response = await request.close();
+  if (canHandleGenericErrors){
+    response = await handleGenericErrors(response);
+  }
+  return response;
+}
+
 Future<HttpClientResponse> getLocaleGetRequestResponse(String uri, {canHandleGenericErrors = true}) async {
   HttpClient client = new HttpClient();
   client.badCertificateCallback = ((X509Certificate cert, String host, int port) => true);
