@@ -132,10 +132,10 @@ void main() {
             return null;
           },
           routes: {
+            DeckHomePage.routeName: (context) => DeckHomePage(),
             HomePage.routeName: (context) => HomePage(),
             InDialogPage.routeName: (context) => InDialogPage(),
             DialogPage.routeName: (context) => DialogPage(),
-            DeckHomePage.routeName: (context) => DeckHomePage(),
             CreateUserPage.routeName: (context) => CreateUserPage(),
             BrowseDeckPage.routeName: (context) => BrowseDeckPage(),
           },)
