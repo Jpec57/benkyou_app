@@ -7,6 +7,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import 'Localization.dart';
+
 class PublishDeckDialog extends StatefulWidget{
   final Deck deck;
 
@@ -21,9 +23,9 @@ class PublishDeckDialogState extends State<PublishDeckDialog>{
 
   String _renderContent(){
     return widget.deck.isPublic ?
-    "Are you sure you want to make you deck private again ? All copies already done by users will not be deleted."
+    LocalizationWidget.of(context).getLocalizeValue('confirm_private_deck')
         :
-    "Publishing your deck means that anybody will be able to see your deck in the 'Browse' section. Do you want to continue ?";
+    LocalizationWidget.of(context).getLocalizeValue('confirm_publish_deck');
   }
 
 
@@ -33,7 +35,7 @@ class PublishDeckDialogState extends State<PublishDeckDialog>{
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(32.0))),
       contentPadding: EdgeInsets.all(15.0),
-      title: Text(widget.deck.isPublic ? 'Unpublish your deck' : 'Publish your deck'),
+      title: Text(widget.deck.isPublic ? LocalizationWidget.of(context).getLocalizeValue('unpublish_your_deck') : LocalizationWidget.of(context).getLocalizeValue('publish_your_deck')),
       content: Container(
         width: MediaQuery.of(context).size.height * 0.7,
         child: Padding(
@@ -54,7 +56,7 @@ class PublishDeckDialogState extends State<PublishDeckDialog>{
                       padding: const EdgeInsets.only(right: 5.0),
                       child: RaisedButton(
                         color: Color(COLOR_ORANGE),
-                        child: Text('Cancel'.toUpperCase(),
+                        child: Text(LocalizationWidget.of(context).getLocalizeValue('cancel').toUpperCase(),
                           style: TextStyle(
                               color: Colors.white
                           ),
@@ -69,7 +71,7 @@ class PublishDeckDialogState extends State<PublishDeckDialog>{
                       padding: const EdgeInsets.only(left: 5.0),
                       child: RaisedButton(
                         color: Color(COLOR_DARK_BLUE),
-                        child: Text((widget.deck.isPublic ? 'Unpublish': 'Publish' ).toUpperCase(),
+                        child: Text((widget.deck.isPublic ? LocalizationWidget.of(context).getLocalizeValue('unpublish'): LocalizationWidget.of(context).getLocalizeValue('publish') ).toUpperCase(),
                           style: TextStyle(
                               color: Colors.white
                           ),),

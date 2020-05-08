@@ -4,6 +4,8 @@ import 'package:benkyou/utils/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'Localization.dart';
+
 class DeckCardList extends StatefulWidget{
   final List<DeckCard> cards;
 
@@ -41,7 +43,7 @@ class DeckCardListState extends State<DeckCardList>{
   @override
   Widget build(BuildContext context) {
     if (widget.cards.length == 0){
-      return Center(child: Text('There is no card yet.'));
+      return Center(child: Text(LocalizationWidget.of(context).getLocalizeValue('no_card_yet')));
     }
     return ListView.separated(
       shrinkWrap: true,

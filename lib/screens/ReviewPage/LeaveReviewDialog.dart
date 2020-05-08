@@ -5,6 +5,7 @@ import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
 import 'package:benkyou/services/api/cardRequests.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/LoadingCircle.dart';
+import 'package:benkyou/widgets/Localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -26,7 +27,7 @@ class LeaveReviewDialogState extends State<LeaveReviewDialog>{
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(32.0))),
       contentPadding: EdgeInsets.all(15.0),
-      title: Text('Stop review'),
+      title: Text(LocalizationWidget.of(context).getLocalizeValue('stop_review')),
       content: SingleChildScrollView(
         child: GestureDetector(
           onTap: () {
@@ -43,7 +44,7 @@ class LeaveReviewDialogState extends State<LeaveReviewDialog>{
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text("Do you want to leave the review ? Your progression will be saved.", textAlign: TextAlign.center,),
+                  Text(LocalizationWidget.of(context).getLocalizeValue('quit_review_before_end_mess'), textAlign: TextAlign.center,),
                   Padding(
                     padding: const EdgeInsets.only(top: 15.0),
                     child: Row(
@@ -54,7 +55,7 @@ class LeaveReviewDialogState extends State<LeaveReviewDialog>{
                             child: RaisedButton(
                               color: Color(COLOR_DARK_BLUE),
                               child: Text(
-                                "No".toUpperCase(),
+                                LocalizationWidget.of(context).getLocalizeValue('no').toUpperCase(),
                                 style: TextStyle(
                                     color: Colors.white
                                 ),
@@ -71,7 +72,7 @@ class LeaveReviewDialogState extends State<LeaveReviewDialog>{
                             child: RaisedButton(
                               color: Color(COLOR_ORANGE),
                               child: Text(
-                                "Yes".toUpperCase(),
+                                LocalizationWidget.of(context).getLocalizeValue('yes').toUpperCase(),
                                 style: TextStyle(
                                     color: Colors.white
                                 ),

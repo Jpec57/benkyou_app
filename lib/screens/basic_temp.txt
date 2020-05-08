@@ -1,0 +1,25 @@
+import 'package:benkyou/widgets/MainDrawer.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
+class InDialogListening extends StatefulWidget{
+  static const routeName = '/lessons';
+
+  @override
+  State<StatefulWidget> createState() => LessonHomePageState();
+
+}
+
+class InDialogListeningState extends State<InDialogListening>{
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Lessons'),
+      ),
+      drawer: MainDrawer(),
+      body: Container(),
+    );
+  }
+}

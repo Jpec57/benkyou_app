@@ -6,6 +6,7 @@ import 'package:benkyou/services/api/deckRequests.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/DeckCardList.dart';
 import 'package:benkyou/widgets/LoadingCircle.dart';
+import 'package:benkyou/widgets/Localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -56,7 +57,7 @@ class PreviewPublicDeckPageState extends State<PreviewPublicDeckPage>{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Preview deck'),
+        title: Text(LocalizationWidget.of(context).getLocalizeValue('preview_deck')),
         automaticallyImplyLeading: false,
         leading: IconButton(
           onPressed: () {
@@ -70,7 +71,7 @@ class PreviewPublicDeckPageState extends State<PreviewPublicDeckPage>{
         builder: (BuildContext context, AsyncSnapshot deckSnapshot) {
           switch (deckSnapshot.connectionState){
             case ConnectionState.waiting:
-              return Center(child: Text("Loading..."),);
+              return Center(child: Text(LocalizationWidget.of(context).getLocalizeValue('loading')),);
             case ConnectionState.done:
               if (deckSnapshot.hasData){
                 Deck deck = deckSnapshot.data;
@@ -111,7 +112,7 @@ class PreviewPublicDeckPageState extends State<PreviewPublicDeckPage>{
                                   onTap: (){
                                     //TODO login
                                   },
-                                  child: Text("by ${deck.author.username}", style: TextStyle(
+                                  child: Text(LocalizationWidget.of(context).getLocalizeValue('by') + " ${deck.author.username}", style: TextStyle(
                                       shadows: <Shadow>[
                                         Shadow(
                                           offset: Offset(2.0, 2.0),
@@ -141,7 +142,7 @@ class PreviewPublicDeckPageState extends State<PreviewPublicDeckPage>{
                               color: Color(COLOR_DARK_BLUE),
                               child: Padding(
                                 padding: const EdgeInsets.only(top: 10, bottom: 10),
-                                child: Text('List of cards in deck', textAlign: TextAlign.center,
+                                child: Text(LocalizationWidget.of(context).getLocalizeValue('list_cards_in_deck'), textAlign: TextAlign.center,
                                   style: TextStyle(fontSize: 20, color: Colors.white),),
                               ),
                             ),
@@ -172,14 +173,14 @@ class PreviewPublicDeckPageState extends State<PreviewPublicDeckPage>{
                               arguments: DeckPageArguments(importedDeck.id)
                           );
                         } else {
-                          Get.snackbar('Error', 'You cannot import your own deck...', snackPosition: SnackPosition.BOTTOM);
+                          Get.snackbar(LocalizationWidget.of(context).getLocalizeValue('error'), LocalizationWidget.of(context).getLocalizeValue('import_own_deck_error'), snackPosition: SnackPosition.BOTTOM);
                         }
                       },
                       child: Container(
                         height: MediaQuery.of(context).size.height * 0.1,
                           color: Color(COLOR_ORANGE),
                           child: Center(child:
-                          Text("Import this deck".toUpperCase(),
+                          Text(LocalizationWidget.of(context).getLocalizeValue('import_deck').toUpperCase(),
                             style:
                             TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)
                             ,))
@@ -188,9 +189,9 @@ class PreviewPublicDeckPageState extends State<PreviewPublicDeckPage>{
                   ],
                 );
               }
-              return Center(child: Text("No data."),);
+              return Center(child: Text(LocalizationWidget.of(context).getLocalizeValue('no_data')),);
             default:
-              return Center(child: Text("No data."),);
+              return Center(child: Text(LocalizationWidget.of(context).getLocalizeValue('no_data')),);
           }
       },
       ),

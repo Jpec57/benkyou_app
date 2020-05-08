@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'Localization.dart';
+
 class AddAnswerCardWidget extends StatefulWidget {
   final String hint;
   final int cardId;
@@ -83,7 +85,7 @@ class AddAnswerCardWidgetState extends State<AddAnswerCardWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  'Possible answers',
+                  LocalizationWidget.of(context).getLocalizeValue('possible_answers'),
                   style: TextStyle(fontSize: 20),
                 ),
                 GestureDetector(
@@ -139,7 +141,7 @@ class AddAnswerCardWidgetState extends State<AddAnswerCardWidget> {
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             labelStyle: TextStyle(fontSize: 20),
-                            hintText: 'Possible answer ${index + 1}',
+                            hintText: LocalizationWidget.of(context).getLocalizeValue('possible_answer') + ' ${index + 1}',
                           ),
                         ),
                       ),

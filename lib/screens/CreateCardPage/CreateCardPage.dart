@@ -8,6 +8,7 @@ import 'package:benkyou/services/translator/TextConversion.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/AddAnswerCardWidget.dart';
 import 'package:benkyou/widgets/JishoList.dart';
+import 'package:benkyou/widgets/Localization.dart';
 import 'package:benkyou/widgets/MainDrawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +32,7 @@ class CreateCardPage extends StatefulWidget {
 
 class CreateCardPageState extends State<CreateCardPage> {
   final _formKey = GlobalKey<FormState>();
-  String _bottomButtonLabel = 'NEXT';
+  String _bottomButtonLabel = '';
   String japanese = '';
   String _error = '';
   String _researchWord = '';
@@ -56,6 +57,7 @@ class CreateCardPageState extends State<CreateCardPage> {
   @override
   void initState() {
     super.initState();
+    _bottomButtonLabel = LocalizationWidget.of(context).getLocalizeValue('next');
     _kanjiEditingController = new TextEditingController();
     _kanaEditingController = new TextEditingController();
 
@@ -251,9 +253,9 @@ class CreateCardPageState extends State<CreateCardPage> {
                             textInputAction: TextInputAction.next,
                             autofocus: true,
                             decoration: InputDecoration(
-                                labelText: 'Kana/Romaji to transform',
+                                labelText: LocalizationWidget.of(context).getLocalizeValue('kana_kanji_tranform'),
                                 labelStyle: TextStyle(fontSize: 20),
-                                hintText: 'Enter kana or romaji here'),
+                                hintText: LocalizationWidget.of(context).getLocalizeValue('enter_kana_kanji')),
                           ),
                         ),
                       ),
@@ -279,9 +281,9 @@ class CreateCardPageState extends State<CreateCardPage> {
                               },
                               textInputAction: TextInputAction.next,
                               decoration: InputDecoration(
-                                  labelText: 'Kanji',
+                                  labelText: LocalizationWidget.of(context).getLocalizeValue('kanji'),
                                   labelStyle: TextStyle(fontSize: 20),
-                                  hintText: 'Enter kanji here'),
+                                  hintText: LocalizationWidget.of(context).getLocalizeValue('input_kanji_label')),
                             ),
                           ]),
                         ),
@@ -296,13 +298,13 @@ class CreateCardPageState extends State<CreateCardPage> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
                                   Text(
-                                    'Is card reversible ?',
+                                    LocalizationWidget.of(context).getLocalizeValue('is_card_reversible'),
                                     style: TextStyle(fontSize: 18),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(top: 5.0),
                                     child: Text(
-                                      'Another card inverting japanese and english will be created',
+                                      LocalizationWidget.of(context).getLocalizeValue('card_inverse_explanation'),
                                       style: TextStyle(
                                           fontStyle: FontStyle.italic,
                                           fontSize: 12),
@@ -329,7 +331,7 @@ class CreateCardPageState extends State<CreateCardPage> {
                       ),
                       Container(
                         child: Text(
-                          'Propositions of answer',
+                          LocalizationWidget.of(context).getLocalizeValue('prop_of_answer'),
                           style: TextStyle(fontSize: 20),
                           textAlign: TextAlign.start,
                         ),
@@ -357,7 +359,7 @@ class CreateCardPageState extends State<CreateCardPage> {
     setState(() {
       japanese = '';
       _researchWord = '';
-      _bottomButtonLabel = 'NEXT';
+      _bottomButtonLabel = LocalizationWidget.of(context).getLocalizeValue('next').toUpperCase();
     });
     _pageController.animateToPage(0,
         duration: Duration(milliseconds: 500), curve: Curves.easeIn);
@@ -372,7 +374,7 @@ class CreateCardPageState extends State<CreateCardPage> {
           child: Container(
             child: Center(
               child: Text(
-                'Your card have been successfully created !',
+                LocalizationWidget.of(context).getLocalizeValue('create_card_success'),
                 style: TextStyle(
                   fontSize: 25,
                 ),
@@ -390,7 +392,7 @@ class CreateCardPageState extends State<CreateCardPage> {
             decoration: BoxDecoration(color: Color(COLOR_DARK_BLUE)),
             child: Center(
               child: Text(
-                'CREATE ANOTHER CARD',
+                LocalizationWidget.of(context).getLocalizeValue('create_another_card').toUpperCase(),
                 style: TextStyle(fontSize: 30, color: Colors.white),
               ),
             ),
@@ -410,7 +412,7 @@ class CreateCardPageState extends State<CreateCardPage> {
       child: Scaffold(
         drawer: MainDrawer(),
         appBar: AppBar(
-          title: Text("Create a card"),
+          title: Text(LocalizationWidget.of(context).getLocalizeValue('create_card')),
         ),
         body: Column(
           children: <Widget>[

@@ -6,6 +6,7 @@ import 'package:benkyou/screens/ReviewPage/ReviewPage.dart';
 import 'package:benkyou/screens/ReviewPage/ReviewPageArguments.dart';
 import 'package:benkyou/services/api/cardRequests.dart';
 import 'package:benkyou/utils/colors.dart';
+import 'package:benkyou/widgets/Localization.dart';
 import 'package:benkyou/widgets/PublishDeckDialog.dart';
 import 'package:benkyou/widgets/ReviewSchedule.dart';
 import 'package:benkyou/widgets/SRSPreview.dart';
@@ -113,7 +114,7 @@ class DeckPageState extends State<DeckPage> {
                 AsyncSnapshot<List<UserCard>> userCardSnapshot) {
               switch (userCardSnapshot.connectionState) {
                 case ConnectionState.waiting:
-                  return Center(child: Text("Loading..."));
+                  return Center(child: Text(LocalizationWidget.of(context).getLocalizeValue('loading')));
                 case ConnectionState.done:
                   if (userCardSnapshot.hasData) {
                     List<UserCard> cards = userCardSnapshot.data;
@@ -148,7 +149,7 @@ class DeckPageState extends State<DeckPage> {
                                       cardsToReviewSnapshot) {
                                 switch (cardsToReviewSnapshot.connectionState) {
                                   case ConnectionState.waiting:
-                                    return Text("Loading...");
+                                    return Text(LocalizationWidget.of(context).getLocalizeValue('loading'));
                                   case ConnectionState.done:
                                     if (cardsToReviewSnapshot.hasData) {
                                       List<UserCard> cardsToReview =
@@ -202,10 +203,10 @@ class DeckPageState extends State<DeckPage> {
                     );
                   }
                   return Center(
-                      child: Text("The deck is empty. Please create a card."));
+                      child: Text(LocalizationWidget.of(context).getLocalizeValue('empty_deck_create_card')));
                 default:
                   return Center(
-                      child: Text("The deck is empty. Please create a card."));
+                      child: Text(LocalizationWidget.of(context).getLocalizeValue('empty_deck_create_card')));
               }
             },
           ),
@@ -226,7 +227,7 @@ class DeckPageState extends State<DeckPage> {
                 appBar: AppBar(
                   title: Text(""),
                 ),
-                body: Center(child: Text("Loading...")));
+                body: Center(child: Text(LocalizationWidget.of(context).getLocalizeValue('loading'))));
           case ConnectionState.done:
             Deck deckData;
             if (deckSnapshot.hasData && deckSnapshot.data != null) {
@@ -249,7 +250,7 @@ class DeckPageState extends State<DeckPage> {
                       color: deckData.isPublic ? Color(COLOR_ORANGE) : Color(COLOR_GREY),
                       onPressed: () {
                         if (deckData.cards.length == 0){
-                          Get.snackbar('Empty deck', 'Your deck must have at least one card to be published.', snackPosition: SnackPosition.BOTTOM);
+                          Get.snackbar(LocalizationWidget.of(context).getLocalizeValue('empty_deck'), LocalizationWidget.of(context).getLocalizeValue('empty_deck_publish_error'), snackPosition: SnackPosition.BOTTOM);
                           return;
                         }
                         showDialog(
@@ -265,7 +266,7 @@ class DeckPageState extends State<DeckPage> {
                 floatingActionButton: FloatingActionButton(
                   onPressed: _createNewCard,
                   backgroundColor: Color(COLOR_ORANGE),
-                  tooltip: 'Add a deck',
+                  tooltip: LocalizationWidget.of(context).getLocalizeValue('add_deck'),
                   child: Icon(Icons.add),
                 ),
               );

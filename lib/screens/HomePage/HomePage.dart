@@ -1,13 +1,14 @@
 import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
 import 'package:benkyou/screens/DialogPage/InDialogPage.dart';
 import 'package:benkyou/utils/colors.dart';
+import 'package:benkyou/widgets/Localization.dart';
 import 'package:benkyou/widgets/MainDrawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class HomePage extends StatefulWidget{
-  static const routeName = '/';
+  static const routeName = '/home';
 
   @override
   State<StatefulWidget> createState() => HomePageState();
@@ -70,7 +71,7 @@ class HomePageState extends State<HomePage>{
                         color: Color(COLOR_ORANGE),
                       ),
                       child: Center(
-                        child: Text('Review decks'.toUpperCase(),
+                        child: Text(LocalizationWidget.of(context).getLocalizeValue('review_decks').toUpperCase(),
                           textAlign: TextAlign.center,
                           style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),),
                       ),
@@ -87,7 +88,7 @@ class HomePageState extends State<HomePage>{
                         color: Color(COLOR_DARK_BLUE),
                       ),
                       child: Center(
-                        child: Text('Speak'.toUpperCase(),
+                        child: Text(LocalizationWidget.of(context).getLocalizeValue('speak').toUpperCase(),
                           textAlign: TextAlign.center,
                           style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),),
                       ),

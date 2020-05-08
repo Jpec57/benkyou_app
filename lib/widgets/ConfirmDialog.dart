@@ -2,6 +2,8 @@ import 'package:benkyou/utils/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'Localization.dart';
+
 class ConfirmDialog extends StatelessWidget{
   final String action;
   final Function positiveCallback;
@@ -15,7 +17,7 @@ class ConfirmDialog extends StatelessWidget{
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(32.0))),
       contentPadding: EdgeInsets.all(10.0),
-      title: Text('Confirm action'),
+      title: Text(LocalizationWidget.of(context).getLocalizeValue('confirm_action')),
       content: GestureDetector(
         onTap: () {
           FocusScopeNode currentFocus = FocusScope.of(context);
@@ -42,7 +44,7 @@ class ConfirmDialog extends StatelessWidget{
                           padding: const EdgeInsets.only(right: 5.0),
                           child: RaisedButton(
                             color: Color(COLOR_DARK_BLUE),
-                            child: Text('NO',
+                            child: Text(LocalizationWidget.of(context).getLocalizeValue('no').toUpperCase(),
                               style: TextStyle(
                                   color: Colors.white
                               ),),
@@ -59,7 +61,7 @@ class ConfirmDialog extends StatelessWidget{
                           padding: const EdgeInsets.only(left: 5.0),
                           child: RaisedButton(
                             color: Color(COLOR_ORANGE),
-                            child: Text('YES',
+                            child: Text(LocalizationWidget.of(context).getLocalizeValue('yes').toUpperCase(),
                               style: TextStyle(
                                   color: Colors.white
                               ),

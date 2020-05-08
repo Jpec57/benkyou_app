@@ -5,6 +5,7 @@ import 'package:benkyou/screens/ListCardPage/ListCardPageArguments.dart';
 import 'package:benkyou/services/api/cardRequests.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/AddAnswerCardWidget.dart';
+import 'package:benkyou/widgets/Localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -37,7 +38,7 @@ class ModifyCardPageState extends State<ModifyCardPage>{
     DeckCard deckCard = widget.userCard.card;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Modify card'),
+        title: Text(LocalizationWidget.of(context).getLocalizeValue('modify_card')),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -66,7 +67,7 @@ class ModifyCardPageState extends State<ModifyCardPage>{
                 },
                 child: Container(
                   color: Color(COLOR_DARK_BLUE),
-                  child: Center(child: Text('Delete'.toUpperCase(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18))),),
+                  child: Center(child: Text(LocalizationWidget.of(context).getLocalizeValue('delete').toUpperCase(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18))),),
               ),
             ),
             Expanded(
@@ -79,7 +80,7 @@ class ModifyCardPageState extends State<ModifyCardPage>{
                 },
                 child: Container(
                   color: Color(COLOR_ORANGE),
-                  child: Center(child: Text('Update'.toUpperCase(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),)),),
+                  child: Center(child: Text(LocalizationWidget.of(context).getLocalizeValue('update').toUpperCase(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),)),),
               ),
             ),
           ],

@@ -4,6 +4,8 @@ import 'package:benkyou/widgets/LoginDialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'Localization.dart';
+
 class ConnectedActionDialog extends StatelessWidget{
   final String action;
 
@@ -15,7 +17,7 @@ class ConnectedActionDialog extends StatelessWidget{
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(32.0))),
       contentPadding: EdgeInsets.all(15.0),
-      title: Text('You must be connected.'),
+      title: Text(LocalizationWidget.of(context).getLocalizeValue('must_be_connected_message')),
       content: Container(
         width: MediaQuery.of(context).size.height * 0.7,
         child: Padding(
@@ -26,7 +28,7 @@ class ConnectedActionDialog extends StatelessWidget{
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(top: 10, bottom: 30),
-                child: Text("Login or register $action", textAlign: TextAlign.center,),
+                child: Text(LocalizationWidget.of(context).getLocalizeValue('login_or_register') + " $action", textAlign: TextAlign.center,),
               ),
               Row(
                 mainAxisSize: MainAxisSize.max,
@@ -36,7 +38,7 @@ class ConnectedActionDialog extends StatelessWidget{
                       padding: const EdgeInsets.only(right: 5.0),
                       child: RaisedButton(
                         color: Color(COLOR_DARK_BLUE),
-                        child: Text('Register',
+                        child: Text(LocalizationWidget.of(context).getLocalizeValue('register'),
                           style: TextStyle(
                               color: Colors.white
                           ),),
@@ -54,7 +56,7 @@ class ConnectedActionDialog extends StatelessWidget{
                       padding: const EdgeInsets.only(left: 5.0),
                       child: RaisedButton(
                         color: Color(COLOR_ORANGE),
-                        child: Text('Login',
+                        child: Text(LocalizationWidget.of(context).getLocalizeValue('login'),
                           style: TextStyle(
                               color: Colors.white
                           ),

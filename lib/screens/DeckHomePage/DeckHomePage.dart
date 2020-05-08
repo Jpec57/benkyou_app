@@ -3,6 +3,7 @@ import 'package:benkyou/screens/DeckHomePage/CreateDeckDialog.dart';
 import 'package:benkyou/services/api/cardRequests.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/ConnectedActionDialog.dart';
+import 'package:benkyou/widgets/Localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,7 +13,8 @@ import '../../widgets/MainDrawer.dart';
 import 'DeckContainer.dart';
 
 class DeckHomePage extends StatefulWidget {
-  static const routeName = '/home/deck';
+  static const routeName = '/';
+//  static const routeName = '/home/deck';
 
   @override
   State<StatefulWidget> createState() => DeckHomePageState();
@@ -35,7 +37,7 @@ class DeckHomePageState extends State<DeckHomePage> {
       showDialog(
           context: context,
           builder: (BuildContext context) => ConnectedActionDialog(
-                action: "to create a deck.",
+                action: LocalizationWidget.of(context).getLocalizeValue('action_to_create_deck'),
               ));
       return;
     }
@@ -130,13 +132,13 @@ class DeckHomePageState extends State<DeckHomePage> {
                 switch (deckSnapshot.connectionState) {
                   case ConnectionState.none:
                     return Center(
-                        child: Text('No deck available. Please create one.'));
+                        child: Text(LocalizationWidget.of(context).getLocalizeValue('no_deck_create')));
                   case ConnectionState.done:
                     if (deckSnapshot.hasData) {
                       if (deckSnapshot.data.length == 0) {
                         return Center(
                             child:
-                                Text('No deck available. Please create one.'));
+                                Text(LocalizationWidget.of(context).getLocalizeValue('no_deck_create')));
                       }
                       return GridView.count(
                           crossAxisCount: 2,
@@ -148,15 +150,15 @@ class DeckHomePageState extends State<DeckHomePage> {
                           }));
                     }
                     return Center(
-                        child: Text('No deck available. Please create one.'));
+                        child: Text(LocalizationWidget.of(context).getLocalizeValue('no_deck_create')));
                   default:
-                    return Center(child: Text('Loading...'));
+                    return Center(child: Text(LocalizationWidget.of(context).getLocalizeValue('loading')));
                 }
               })),
       floatingActionButton: FloatingActionButton(
         onPressed: _createNewDeck,
         backgroundColor: Color(COLOR_ORANGE),
-        tooltip: 'Add a deck',
+        tooltip: LocalizationWidget.of(context).getLocalizeValue('add_deck'),
         child: Icon(Icons.add),
       ),
     );

@@ -1,9 +1,11 @@
 import 'package:benkyou/screens/BrowseDeckPage/BrowseDeckPage.dart';
 import 'package:benkyou/screens/HomePage/HomePage.dart';
+import 'package:benkyou/screens/LessonHomePage/LessonHomePage.dart';
 import 'package:benkyou/screens/ListCardPage/ListCardPage.dart';
 import 'package:benkyou/screens/ListCardPage/ListCardPageArguments.dart';
 import 'package:benkyou/services/api/userRequests.dart';
 import 'package:benkyou/widgets/LoadingCircle.dart';
+import 'package:benkyou/widgets/Localization.dart';
 import 'package:benkyou/widgets/LoginDialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -37,12 +39,12 @@ class MainDrawerState extends State<MainDrawer>{
         switch(snapshot.connectionState){
           case ConnectionState.waiting:
             return ListTile(
-              title: Text('Loading...'),
+              title: Text(LocalizationWidget.of(context).getLocalizeValue('loading')),
             );
           case ConnectionState.done:
             if (snapshot.hasData && snapshot.data){
               return ListTile(
-                title: Text('Log out'),
+                title: Text(LocalizationWidget.of(context).getLocalizeValue('log_out')),
                 onTap: () async {
                   showLoadingDialog(context);
                   await logoutRequest();
@@ -55,7 +57,7 @@ class MainDrawerState extends State<MainDrawer>{
               );
             }
             return ListTile(
-              title: Text('Log in'),
+              title: Text(LocalizationWidget.of(context).getLocalizeValue('log_in')),
               onTap: () {
                 Navigator.pop(context);
                 showDialog(
@@ -64,7 +66,7 @@ class MainDrawerState extends State<MainDrawer>{
             );
           default:
             return ListTile(
-              title: Text('Log in'),
+              title: Text(LocalizationWidget.of(context).getLocalizeValue('log_in')),
               onTap: () {
                 Navigator.pop(context);
                 showDialog(
@@ -144,16 +146,7 @@ class MainDrawerState extends State<MainDrawer>{
             ),
           ),
           ListTile(
-            title: Text('Home'),
-            onTap: () {
-              Navigator.pushNamed(
-                context,
-                HomePage.routeName,
-              );
-            },
-          ),
-          ListTile(
-            title: Text('My decks'),
+            title: Text(LocalizationWidget.of(context).getLocalizeValue('home')),
             onTap: () {
               Navigator.pushNamed(
                 context,
@@ -162,7 +155,25 @@ class MainDrawerState extends State<MainDrawer>{
             },
           ),
           ListTile(
-            title: Text('Browse online decks'),
+            title: Text(LocalizationWidget.of(context).getLocalizeValue('lessons')),
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                LessonHomePage.routeName,
+              );
+            },
+          ),
+          ListTile(
+            title: Text(LocalizationWidget.of(context).getLocalizeValue('my_decks')),
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                DeckHomePage.routeName,
+              );
+            },
+          ),
+          ListTile(
+            title: Text(LocalizationWidget.of(context).getLocalizeValue('browse_online_decks')),
             onTap: () {
               Navigator.pushNamed(
                 context,
@@ -171,7 +182,7 @@ class MainDrawerState extends State<MainDrawer>{
             },
           ),
           ListTile(
-            title: Text('My cards'),
+            title: Text(LocalizationWidget.of(context).getLocalizeValue('my_cards')),
             onTap: () {
               Navigator.pushNamed(
                 context,

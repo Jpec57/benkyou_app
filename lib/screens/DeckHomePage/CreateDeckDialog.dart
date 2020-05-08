@@ -3,6 +3,7 @@ import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
 import 'package:benkyou/services/api/deckRequests.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/ConfirmDialog.dart';
+import 'package:benkyou/widgets/Localization.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -47,13 +48,13 @@ class CreateDeckDialogState extends State<CreateDeckDialog> {
       child: RaisedButton(
         color: Color(COLOR_ORANGE),
         child: Text(
-          "Delete deck".toUpperCase(),
+          LocalizationWidget.of(context).getLocalizeValue('delete_deck').toUpperCase(),
           style: TextStyle(color: Colors.white),
         ),
         onPressed: () async {
           if (_formKey.currentState.validate()){
             Get.dialog(ConfirmDialog(
-              action: "Are you sure you want to delete this deck ?",
+              action: LocalizationWidget.of(context).getLocalizeValue('confirm_delete_deck_mess'),
               positiveCallback: () async {
                 await deleteDeck(widget.deck.id);
                 Navigator.pushNamed(context, DeckHomePage.routeName);
@@ -78,7 +79,7 @@ class CreateDeckDialogState extends State<CreateDeckDialog> {
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(32.0))),
         contentPadding: EdgeInsets.all(10.0),
-        title: Text(widget.isEditing ? 'Edit your deck' : 'Create a deck'),
+        title: Text(widget.isEditing ? LocalizationWidget.of(context).getLocalizeValue('edit_deck') : LocalizationWidget.of(context).getLocalizeValue('create_deck')),
         content: SingleChildScrollView(
           child: Container(
             width: MediaQuery.of(context).size.height * 0.7,
@@ -90,29 +91,29 @@ class CreateDeckDialogState extends State<CreateDeckDialog> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Text("Title*"),
+                    Text(LocalizationWidget.of(context).getLocalizeValue('title') + '*'),
                     TextFormField(
                       controller: _titleController,
                       validator: (value) {
                         if (value.length < 2) {
-                          return 'Your title must use at least 2 characters.';
+                          return LocalizationWidget.of(context).getLocalizeValue('min_2_title');
                         }
                         return null;
                       },
                       decoration: InputDecoration(
-                          hintText: 'Enter a title',
+                          hintText: LocalizationWidget.of(context).getLocalizeValue('enter_title'),
                           labelStyle: TextStyle()),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 15.0),
-                      child: Text("Description"),
+                      child: Text(LocalizationWidget.of(context).getLocalizeValue('description')),
                     ),
                     TextFormField(
                       maxLines: 3,
                       textAlign: TextAlign.justify,
                       controller: _descriptionController,
                       decoration: InputDecoration(
-                          hintText: 'Enter a description',
+                          hintText: LocalizationWidget.of(context).getLocalizeValue('enter_description'),
                           labelStyle: TextStyle(
                           )),
                     ),
@@ -124,7 +125,7 @@ class CreateDeckDialogState extends State<CreateDeckDialog> {
                       child: RaisedButton(
                         color: Color(COLOR_DARK_BLUE),
                         child: Text(
-                          (widget.isEditing ? "Update deck" : "Create deck").toUpperCase(),
+                          (widget.isEditing ? LocalizationWidget.of(context).getLocalizeValue('update_deck') : LocalizationWidget.of(context).getLocalizeValue('create_deck')).toUpperCase(),
                           style: TextStyle(color: Colors.white),
                         ),
                         onPressed: () async {

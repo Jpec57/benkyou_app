@@ -2,6 +2,8 @@ import 'package:benkyou/models/JishoTranslation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'Localization.dart';
+
 class JishoList extends StatefulWidget {
   final String researchWord;
   final Function callback;
@@ -54,11 +56,11 @@ class JishoListState extends State<JishoList> {
                   ),
                 );
               case ConnectionState.waiting:
-                return Text("Searching...");
+                return Text(LocalizationWidget.of(context).getLocalizeValue('searching'));
               case ConnectionState.none:
-                return Text("No connection");
+                return Text(LocalizationWidget.of(context).getLocalizeValue('no_connection'));
               default:
-                return Text("Empty");
+                return Text(LocalizationWidget.of(context).getLocalizeValue('empty'));
             }
           }
       );
@@ -66,7 +68,7 @@ class JishoListState extends State<JishoList> {
     return Padding(
       padding: const EdgeInsets.only(top: 12.0),
       child: Container(
-        child: Text("Please enter a kana or a kanji to start searching.", style: TextStyle(fontStyle: FontStyle.italic)),
+        child: Text(LocalizationWidget.of(context).getLocalizeValue('kana_kanji_start_search'), style: TextStyle(fontStyle: FontStyle.italic)),
       ),
     );
   }

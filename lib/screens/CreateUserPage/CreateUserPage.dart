@@ -5,6 +5,7 @@ import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
 import 'package:benkyou/services/api/userRequests.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/LoadingCircle.dart';
+import 'package:benkyou/widgets/Localization.dart';
 import 'package:benkyou/widgets/MainDrawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -29,10 +30,10 @@ class CreateUserPageState extends State<CreateUserPage> {
   void initState() {
     super.initState();
     _usernameController =
-        new TextEditingController(text: 'Jpec');
-    _emailController = new TextEditingController(text: 'abc@hotmail.fr');
-    _passwordController = new TextEditingController(text: 'iiiiii');
-    _confirmPasswordController = new TextEditingController(text: 'iiiiii');
+        new TextEditingController();
+    _emailController = new TextEditingController();
+    _passwordController = new TextEditingController();
+    _confirmPasswordController = new TextEditingController();
   }
 
   @override
@@ -40,7 +41,7 @@ class CreateUserPageState extends State<CreateUserPage> {
     return Scaffold(
         drawer: MainDrawer(),
         appBar: AppBar(
-          title: Text('Create account'),
+          title: Text(LocalizationWidget.of(context).getLocalizeValue('create_account')),
         ),
         body: GestureDetector(
           onTap: () {
@@ -58,17 +59,17 @@ class CreateUserPageState extends State<CreateUserPage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Text("Username"),
+                    Text(LocalizationWidget.of(context).getLocalizeValue('username')),
                     TextFormField(
                       controller: _usernameController,
                       validator: (value) {
                         if (value.isEmpty) {
-                          return 'Please enter your username';
+                          return LocalizationWidget.of(context).getLocalizeValue('enter_username');
                         }
                         return null;
                       },
                       decoration: InputDecoration(
-                          hintText: 'Enter your username',
+                          hintText: LocalizationWidget.of(context).getLocalizeValue('enter_username'),
                           labelStyle: TextStyle()),
                     ),
                     Padding(
@@ -77,17 +78,17 @@ class CreateUserPageState extends State<CreateUserPage> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          Text("Email"),
+                          Text(LocalizationWidget.of(context).getLocalizeValue('email')),
                           TextFormField(
                             controller: _emailController,
                             validator: (value) {
                               if (value.isEmpty) {
-                                return 'Please enter your email.';
+                                return LocalizationWidget.of(context).getLocalizeValue('enter_email');
                               }
                               return null;
                             },
                             decoration: InputDecoration(
-                                hintText: 'Enter your email',
+                                hintText: LocalizationWidget.of(context).getLocalizeValue('enter_email'),
                                 labelStyle: TextStyle()),
                           ),
                         ],
@@ -100,21 +101,21 @@ class CreateUserPageState extends State<CreateUserPage> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          Text("Password"),
+                          Text(LocalizationWidget.of(context).getLocalizeValue('password')),
                           TextFormField(
                             obscureText: true,
                             controller: _passwordController,
                             validator: (value) {
                               if (value.isEmpty) {
-                                return 'Please enter your password';
+                                return LocalizationWidget.of(context).getLocalizeValue('enter_password');
                               }
                               if (value.length < 6) {
-                                return 'Your password must use least 6 characters';
+                                return LocalizationWidget.of(context).getLocalizeValue('at_least_6_char');
                               }
                               return null;
                             },
                             decoration: InputDecoration(
-                                hintText: 'Enter your password',
+                                hintText: LocalizationWidget.of(context).getLocalizeValue('enter_password'),
                                 labelStyle: TextStyle()),
                           ),
                         ],
@@ -126,21 +127,21 @@ class CreateUserPageState extends State<CreateUserPage> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          Text("Confirm password"),
+                          Text(LocalizationWidget.of(context).getLocalizeValue('confirm_password')),
                           TextFormField(
                             obscureText: true,
                             controller: _confirmPasswordController,
                             validator: (value) {
                               if (value.isEmpty) {
-                                return 'Please confirm your password';
+                                return LocalizationWidget.of(context).getLocalizeValue('enter_confirm_password');
                               }
                               if (_passwordController.text != value){
-                                return "Passwords don't match";
+                                return LocalizationWidget.of(context).getLocalizeValue('password_not_match');
                               }
                               return null;
                             },
                             decoration: InputDecoration(
-                                hintText: 'Enter your password again',
+                                hintText: LocalizationWidget.of(context).getLocalizeValue('enter_pass_again'),
                                 labelStyle: TextStyle()),
                           ),
                         ],
@@ -158,7 +159,7 @@ class CreateUserPageState extends State<CreateUserPage> {
                       padding: const EdgeInsets.only(top: 15.0),
                       child: RaisedButton(
                         color: Color(COLOR_ORANGE),
-                        child: Text("Register".toUpperCase(), style: TextStyle(color: Colors.white),),
+                        child: Text(LocalizationWidget.of(context).getLocalizeValue('register').toUpperCase(), style: TextStyle(color: Colors.white),),
                         onPressed: () async {
                           _globalError = '';
                           if (_formKey.currentState.validate()) {

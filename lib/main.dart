@@ -6,6 +6,7 @@ import 'package:benkyou/screens/CreateUserPage/CreateUserPage.dart';
 import 'package:benkyou/screens/DialogPage/DialogPage.dart';
 import 'package:benkyou/screens/DialogPage/InDialogPage.dart';
 import 'package:benkyou/screens/HomePage/HomePage.dart';
+import 'package:benkyou/screens/LessonHomePage/LessonHomePage.dart';
 import 'package:benkyou/screens/ListCardPage/ListCardPage.dart';
 import 'package:benkyou/screens/ListCardPage/ListCardPageArguments.dart';
 import 'package:benkyou/screens/ModifyCardPage/ModifyCardPage.dart';
@@ -15,6 +16,7 @@ import 'package:benkyou/screens/PreviewPublicDeckPage/PreviewPublicDeckPageArgum
 import 'package:benkyou/screens/ReviewPage/ReviewPage.dart';
 import 'package:benkyou/screens/ReviewPage/ReviewPageArguments.dart';
 import 'package:benkyou/utils/colors.dart';
+import 'package:benkyou/widgets/Localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
@@ -47,21 +49,22 @@ void main() {
         () =>
         runApp(MaterialApp(
           localizationsDelegates: [
-            // ... app-specific localization delegate[s] here
+            MyLocalizationsDelegate(),
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: [
-            const Locale('en'),
-            const Locale('fr'),
+            const Locale(EN_LOCALE),
+            const Locale(FR_LOCALE),
+            const Locale(JAP_LOCALE),
           ],
           title: 'Benkyou',
           navigatorKey: Get.key,
           theme: ThemeData(
             primaryColor: Color(COLOR_DARK_BLUE),
           ),
-          initialRoute: HomePage.routeName,
+          initialRoute: DeckHomePage.routeName,
           onGenerateRoute: (settings) {
             if (settings.name == DeckPage.routeName) {
               final DeckPageArguments args = settings.arguments;
@@ -133,6 +136,7 @@ void main() {
           },
           routes: {
             DeckHomePage.routeName: (context) => DeckHomePage(),
+            LessonHomePage.routeName: (context) => LessonHomePage(),
             HomePage.routeName: (context) => HomePage(),
             InDialogPage.routeName: (context) => InDialogPage(),
             DialogPage.routeName: (context) => DialogPage(),

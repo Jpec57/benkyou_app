@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'Localization.dart';
+
 class LoginDialog extends StatefulWidget{
   @override
   State<StatefulWidget> createState() => LoginDialogState();
@@ -41,7 +43,7 @@ class LoginDialogState extends State<LoginDialog>{
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(32.0))),
       contentPadding: EdgeInsets.all(15.0),
-      title: Text('Login'),
+      title: Text(LocalizationWidget.of(context).getLocalizeValue('login')),
       content: SingleChildScrollView(
         child: GestureDetector(
           onTap: () {
@@ -60,17 +62,17 @@ class LoginDialogState extends State<LoginDialog>{
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Text("Username / email"),
+                    Text(LocalizationWidget.of(context).getLocalizeValue('user_email')),
                     TextFormField(
                       controller: _usernameController,
                       validator: (value) {
                         if (value.isEmpty) {
-                          return 'Please enter your username or email';
+                          return LocalizationWidget.of(context).getLocalizeValue('enter_username_email');
                         }
                         return null;
                       },
                       decoration: InputDecoration(
-                          hintText: 'Enter your username',
+                          hintText: LocalizationWidget.of(context).getLocalizeValue('enter_username'),
                           labelStyle: TextStyle()),
                     ),
                     Padding(
@@ -79,18 +81,18 @@ class LoginDialogState extends State<LoginDialog>{
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          Text("Password"),
+                          Text(LocalizationWidget.of(context).getLocalizeValue('password')),
                           TextFormField(
                             obscureText: true,
                             controller: _passwordController,
                             validator: (value) {
                               if (value.isEmpty) {
-                                return 'Please enter your password';
+                                return LocalizationWidget.of(context).getLocalizeValue('enter_password');
                               }
                               return null;
                             },
                             decoration: InputDecoration(
-                                hintText: 'Enter your password',
+                                hintText: LocalizationWidget.of(context).getLocalizeValue('enter_password'),
                                 labelStyle: TextStyle()),
                           ),
                         ],
@@ -104,7 +106,7 @@ class LoginDialogState extends State<LoginDialog>{
                       child: RaisedButton(
                         color: Color(COLOR_DARK_BLUE),
                         child: Text(
-                            "Login".toUpperCase(),
+                            LocalizationWidget.of(context).getLocalizeValue('login').toUpperCase(),
                           style: TextStyle(
                             color: Colors.white
                           ),
@@ -115,7 +117,7 @@ class LoginDialogState extends State<LoginDialog>{
                             bool res = await loginRequest(_usernameController.text, _passwordController.text);
                             Navigator.pop(context);
                             if (!res){
-                              Get.snackbar('Error', 'An error occurred. Please contact the support for any help.', snackPosition: SnackPosition.BOTTOM);
+                              Get.snackbar(LocalizationWidget.of(context).getLocalizeValue(LocalizationWidget.of(context).getLocalizeValue('generic_error')), 'An error occurred. Please contact the support for any help.', snackPosition: SnackPosition.BOTTOM);
                             } else {
                               Navigator.pushReplacementNamed(
                                 context,
@@ -123,7 +125,7 @@ class LoginDialogState extends State<LoginDialog>{
                               );
                               SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
                               String username = sharedPreferences.getString('username');
-                              Get.snackbar('Welcome back $username!', '久しぶりだな麦わら', snackPosition: SnackPosition.BOTTOM);}
+                              Get.snackbar(LocalizationWidget.of(context).getLocalizeValue('welcome_back') + ' $username!', '久しぶりだな麦わら', snackPosition: SnackPosition.BOTTOM);}
                           }
                         },
                       ),
@@ -134,7 +136,7 @@ class LoginDialogState extends State<LoginDialog>{
                       child: RaisedButton(
                         color: Color(COLOR_ORANGE),
                         child: Text(
-                          "Not a member yet ? Register here".toUpperCase(),
+                          LocalizationWidget.of(context).getLocalizeValue('not_member_yet').toUpperCase(),
                           style: TextStyle(
                               color: Colors.white
                           ),

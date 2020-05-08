@@ -4,6 +4,7 @@ import 'package:benkyou/models/UserCard.dart';
 import 'package:benkyou/models/UserCardProcessedInfo.dart';
 import 'package:benkyou/models/UserCardReviewCount.dart';
 import 'package:benkyou/services/rest.dart';
+import 'package:flutter/material.dart';
 
 
 Future<bool> deleteUserCard(int userCardId) async {
@@ -37,6 +38,17 @@ Future<UserCard> updateCardAnswers(int userCardId, List<String> answers) async {
   return UserCard.fromId(card);
 }
 
+Future<List<UserCard>> getUserJapaneseCardsForDeck(int deckId) async {
+  HttpClientResponse cardResponse = await getLocaleGetRequestResponse("/users/decks/$deckId/language/$LANGUAGE_CODE_JAPANESE");
+  var cards = await getJsonFromHttpResponse(cardResponse);
+  if (!isRequestValid(cardResponse.statusCode)){
+    print(cards);
+    return null;
+  }
+  List<UserCard> parsedCards = decodeUserCardJsonArray(cards);
+  return parsedCards;
+}
+
 Future<List<UserCard>> getUserCardsForDeck(int deckId) async {
   HttpClientResponse cardResponse = await getLocaleGetRequestResponse("/users/decks/$deckId");
   var cards = await getJsonFromHttpResponse(cardResponse);
@@ -50,6 +62,17 @@ Future<List<UserCard>> getUserCardsForDeck(int deckId) async {
 
 Future<List<UserCard>> getUserCardsGroupByDeck() async {
   HttpClientResponse cardResponse = await getLocaleGetRequestResponse("/users/cards");
+  var cards = await getJsonFromHttpResponse(cardResponse);
+  if (!isRequestValid(cardResponse.statusCode)){
+    print(cards);
+    return null;
+  }
+  List<UserCard> parsedCards = decodeUserCardJsonArray(cards);
+  return parsedCards;
+}
+
+Future<List<UserCard>> getJapaneseUserCardsGroupByDeck() async {
+  HttpClientResponse cardResponse = await getLocaleGetRequestResponse("/users/cards/language/$LANGUAGE_CODE_JAPANESE");
   var cards = await getJsonFromHttpResponse(cardResponse);
   if (!isRequestValid(cardResponse.statusCode)){
     print(cards);

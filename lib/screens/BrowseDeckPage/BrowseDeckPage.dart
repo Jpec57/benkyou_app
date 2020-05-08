@@ -1,9 +1,9 @@
 import 'package:benkyou/models/Deck.dart';
-import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
 import 'package:benkyou/screens/PreviewPublicDeckPage/PreviewPublicDeckPage.dart';
 import 'package:benkyou/screens/PreviewPublicDeckPage/PreviewPublicDeckPageArguments.dart';
 import 'package:benkyou/services/api/deckRequests.dart';
 import 'package:benkyou/utils/colors.dart';
+import 'package:benkyou/widgets/Localization.dart';
 import 'package:benkyou/widgets/MainDrawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -75,7 +75,7 @@ class BrowseDeckPageState extends State<BrowseDeckPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Browse Online Deck'),
+        title: Text(LocalizationWidget.of(context).getLocalizeValue('browse_online_deck')),
       ),
       drawer: MainDrawer(),
       body: Padding(
@@ -87,13 +87,13 @@ class BrowseDeckPageState extends State<BrowseDeckPage> {
                 switch (deckSnapshot.connectionState) {
                   case ConnectionState.none:
                     return Center(
-                        child: Text('No deck available. Please create one.'));
+                        child: Text(LocalizationWidget.of(context).getLocalizeValue('no_deck_create')));
                   case ConnectionState.done:
                     if (deckSnapshot.hasData) {
                       if (deckSnapshot.data.length == 0) {
                         return Center(
                             child:
-                                Text('No deck available. Please create one.'));
+                                Text(LocalizationWidget.of(context).getLocalizeValue('no_deck_create')));
                       }
                       return GridView.count(
                           crossAxisCount: 2,
@@ -105,9 +105,9 @@ class BrowseDeckPageState extends State<BrowseDeckPage> {
                           }));
                     }
                     return Center(
-                        child: Text('No deck available. Please create one.'));
+                        child: Text(LocalizationWidget.of(context).getLocalizeValue('no_deck_create')));
                   default:
-                    return Center(child: Text('Loading...'));
+                    return Center(child: Text(LocalizationWidget.of(context).getLocalizeValue('loading')));
                 }
               })),
     );

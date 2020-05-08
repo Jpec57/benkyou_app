@@ -7,6 +7,7 @@ import 'package:benkyou/services/api/cardRequests.dart';
 import 'package:benkyou/services/translator/TextConversion.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/utils/string.dart';
+import 'package:benkyou/widgets/Localization.dart';
 import 'package:benkyou/widgets/MainDrawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -29,9 +30,9 @@ class ListCardPageState extends State<ListCardPage> {
 
   Future<List<UserCard>> _fetchUserCards() {
     if (widget.deckId != null) {
-      return getUserCardsForDeck(widget.deckId);
+      return getUserJapaneseCardsForDeck(widget.deckId);
     }
-    return getUserCardsGroupByDeck();
+    return getJapaneseUserCardsGroupByDeck();
   }
 
   @override
@@ -172,7 +173,7 @@ class ListCardPageState extends State<ListCardPage> {
             hintStyle: TextStyle(
               color: Colors.white60
             ),
-            hintText: 'Enter a word to search',
+            hintText: LocalizationWidget.of(context).getLocalizeValue('enter_search_word'),
               border: new UnderlineInputBorder(
                   borderSide: new BorderSide(
                       color: Colors.white
@@ -182,13 +183,15 @@ class ListCardPageState extends State<ListCardPage> {
         ),
       );
     }
-    return Text('My cards');
+    return Text(LocalizationWidget.of(context).getLocalizeValue('my_cards'));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+//        bottomOpacity: 0.0,
+//        elevation: 0.0,
         title: _renderResearchBar(),
         actions: <Widget>[
           IconButton(
@@ -211,21 +214,47 @@ class ListCardPageState extends State<ListCardPage> {
               AsyncSnapshot<List<UserCard>> cardSnapshot) {
             switch (cardSnapshot.connectionState) {
               case ConnectionState.waiting:
-                return Center(child: Text('Loading...'));
+                return Center(child: Text(LocalizationWidget.of(context).getLocalizeValue('loading')));
               case ConnectionState.done:
                 if (cardSnapshot.hasData && cardSnapshot.data.isNotEmpty){
                   return Column(
                     children: <Widget>[
+                                          //TODO add filters ?
+
+//                      Container(
+//                        decoration: BoxDecoration(
+//                            color: Color(COLOR_DARK_BLUE),
+//                          boxShadow: [
+//                            BoxShadow(
+//                              color: Colors.black,
+//                              blurRadius: 1.0,
+//                              spreadRadius: 0.0,
+//                              offset: Offset(2.0, 2.0), // shadow direction: bottom right
+//                            )
+//                          ],
+//                        ),
+//                        child: ExpansionTile(
+//                          title: Center(
+//                              child: Text('More filters', style: TextStyle(color: Colors.white),)
+//                          ),
+//                          children: <Widget>[
+//                            Container(
+//                              child: Text('Bonjour toi'),
+//                            )
+//                          ],
+//
+//                        ),
+//                      ),
                       Expanded(child: _renderCardList(cardSnapshot.data, _textEditingController.text)),
                     ],
                   );
                 }
                 return Center(
-                  child: Text('There is no card. Please create one.'),
+                  child: Text(LocalizationWidget.of(context).getLocalizeValue('no_card_create_one')),
                 );
               default:
                 return Center(
-                  child: Text('There is no card. Please create one.'),
+                  child: Text(LocalizationWidget.of(context).getLocalizeValue('no_card_create_one')),
                 );
             }
           }),

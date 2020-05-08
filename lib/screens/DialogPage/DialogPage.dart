@@ -1,4 +1,5 @@
 import 'package:benkyou/services/rest.dart';
+import 'package:benkyou/widgets/Localization.dart';
 import 'package:benkyou/widgets/MainDrawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -70,7 +71,7 @@ class DialogPageState extends State<DialogPage> {
               color: Colors.red,
               height: 300,
               child: Text(
-                'Start',
+                LocalizationWidget.of(context).getLocalizeValue('start'),
               ),
             ),
           ),
@@ -90,7 +91,7 @@ class DialogPageState extends State<DialogPage> {
               color: Colors.blue,
               height: 100,
               child: Text(
-                'Stop',
+                LocalizationWidget.of(context).getLocalizeValue('stop'),
               ),
             ),
           ),
