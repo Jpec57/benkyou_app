@@ -163,6 +163,9 @@ class PreviewPublicDeckPageState extends State<PreviewPublicDeckPage>{
                     GestureDetector(
                       onTap: () async {
                         SharedPreferences shared = await SharedPreferences.getInstance();
+                        if (shared.get('apiToken') == null){
+                          Get.snackbar(LocalizationWidget.of(context).getLocalizeValue('error'), LocalizationWidget.of(context).getLocalizeValue('must_be_connected_message'), snackPosition: SnackPosition.BOTTOM);
+                        }
                         if (shared.get('username') != deck.author.username){
                           showLoadingDialog(context);
                           Deck importedDeck = await importDeck(deck.id);

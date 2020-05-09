@@ -7,6 +7,8 @@ import 'package:benkyou/screens/DialogPage/DialogPage.dart';
 import 'package:benkyou/screens/DialogPage/InDialogPage.dart';
 import 'package:benkyou/screens/HomePage/HomePage.dart';
 import 'package:benkyou/screens/LessonHomePage/LessonHomePage.dart';
+import 'package:benkyou/screens/LessonHomePage/LessonPage.dart';
+import 'package:benkyou/screens/LessonHomePage/LessonPageArguments.dart';
 import 'package:benkyou/screens/ListCardPage/ListCardPage.dart';
 import 'package:benkyou/screens/ListCardPage/ListCardPageArguments.dart';
 import 'package:benkyou/screens/ModifyCardPage/ModifyCardPage.dart';
@@ -83,6 +85,17 @@ void main() {
                 builder: (context) {
                   return ReviewPage(
                     cards: args.cards,
+                  );
+                },
+              );
+            }
+
+            if (settings.name == LessonPage.routeName) {
+              final LessonPageArguments args = settings.arguments;
+              return MaterialPageRoute(
+                builder: (context) {
+                  return LessonPage(
+                    lessonId: args.lessonId,
                   );
                 },
               );
