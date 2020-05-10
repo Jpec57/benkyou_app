@@ -1,5 +1,6 @@
 import 'package:benkyou/models/Deck.dart';
 import 'package:benkyou/screens/BrowseDeckPage/BrowseDeckPage.dart';
+import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
 import 'package:benkyou/screens/DeckPage/DeckPage.dart';
 import 'package:benkyou/screens/DeckPage/DeckPageArguments.dart';
 import 'package:benkyou/services/api/deckRequests.dart';
@@ -165,18 +166,24 @@ class PreviewPublicDeckPageState extends State<PreviewPublicDeckPage>{
                         SharedPreferences shared = await SharedPreferences.getInstance();
                         if (shared.get('apiToken') == null){
                           Get.snackbar(LocalizationWidget.of(context).getLocalizeValue('error'), LocalizationWidget.of(context).getLocalizeValue('must_be_connected_message'), snackPosition: SnackPosition.BOTTOM);
-                        }
-                        if (shared.get('username') != deck.author.username){
-                          showLoadingDialog(context);
-                          Deck importedDeck = await importDeck(deck.id);
                           Navigator.pop(context);
                           Navigator.pushNamed(
                               context,
-                              DeckPage.routeName,
-                              arguments: DeckPageArguments(importedDeck.id)
+                              DeckHomePage.routeName,
                           );
                         } else {
-                          Get.snackbar(LocalizationWidget.of(context).getLocalizeValue('error'), LocalizationWidget.of(context).getLocalizeValue('import_own_deck_error'), snackPosition: SnackPosition.BOTTOM);
+                          if (shared.get('username') != deck.author.username){
+                            showLoadingDialog(context);
+                            Deck importedDeck = await importDeck(deck.id);
+                            Navigator.pop(context);
+                            Navigator.pushNamed(
+                                context,
+                                DeckPage.routeName,
+                                arguments: DeckPageArguments(importedDeck.id)
+                            );
+                          } else {
+                            Get.snackbar(LocalizationWidget.of(context).getLocalizeValue('error'), LocalizationWidget.of(context).getLocalizeValue('import_own_deck_error'), snackPosition: SnackPosition.BOTTOM);
+                          }
                         }
                       },
                       child: Container(
