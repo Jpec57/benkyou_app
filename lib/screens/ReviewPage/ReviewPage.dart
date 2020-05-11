@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:benkyou/models/Answer.dart';
 import 'package:benkyou/models/UserCard.dart';
 import 'package:benkyou/models/UserCardProcessedInfo.dart';
+import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
 import 'package:benkyou/screens/DeckPage/DeckPage.dart';
 import 'package:benkyou/screens/DeckPage/DeckPageArguments.dart';
 import 'package:benkyou/screens/ReviewPage/LeaveReviewDialog.dart';
@@ -11,6 +12,7 @@ import 'package:benkyou/services/api/cardRequests.dart';
 import 'package:benkyou/services/translator/TextConversion.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/utils/string.dart';
+import 'package:benkyou/widgets/CompleteTextDialog.dart';
 import 'package:benkyou/widgets/LoadingCircle.dart';
 import 'package:benkyou/widgets/Localization.dart';
 import 'package:flare_flutter/flare_actor.dart';
@@ -18,6 +20,7 @@ import 'package:flare_flutter/flare_controls.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:get/get.dart';
 
 class ReviewPage extends StatefulWidget {
   static const routeName = '/review';
@@ -39,6 +42,7 @@ class ReviewPageState extends State<ReviewPage> {
   final FlareControls _validAnswerAnimControls = FlareControls();
   final FlareControls _incorrectAnswerAnimControls = FlareControls();
 
+  FocusNode _focusNode;
   TextEditingController _answerController;
   List<UserCard> _remainingCards;
   List<int> _processedCardIds;
@@ -60,8 +64,14 @@ class ReviewPageState extends State<ReviewPage> {
     currentCard = _remainingCards[currentIndex];
     //first card
     initializeTts();
-
     _answerController = new TextEditingController();
+    _focusNode = new FocusNode();
+  }
+
+  void updateCurrentUserCard(UserCard updatedCard){
+    setState(() {
+      currentCard = updatedCard;
+    });
   }
 
   initializeTts() {
@@ -86,7 +96,8 @@ class ReviewPageState extends State<ReviewPage> {
       });
     });
     bool toEnglish = currentCard.card.answerLanguageCode == 0;
-    _speak(currentCard.card.question, toEnglish ? "ja-JP" : "en-GB");
+    String toSpeak = currentCard.card.question.split(',')[0];
+    _speak(toSpeak, toEnglish ? "ja-JP" : "en-GB");
   }
 
   Future _speak(String text, String languageCode) async {
@@ -115,6 +126,7 @@ class ReviewPageState extends State<ReviewPage> {
   @override
   void dispose() {
     super.dispose();
+    _focusNode.dispose();
     _flutterTts.stop();
   }
 
@@ -133,9 +145,39 @@ class ReviewPageState extends State<ReviewPage> {
 
   Widget _renderUserNotes(String userNote) {
     if (userNote != null) {
-      return Text(currentCard.userNote);
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(currentCard.userNote),
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: Icon(Icons.add_circle),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(LocalizationWidget.of(context).getLocalizeValue('edit_note')),
+                ),
+              ],
+            ),
+          )
+        ],
+      );
     }
-    return Text(LocalizationWidget.of(context).getLocalizeValue('add_note'));
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right: 8.0),
+          child: Icon(Icons.add_circle),
+        ),
+        Text(LocalizationWidget.of(context).getLocalizeValue('add_note')),
+      ],
+    );
   }
 
   Widget _renderAnswerPart() {
@@ -154,13 +196,48 @@ class ReviewPageState extends State<ReviewPage> {
           ),
           Padding(
             padding:
-                const EdgeInsets.only(top: 8.0, left: 8, right: 8, bottom: 30),
+                const EdgeInsets.only(top: 8.0, left: 8, right: 8, bottom: 8),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: _renderAnswers(currentCard.card.answers),
             ),
           ),
+          Container(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 30.0),
+              child: GestureDetector(
+                onTap: (){
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) => CompleteTextDialog(
+                        text: '', positiveCallback: (text) async{
+                          UserCard updatedUserCard = await addUserAnswer(currentCard.id, text);
+                          if (updatedUserCard != null){
+                            updateCurrentUserCard(updatedUserCard);
+                          } else {
+                            Get.snackbar(LocalizationWidget.of(context).getLocalizeValue('error'), LocalizationWidget.of(context).getLocalizeValue('generic_error'), snackPosition: SnackPosition.BOTTOM);
+                          }
+                      },
+                      ));
+                },
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Icon(Icons.add_circle),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                      child: Text(LocalizationWidget.of(context).getLocalizeValue('add_note')),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+
           Text(LocalizationWidget.of(context).getLocalizeValue('users_note')),
           Divider(
             thickness: 1,
@@ -168,7 +245,26 @@ class ReviewPageState extends State<ReviewPage> {
           Container(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: _renderUserNotes(currentCard.userNote),
+              child: GestureDetector(
+                onTap: (){
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) => CompleteTextDialog(
+                        text: currentCard.userNote, positiveCallback: (text) async{
+                          UserCard updatedUserCard = await postUserNote(currentCard.id, text);
+                          if (updatedUserCard != null){
+                            updateCurrentUserCard(updatedUserCard);
+                          } else {
+                            Get.snackbar(LocalizationWidget.of(context).getLocalizeValue('error'), LocalizationWidget.of(context).getLocalizeValue('generic_error'), snackPosition: SnackPosition.BOTTOM);
+                          }
+                      },
+                      ));
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                  child: _renderUserNotes(currentCard.userNote),
+                ),
+              ),
             ),
           )
         ],
@@ -205,12 +301,14 @@ class ReviewPageState extends State<ReviewPage> {
       currentIndex = (length == 1) ? 0 : generateRandomIndex(_remainingCards);
       currentCard = _remainingCards[currentIndex];
       bool toEnglish = currentCard.card.answerLanguageCode == 0;
-      _speak(currentCard.card.question, toEnglish ? "ja-JP" : "en-GB");
+      String toSpeak = currentCard.card.question.split(',')[0];
+      _speak(toSpeak, toEnglish ? "ja-JP" : "en-GB");
     } else {
       await _sendReview(_processedCards);
       Navigator.pushReplacementNamed(context, DeckPage.routeName,
           arguments: DeckPageArguments(currentCard.deck.id));
     }
+    FocusScope.of(context).requestFocus(_focusNode);
     setState(() {
       _answerController.clear();
     });
@@ -283,10 +381,18 @@ class ReviewPageState extends State<ReviewPage> {
         title: Text(LocalizationWidget.of(context).getLocalizeValue('review')),
         leading: IconButton(
           onPressed: () {
-            showDialog(
-                context: context,
-                builder: (BuildContext context) => LeaveReviewDialog(
-                    processedCards: _processedCards, deckId: widget.deckId));
+            if (_processedCards == null || _processedCards.length == 0){
+              if (widget.deckId != null){
+                Navigator.pushReplacementNamed(context, DeckPage.routeName, arguments: DeckPageArguments(widget.deckId));
+              } else {
+                Navigator.pushReplacementNamed(context, DeckHomePage.routeName);
+              }
+            } else {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) => LeaveReviewDialog(
+                      processedCards: _processedCards, deckId: widget.deckId));
+            }
           },
           icon: Icon(Icons.arrow_back),
         ),
@@ -300,21 +406,23 @@ class ReviewPageState extends State<ReviewPage> {
         },
         child: Column(
           children: <Widget>[
-            Expanded(
-              flex: 1,
+            IntrinsicHeight(
               child: Container(
+                constraints: BoxConstraints(
+                  minHeight: MediaQuery.of(context).size.height * 0.2
+                ),
                 color: Color(COLOR_GREY),
                 child: Stack(
                   children: <Widget>[
                     Align(
                       child: GestureDetector(
                         onTap: () {
+                          String toSpeak = currentCard != null
+                              ? currentCard.card.question.split(',')[0] : '';
                           isPlaying
                               ? _stop()
                               : _speak(
-                                  currentCard != null
-                                      ? currentCard.card.question
-                                      : '',
+                                  toSpeak,
                                   toEnglish ? "ja-JP" : "en-GB");
                         },
                         child: Padding(
@@ -363,66 +471,74 @@ class ReviewPageState extends State<ReviewPage> {
                 ),
               ),
             ),
-            Container(
-              color: Colors.black,
-              height: 50,
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        (toEnglish
-                                ? LocalizationWidget.of(context)
-                                    .getLocalizeValue('english')
-                                : LocalizationWidget.of(context)
-                                    .getLocalizeValue('japanese'))
-                            .toUpperCase(),
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                  Opacity(
-                    opacity: _isPlayingAnimation && isAnswerCorrect ? 1 : 0,
-                    child: SizedBox(
-                      height: 50,
-                      width: 50,
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            _validAnswerAnimControls.play("Untitled");
-                          });
-                        },
-                        child: FlareActor(
-                          'lib/animations/correct_check.flr',
-                          animation: "Untitled",
-                          controller: _validAnswerAnimControls,
-                          shouldClip: false,
+            IntrinsicHeight(
+              child: Container(
+                color: Colors.black,
+                child: Stack(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      child: Center(
+                        child: Text(
+                          (toEnglish
+                              ? LocalizationWidget.of(context)
+                              .getLocalizeValue('english')
+                              : LocalizationWidget.of(context)
+                              .getLocalizeValue('japanese'))
+                              .toUpperCase(),
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
-                  ),
-                  Opacity(
-                    opacity: _isPlayingAnimation && !isAnswerCorrect ? 1 : 0,
-                    child: SizedBox(
-                      height: 50,
-                      width: 50,
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            _incorrectAnswerAnimControls.play("Error");
-                          });
-                        },
-                        child: FlareActor(
-                          'lib/animations/wrong_answer.flr',
-                          animation: "Error",
-                          controller: _incorrectAnswerAnimControls,
-                          shouldClip: false,
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Opacity(
+                        opacity: _isPlayingAnimation && isAnswerCorrect ? 1 : 0,
+                        child: SizedBox(
+                          height: 50,
+                          width: 50,
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                _validAnswerAnimControls.play("Untitled");
+                              });
+                            },
+                            child: FlareActor(
+                              'lib/animations/correct_check.flr',
+                              animation: "Untitled",
+                              controller: _validAnswerAnimControls,
+                              shouldClip: false,
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  )
-                ],
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Opacity(
+                        opacity: _isPlayingAnimation && !isAnswerCorrect ? 1 : 0,
+                        child: SizedBox(
+                          height: 50,
+                          width: 50,
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                _incorrectAnswerAnimControls.play("Error");
+                              });
+                            },
+                            child: FlareActor(
+                              'lib/animations/wrong_answer.flr',
+                              animation: "Error",
+                              controller: _incorrectAnswerAnimControls,
+                              shouldClip: false,
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
             Container(
@@ -433,9 +549,11 @@ class ReviewPageState extends State<ReviewPage> {
                   Expanded(
                     child: Container(
                       color: _setFieldColor(),
-                      child: TextField(
+                      child: TextFormField(
+                        focusNode: _focusNode,
                         textInputAction: TextInputAction.go,
-                        onSubmitted: (value) {
+                        autocorrect: false,
+                        onFieldSubmitted: (value) {
                           if (_answerController.text.isNotEmpty) {
                             _processAnswer();
                           }
@@ -447,7 +565,6 @@ class ReviewPageState extends State<ReviewPage> {
                                   .getLocalizeValue('answer')
                               : '答え',
                           labelStyle: TextStyle(),
-//                          fillColor: Colors.green
                         ),
                         textAlign: TextAlign.center,
                         autofocus: true,
@@ -492,12 +609,3 @@ class ReviewPageState extends State<ReviewPage> {
     );
   }
 }
-
-/*
-                  Container(
-                    child: InkWell(
-                      child: FlareActor('lib/animations/checkmark_anim.flr'
-                      ),
-                    ),
-                  )
- */

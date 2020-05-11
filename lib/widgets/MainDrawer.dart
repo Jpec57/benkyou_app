@@ -3,6 +3,7 @@ import 'package:benkyou/screens/HomePage/HomePage.dart';
 import 'package:benkyou/screens/LessonHomePage/LessonHomePage.dart';
 import 'package:benkyou/screens/ListCardPage/ListCardPage.dart';
 import 'package:benkyou/screens/ListCardPage/ListCardPageArguments.dart';
+import 'package:benkyou/screens/ProfilePage/ProfilePage.dart';
 import 'package:benkyou/services/api/userRequests.dart';
 import 'package:benkyou/widgets/LoadingCircle.dart';
 import 'package:benkyou/widgets/Localization.dart';
@@ -164,6 +165,15 @@ class MainDrawerState extends State<MainDrawer>{
             },
           ),
           ListTile(
+            title: Text(LocalizationWidget.of(context).getLocalizeValue('my_profile')),
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                ProfilePage.routeName,
+              );
+            },
+          ),
+          ListTile(
             title: Text(LocalizationWidget.of(context).getLocalizeValue('my_decks')),
             onTap: () {
               Navigator.pushNamed(
@@ -173,21 +183,21 @@ class MainDrawerState extends State<MainDrawer>{
             },
           ),
           ListTile(
+            title: Text(LocalizationWidget.of(context).getLocalizeValue('my_cards')),
+            onTap: () {
+              Navigator.pushNamed(
+                  context,
+                  ListCardPage.routeName,
+                  arguments: ListCardPageArguments()
+              );
+            },
+          ),
+          ListTile(
             title: Text(LocalizationWidget.of(context).getLocalizeValue('browse_online_decks')),
             onTap: () {
               Navigator.pushNamed(
                 context,
                 BrowseDeckPage.routeName,
-              );
-            },
-          ),
-          ListTile(
-            title: Text(LocalizationWidget.of(context).getLocalizeValue('my_cards')),
-            onTap: () {
-              Navigator.pushNamed(
-                context,
-                ListCardPage.routeName,
-                arguments: ListCardPageArguments()
               );
             },
           ),

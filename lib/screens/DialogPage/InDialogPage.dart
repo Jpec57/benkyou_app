@@ -129,7 +129,6 @@ class InDialogPageState extends State<InDialogPage> with SingleTickerProviderSta
       int randomIndex = generateRandomIndex(possibleNextQuestions);
       return lastAnswer.possibleAnswers[randomIndex];
     } else {
-      print('end');
       return null;
     }
   }
@@ -147,7 +146,6 @@ class InDialogPageState extends State<InDialogPage> with SingleTickerProviderSta
             return GestureDetector(
               onTap: () async {
                 await _speak(answer.text).whenComplete((){
-                  print('end');
                 });
 
                 DialogText nextQuestion = _getNextQuestion(answer);

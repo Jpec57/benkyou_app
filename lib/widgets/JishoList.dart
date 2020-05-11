@@ -58,7 +58,7 @@ class JishoListState extends State<JishoList> {
               case ConnectionState.waiting:
                 return Text(LocalizationWidget.of(context).getLocalizeValue('searching'));
               case ConnectionState.none:
-                return Text(LocalizationWidget.of(context).getLocalizeValue('no_connection'));
+                return Text(LocalizationWidget.of(context).getLocalizeValue('no_internet_connection'));
               default:
                 return Text(LocalizationWidget.of(context).getLocalizeValue('empty'));
             }

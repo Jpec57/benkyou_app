@@ -76,9 +76,11 @@ class LocalizationWidget {
       'no_data': "No data.",
       'stop_review': 'Stop review',
       'quit_review_before_end_mess': "Do you want to leave the review ? Your progression will be saved.",
+      'save': 'Save',
       'no': "No",
       'yes': 'Yes',
       'add_note': 'Add a note',
+      'edit_note': 'Edit note',
       'possible_answers': 'Possible answers',
       'users_note': "User's note",
       'review': 'Review',
@@ -106,6 +108,10 @@ class LocalizationWidget {
       'cancel': 'Cancel',
       'unpublish': 'Unpublish',
       'publish': 'Publish',
+      'like_lesson_or not': 'Show your love',
+      'modify_text': 'Modify text',
+      'enter_something_here': 'Enter something here',
+      'my_profile': 'My profile',
       'unpublish_your_deck': 'Unpublish your deck',
       'publish_your_deck': 'Publish your deck',
       'confirm_private_deck': "Are you sure you want to make you deck private again ? All copies already done by users will not be deleted.",
@@ -118,7 +124,11 @@ class LocalizationWidget {
       'prop_of_answer': 'Propositions of answer',
       'browse_online_deck': 'Browse Online Deck',
       'no_deck_create': 'No deck available. Please create one.',
+      'powered_by_jisho': 'powered by Jisho',
+      'no_internet_connection': 'Internet connection issue: please refresh again later.',
       'create_card': 'Create a card',
+      'create_grammar_card': 'Create a grammar card',
+      'create_vocab_card': 'Create a vocabulary card',
       'create_another_card': 'Create another card',
       'create_card_success': 'Your card have been successfully created !',
     },
@@ -134,6 +144,9 @@ class LocalizationWidget {
 
   String getLocalizeValue(String key){
     if (!_localizedValues[locale.languageCode].containsKey(key)){
+      if (!_localizedValues[EN_LOCALE].containsKey(key)){
+        return key;
+      }
       return _localizedValues[EN_LOCALE][key];
     }
     return _localizedValues[locale.languageCode][key];

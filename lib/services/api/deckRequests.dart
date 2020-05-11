@@ -44,7 +44,6 @@ Future<List<Deck>> getPublicDecks() async {
 }
 
 Future<List<Deck>> getPersonalDecks() async {
-  print('start');
   List<Deck> parsedDecks = [];
   HttpClientResponse response = await getLocaleGetRequestResponse("/users/decks");
   if (!isRequestValid(response.statusCode)){
@@ -56,7 +55,6 @@ Future<List<Deck>> getPersonalDecks() async {
   for (Map<String, dynamic> deck in decks){
     parsedDecks.add(Deck.fromJson(deck));
   }
-  print(parsedDecks);
   return parsedDecks;
 }
 

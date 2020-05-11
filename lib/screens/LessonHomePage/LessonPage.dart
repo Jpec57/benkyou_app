@@ -102,10 +102,13 @@ class LessonPageState extends State<LessonPage> {
                   children: [
                     _renderVideo(lessonSnapshot.data),
                     Expanded(
-                      child: Markdown(
-                        controller: controller,
-                        selectable: true,
-                        data: lessonSnapshot.data.content,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Markdown(
+                          controller: controller,
+                          selectable: true,
+                          data: lessonSnapshot.data.content,
+                        ),
                       ),
                     ),
                   ],

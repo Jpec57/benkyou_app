@@ -132,7 +132,7 @@ class DeckHomePageState extends State<DeckHomePage> {
                 switch (deckSnapshot.connectionState) {
                   case ConnectionState.none:
                     return Center(
-                        child: Text(LocalizationWidget.of(context).getLocalizeValue('no_deck_create')));
+                        child: Text(LocalizationWidget.of(context).getLocalizeValue('no_internet_connection')));
                   case ConnectionState.done:
                     if (deckSnapshot.hasData) {
                       if (deckSnapshot.data.length == 0) {

@@ -15,6 +15,7 @@ import 'package:benkyou/screens/ModifyCardPage/ModifyCardPage.dart';
 import 'package:benkyou/screens/ModifyCardPage/ModifyCardPageArguments.dart';
 import 'package:benkyou/screens/PreviewPublicDeckPage/PreviewPublicDeckPage.dart';
 import 'package:benkyou/screens/PreviewPublicDeckPage/PreviewPublicDeckPageArguments.dart';
+import 'package:benkyou/screens/ProfilePage/ProfilePage.dart';
 import 'package:benkyou/screens/ReviewPage/ReviewPage.dart';
 import 'package:benkyou/screens/ReviewPage/ReviewPageArguments.dart';
 import 'package:benkyou/utils/colors.dart';
@@ -155,6 +156,7 @@ void main() {
             DialogPage.routeName: (context) => DialogPage(),
             CreateUserPage.routeName: (context) => CreateUserPage(),
             BrowseDeckPage.routeName: (context) => BrowseDeckPage(),
+            ProfilePage.routeName: (context) => ProfilePage(),
           },)
         ),
     onError: (Object error, StackTrace stackTrace) {

@@ -115,6 +115,30 @@ Future<bool> postReview(List<UserCardProcessedInfo> cards) async {
   return true;
 }
 
+Future<UserCard> postUserNote(int cardId, String text) async {
+  Map body = new Map();
+  body.putIfAbsent("text", ()=> text);
+  HttpClientResponse response = await getLocalePostRequestResponse("/cards/$cardId/note", body);
+  var card = await getJsonFromHttpResponse(response);
+  if (!isRequestValid(response.statusCode)){
+    print(response);
+    return null;
+  }
+  return UserCard.fromJson(card);
+}
+
+Future<UserCard> addUserAnswer(int cardId, String text) async {
+  Map body = new Map();
+  body.putIfAbsent("text", ()=> text);
+  HttpClientResponse response = await getLocalePostRequestResponse("/cards/$cardId/answers", body);
+  var card = await getJsonFromHttpResponse(response);
+  if (!isRequestValid(response.statusCode)){
+    print(response);
+    return null;
+  }
+  return UserCard.fromJson(card);
+}
+
 
 ///  DECK CARDS
 

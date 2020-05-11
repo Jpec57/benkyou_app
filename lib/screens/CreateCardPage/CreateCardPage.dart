@@ -45,8 +45,7 @@ class CreateCardPageState extends State<CreateCardPage> {
   final FocusNode _kanaFocusNode = FocusNode();
   bool _isQuestionErrorVisible = false;
   bool _isReversible = true;
-  GlobalKey<AddAnswerCardWidgetState> answerWidgetKey =
-      new GlobalKey<AddAnswerCardWidgetState>();
+  GlobalKey<AddAnswerCardWidgetState> answerWidgetKey;
 
   void triggerJishoResearch(String text) async {
     setState(() {
@@ -57,7 +56,7 @@ class CreateCardPageState extends State<CreateCardPage> {
   @override
   void initState() {
     super.initState();
-    _bottomButtonLabel = LocalizationWidget.of(context).getLocalizeValue('next');
+    answerWidgetKey = new GlobalKey<AddAnswerCardWidgetState>();
     _kanjiEditingController = new TextEditingController();
     _kanaEditingController = new TextEditingController();
 
@@ -336,6 +335,13 @@ class CreateCardPageState extends State<CreateCardPage> {
                           textAlign: TextAlign.start,
                         ),
                       ),
+                      Container(
+                        child: Text(
+                          LocalizationWidget.of(context).getLocalizeValue('powered_by_jisho'),
+                          style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+                          textAlign: TextAlign.start,
+                        ),
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 30.0),
                         child: JishoList(
@@ -404,6 +410,8 @@ class CreateCardPageState extends State<CreateCardPage> {
 
   @override
   Widget build(BuildContext context) {
+    _bottomButtonLabel = LocalizationWidget.of(context).getLocalizeValue('next').toUpperCase();
+
     return WillPopScope(
       onWillPop: () async {
         Navigator.of(context).pushReplacementNamed(DeckHomePage.routeName);
