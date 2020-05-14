@@ -5,17 +5,20 @@ import 'package:benkyou/screens/CreateCardPage/CreateCardPageArguments.dart';
 import 'package:benkyou/screens/CreateUserPage/CreateUserPage.dart';
 import 'package:benkyou/screens/DialogPage/DialogPage.dart';
 import 'package:benkyou/screens/DialogPage/InDialogPage.dart';
+import 'package:benkyou/screens/GrammarReviewPage/GrammarReviewPage.dart';
 import 'package:benkyou/screens/HomePage/HomePage.dart';
 import 'package:benkyou/screens/LessonHomePage/LessonHomePage.dart';
 import 'package:benkyou/screens/LessonHomePage/LessonPage.dart';
 import 'package:benkyou/screens/LessonHomePage/LessonPageArguments.dart';
 import 'package:benkyou/screens/ListCardPage/ListCardPage.dart';
 import 'package:benkyou/screens/ListCardPage/ListCardPageArguments.dart';
+import 'package:benkyou/screens/LoginPage/LoginPage.dart';
 import 'package:benkyou/screens/ModifyCardPage/ModifyCardPage.dart';
 import 'package:benkyou/screens/ModifyCardPage/ModifyCardPageArguments.dart';
 import 'package:benkyou/screens/PreviewPublicDeckPage/PreviewPublicDeckPage.dart';
 import 'package:benkyou/screens/PreviewPublicDeckPage/PreviewPublicDeckPageArguments.dart';
 import 'package:benkyou/screens/ProfilePage/ProfilePage.dart';
+import 'package:benkyou/screens/ProfilePage/ProfilePageArguments.dart';
 import 'package:benkyou/screens/ReviewPage/ReviewPage.dart';
 import 'package:benkyou/screens/ReviewPage/ReviewPageArguments.dart';
 import 'package:benkyou/utils/colors.dart';
@@ -135,6 +138,17 @@ void main() {
               );
             }
 
+            if (settings.name == ProfilePage.routeName) {
+              final ProfilePageArguments args = settings.arguments;
+              return MaterialPageRoute(
+                builder: (context) {
+                  return ProfilePage(
+                    userId: args != null ? args.userId : null,
+                  );
+                },
+              );
+            }
+
             if (settings.name == PreviewPublicDeckPage.routeName) {
               final PreviewPublicDeckPageArguments args = settings.arguments;
               return MaterialPageRoute(
@@ -150,13 +164,14 @@ void main() {
           },
           routes: {
             DeckHomePage.routeName: (context) => DeckHomePage(),
+            GrammarReviewPage.routeName: (context) => GrammarReviewPage(),
+            LoginPage.routeName: (context) => LoginPage(),
             LessonHomePage.routeName: (context) => LessonHomePage(),
             HomePage.routeName: (context) => HomePage(),
             InDialogPage.routeName: (context) => InDialogPage(),
             DialogPage.routeName: (context) => DialogPage(),
             CreateUserPage.routeName: (context) => CreateUserPage(),
             BrowseDeckPage.routeName: (context) => BrowseDeckPage(),
-            ProfilePage.routeName: (context) => ProfilePage(),
           },)
         ),
     onError: (Object error, StackTrace stackTrace) {

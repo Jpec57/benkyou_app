@@ -118,6 +118,7 @@ class DeckPageState extends State<DeckPage> {
                 case ConnectionState.done:
                   if (userCardSnapshot.hasData) {
                     List<UserCard> cards = userCardSnapshot.data;
+                    print(cards);
                     return SingleChildScrollView(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -203,10 +204,22 @@ class DeckPageState extends State<DeckPage> {
                     );
                   }
                   return Center(
-                      child: Text(LocalizationWidget.of(context).getLocalizeValue('empty_deck_create_card')));
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(LocalizationWidget.of(context).getLocalizeValue('empty_deck_create_card'), textAlign: TextAlign.center,),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 20.0),
+                              child: Text(LocalizationWidget.of(context).getLocalizeValue('card_explanation'), textAlign: TextAlign.center),
+                            ),
+                          ],
+                        ),
+                      ));
                 default:
                   return Center(
-                      child: Text(LocalizationWidget.of(context).getLocalizeValue('empty_deck_create_card')));
+                      child: Text(LocalizationWidget.of(context).getLocalizeValue('card_explanation')));
               }
             },
           ),

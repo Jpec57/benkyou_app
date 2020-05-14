@@ -11,20 +11,24 @@ class DeckCard {
   int languageCode;
   int answerLanguageCode;
   bool isReversible;
+  int type;
+  bool isActivated;
 
   DeckCard.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         answers = decodeAnswerJsonArray(json['answers']),
         question = json['question'],
         hint = json['hint'],
+        type = json['type'],
         languageCode = json['languageCode'],
         answerLanguageCode = json['answerLanguageCode'],
-        isReversible = json['isReversible'] == 'true'
+        isReversible = json['isReversible'] == 'true',
+        isActivated = json['isActivated'] == 'true'
   ;
 
   @override
   String toString() {
-    return 'DeckCard{id: $id, answers: $answers, question: $question, hint: $hint, languageCode: $languageCode, answerLanguageCode: $answerLanguageCode, isReversible: $isReversible}';
+    return 'DeckCard{id: $id, type: $type, isActivated: $isActivated, answers: $answers, question: $question, hint: $hint, languageCode: $languageCode, answerLanguageCode: $answerLanguageCode, isReversible: $isReversible}';
   }
 }
 

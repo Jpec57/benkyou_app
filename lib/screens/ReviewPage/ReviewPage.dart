@@ -69,6 +69,7 @@ class ReviewPageState extends State<ReviewPage> {
   }
 
   void updateCurrentUserCard(UserCard updatedCard){
+    _remainingCards[currentIndex] = updatedCard;
     setState(() {
       currentCard = updatedCard;
     });

@@ -27,5 +27,6 @@ List<DialogText> decodePossibleAnswersJsonArray(array){
   for (var diagText in array){
     cards.add(DialogText.fromJson(diagText));
   }
+  print(cards);
   return cards;
 }

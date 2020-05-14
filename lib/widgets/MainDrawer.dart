@@ -1,4 +1,7 @@
 import 'package:benkyou/screens/BrowseDeckPage/BrowseDeckPage.dart';
+import 'package:benkyou/screens/DialogPage/DialogPage.dart';
+import 'package:benkyou/screens/DialogPage/InDialogPage.dart';
+import 'package:benkyou/screens/GrammarReviewPage/GrammarReviewPage.dart';
 import 'package:benkyou/screens/HomePage/HomePage.dart';
 import 'package:benkyou/screens/LessonHomePage/LessonHomePage.dart';
 import 'package:benkyou/screens/ListCardPage/ListCardPage.dart';
@@ -156,15 +159,6 @@ class MainDrawerState extends State<MainDrawer>{
             },
           ),
           ListTile(
-            title: Text(LocalizationWidget.of(context).getLocalizeValue('lessons')),
-            onTap: () {
-              Navigator.pushNamed(
-                context,
-                LessonHomePage.routeName,
-              );
-            },
-          ),
-          ListTile(
             title: Text(LocalizationWidget.of(context).getLocalizeValue('my_profile')),
             onTap: () {
               Navigator.pushNamed(
@@ -173,8 +167,14 @@ class MainDrawerState extends State<MainDrawer>{
               );
             },
           ),
+          Container(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 15.0, top: 8.0),
+              child: Text('Review', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),),
+            ),
+          ),
           ListTile(
-            title: Text(LocalizationWidget.of(context).getLocalizeValue('my_decks')),
+            title: Text(LocalizationWidget.of(context).getLocalizeValue('my_word_decks')),
             onTap: () {
               Navigator.pushNamed(
                 context,
@@ -183,14 +183,34 @@ class MainDrawerState extends State<MainDrawer>{
             },
           ),
           ListTile(
-            title: Text(LocalizationWidget.of(context).getLocalizeValue('my_cards')),
+            title: Text(LocalizationWidget.of(context).getLocalizeValue('my_grammar_decks')),
             onTap: () {
               Navigator.pushNamed(
-                  context,
-                  ListCardPage.routeName,
-                  arguments: ListCardPageArguments()
+                context,
+                GrammarReviewPage.routeName,
               );
             },
+          ),
+          Container(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 15.0, top: 8.0),
+              child: Text('Learn', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),),
+            ),
+          ),
+          ListTile(
+            title: Text(LocalizationWidget.of(context).getLocalizeValue('lessons')),
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                LessonHomePage.routeName,
+              );
+            },
+          ),
+          Container(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 15.0, top: 8.0),
+              child: Text('Discover', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),),
+            ),
           ),
           ListTile(
             title: Text(LocalizationWidget.of(context).getLocalizeValue('browse_online_decks')),
@@ -198,6 +218,31 @@ class MainDrawerState extends State<MainDrawer>{
               Navigator.pushNamed(
                 context,
                 BrowseDeckPage.routeName,
+              );
+            },
+          ),
+          ListTile(
+            title: Text(LocalizationWidget.of(context).getLocalizeValue('dialogs')),
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                InDialogPage.routeName,
+              );
+            },
+          ),
+          Container(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 15.0, top: 8.0),
+              child: Text('Others', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),),
+            ),
+          ),
+          ListTile(
+            title: Text(LocalizationWidget.of(context).getLocalizeValue('my_cards')),
+            onTap: () {
+              Navigator.pushNamed(
+                  context,
+                  ListCardPage.routeName,
+                  arguments: ListCardPageArguments()
               );
             },
           ),

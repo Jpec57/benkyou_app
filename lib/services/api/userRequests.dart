@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:benkyou/models/User.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -55,3 +56,24 @@ Future<bool> logoutRequest() async {
   return true;
 }
 
+Future<User> getMyProfileRequest() async {
+  HttpClientResponse response = await getLocaleGetRequestResponse("/my-profile", canHandleGenericErrors: true);
+  if (!isRequestValid(response.statusCode)){
+    print(await getJsonFromHttpResponse(response));
+    return null;
+  }
+  var json = await getJsonFromHttpResponse(response);
+  print(json);
+  return User.fromJson(json);
+}
+
+Future<User> getUserRequest(int userId) async {
+  HttpClientResponse response = await getLocaleGetRequestResponse("/users/$userId", canHandleGenericErrors: true);
+  if (!isRequestValid(response.statusCode)){
+    print(await getJsonFromHttpResponse(response));
+    return null;
+  }
+  var json = await getJsonFromHttpResponse(response);
+  print(json);
+  return User.fromJson(json);
+}
