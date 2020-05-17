@@ -29,7 +29,9 @@ class ListCardPageState extends State<ListCardPage> {
   bool _isSearching = false;
 
   Future<List<UserCard>> _fetchUserCards() {
+    print("ICI");
     if (widget.deckId != null) {
+      print("Deck ? ${widget.deckId}");
       return getUserJapaneseCardsForDeck(widget.deckId);
     }
     return getJapaneseUserCardsGroupByDeck();

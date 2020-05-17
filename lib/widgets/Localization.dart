@@ -18,7 +18,7 @@ class LocalizationWidget {
 
   static Map<String, Map<String, String>> _localizedValues = {
     EN_LOCALE: {
-      'home': 'Home <3',
+      'home': 'Home',
       'loading': 'Loading...',
       'next': 'Next',
       'kanji': 'Kanji',

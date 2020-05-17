@@ -55,7 +55,15 @@ List<UserCard> decodeUserCardJsonArray(array){
   }
   List<UserCard> cards = [];
   for (var card in array){
-    cards.add(UserCard.fromJson(card));
+    try {
+      var test = UserCard.fromJson(card);
+      print("test $test");
+      cards.add(test);
+    }catch(e){
+
+    }
+
   }
+  print("END");
   return cards;
 }

@@ -18,6 +18,7 @@ Future<bool> loginRequest(String username, String password) async {
       Get.snackbar('Incorrect credentials', 'The username or password is incorrect.');
     }
     String reply = await tokenResponse.transform(utf8.decoder).join();
+    print(reply);
     return false;
   }
   var token = await getJsonFromHttpResponse(tokenResponse);

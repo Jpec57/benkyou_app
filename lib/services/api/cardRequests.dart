@@ -73,11 +73,13 @@ Future<List<UserCard>> getUserCardsGroupByDeck() async {
 
 Future<List<UserCard>> getJapaneseUserCardsGroupByDeck() async {
   HttpClientResponse cardResponse = await getLocaleGetRequestResponse("/users/cards/language/$LANGUAGE_CODE_JAPANESE");
+  print("/users/cards/language/$LANGUAGE_CODE_JAPANESE");
   var cards = await getJsonFromHttpResponse(cardResponse);
   if (!isRequestValid(cardResponse.statusCode)){
     print(cards);
     return null;
   }
+  print(cardResponse.statusCode);
   List<UserCard> parsedCards = decodeUserCardJsonArray(cards);
   return parsedCards;
 }
