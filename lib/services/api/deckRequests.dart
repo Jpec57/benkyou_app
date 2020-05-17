@@ -43,6 +43,21 @@ Future<List<Deck>> getPublicDecks() async {
   return parsedDecks;
 }
 
+Future<List<Deck>> getGrammarDecks() async {
+  List<Deck> parsedDecks = [];
+  HttpClientResponse response = await getLocaleGetRequestResponse("/grammar-decks");
+  if (!isRequestValid(response.statusCode)){
+    print(await getJsonFromHttpResponse(response));
+    return null;
+  }
+
+  List<dynamic> decks = await getJsonFromHttpResponse(response);
+  for (Map<String, dynamic> deck in decks){
+    parsedDecks.add(Deck.fromJson(deck));
+  }
+  return parsedDecks;
+}
+
 Future<List<Deck>> getPersonalDecks() async {
   List<Deck> parsedDecks = [];
   HttpClientResponse response = await getLocaleGetRequestResponse("/users/decks");

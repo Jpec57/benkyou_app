@@ -52,7 +52,8 @@ class ProfilePageState extends State<ProfilePage> {
                   '57',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                Text('Likes'.toUpperCase()),
+                Text(LocalizationWidget.of(context)
+                    .getLocalizeValue('likes').toUpperCase()),
               ],
             ))),
           ),
@@ -72,7 +73,8 @@ class ProfilePageState extends State<ProfilePage> {
                 '10 000',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              Text('Followers'.toUpperCase()),
+              Text(LocalizationWidget.of(context)
+        .getLocalizeValue('followers').toUpperCase()),
             ],
           ))),
           Container(
@@ -91,7 +93,8 @@ class ProfilePageState extends State<ProfilePage> {
                 '579',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              Text('Following'.toUpperCase()),
+              Text(LocalizationWidget.of(context)
+                  .getLocalizeValue('following').toUpperCase()),
             ],
           ))),
         ],
