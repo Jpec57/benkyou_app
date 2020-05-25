@@ -111,6 +111,7 @@ class LoginWidgetState extends State<LoginWidget>{
                           Navigator.pop(context);
                           if (!res){
                             Get.snackbar(LocalizationWidget.of(context).getLocalizeValue(LocalizationWidget.of(context).getLocalizeValue('generic_error')), 'An error occurred. Please contact the support for any help.', snackPosition: SnackPosition.BOTTOM);
+                            Navigator.pop(context);
                           } else {
                             Navigator.pushReplacementNamed(
                               context,
