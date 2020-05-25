@@ -6,6 +6,7 @@ import 'package:benkyou/screens/HomePage/HomePage.dart';
 import 'package:benkyou/screens/LessonHomePage/LessonHomePage.dart';
 import 'package:benkyou/screens/ListCardPage/ListCardPage.dart';
 import 'package:benkyou/screens/ListCardPage/ListCardPageArguments.dart';
+import 'package:benkyou/screens/ListDialogs/ListDialogPage.dart';
 import 'package:benkyou/screens/ProfilePage/ProfilePage.dart';
 import 'package:benkyou/services/api/userRequests.dart';
 import 'package:benkyou/widgets/LoadingCircle.dart';
@@ -226,7 +227,7 @@ class MainDrawerState extends State<MainDrawer>{
             onTap: () {
               Navigator.pushNamed(
                 context,
-                InDialogPage.routeName,
+                ListDialogPage.routeName,
               );
             },
           ),

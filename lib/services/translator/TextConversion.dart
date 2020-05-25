@@ -432,13 +432,13 @@ String getRomaji(int val) {
   return rom[val];
 }
 
-String getRomConversion(String val, {bool onlyRomaji = false}) {
+String getRomConversion(String val, {bool onlyRomaji = false, isStaticAnalysis = true}) {
   var res = "";
   RegExp regExp = RegExp(' |　');
   List<String> listStrings = val.split(regExp);
   int nbStrings = listStrings.length;
   for (var i = 0; i < nbStrings; i++) {
-    String wordRes = getWordToRom(listStrings[i], onlyRomaji: onlyRomaji);
+    String wordRes = getWordToRom(listStrings[i], onlyRomaji: onlyRomaji, isStaticAnalysis: isStaticAnalysis);
     if (wordRes != null) {
       res += wordRes;
     }
@@ -449,14 +449,14 @@ String getRomConversion(String val, {bool onlyRomaji = false}) {
   return res;
 }
 
-String getWordToRom(String word, {bool onlyRomaji = false}) {
+String getWordToRom(String word, {bool onlyRomaji = false, bool isStaticAnalysis = false}) {
   String res = "";
 
   int wordLength = word.length;
   for (var j = 0; j < wordLength; j++) {
     int ch = word.codeUnitAt(j);
 
-    if ((ch == HAk || ch == HAh) && word.length == 1) {
+    if (!isStaticAnalysis && (ch == HAk || ch == HAh) && word.length == 1) {
       ch = WAhk;
     }
     if ((ch == TSUh || ch == TSUk)) {

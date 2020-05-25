@@ -18,7 +18,7 @@ class LocalizationWidget {
 
   static Map<String, Map<String, String>> _localizedValues = {
     EN_LOCALE: {
-      'home': 'Home <3',
+      'home': 'Home',
       'loading': 'Loading...',
       'next': 'Next',
       'kanji': 'Kanji',
@@ -147,6 +147,7 @@ class LocalizationWidget {
       'deck_info_2': 'For instance, if you read a lot of Pokemon manga, it could be interesting to create a deck named "Pokemon" or even "Pokemon Tome 1" since the vocabulary can quickly pile up...',
       'deck_info_3': 'Later, you can even decide to share it with the community (or not) !',
       'grammar': 'Grammar',
+      'list_dialogs': 'List of dialogs',
       'my_grammar_decks': 'My grammar decks',
       'create_grammar_card': 'Create a grammar card',
       'create_vocab_card': 'Create a vocabulary card',

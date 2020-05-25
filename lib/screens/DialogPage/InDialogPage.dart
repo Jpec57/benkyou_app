@@ -13,7 +13,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
 class InDialogPage extends StatefulWidget {
-  static const routeName = '/dialog/in';
+  static const routeName = '/dialogs/in';
+  final int dialogId;
+
+  const InDialogPage({Key key, @required this.dialogId}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => InDialogPageState();
@@ -61,7 +64,7 @@ class InDialogPageState extends State<InDialogPage>
   }
 
   void _initDialog() async {
-    dialog = getDialogRequest(1);
+    dialog = getDialogRequest(widget.dialogId);
     UserDialog userDialog = await dialog;
     DialogText firstText = userDialog.firstDialog;
     setState(() {
@@ -71,7 +74,6 @@ class InDialogPageState extends State<InDialogPage>
 
   void loadTimer() {
     _timer = new Timer(Duration(seconds: 60), () {
-      print("Time's up !");
       if (!isRecordPlaying && _tabController.index == 0) {
 //        _speak('どうした？助けが必要ですか？');
       }

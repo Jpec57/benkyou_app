@@ -5,6 +5,7 @@ import 'package:benkyou/screens/CreateCardPage/CreateCardPageArguments.dart';
 import 'package:benkyou/screens/CreateUserPage/CreateUserPage.dart';
 import 'package:benkyou/screens/DialogPage/DialogPage.dart';
 import 'package:benkyou/screens/DialogPage/InDialogPage.dart';
+import 'package:benkyou/screens/DialogPage/InDialogPageArguments.dart';
 import 'package:benkyou/screens/GrammarReviewPage/GrammarReviewPage.dart';
 import 'package:benkyou/screens/HomePage/HomePage.dart';
 import 'package:benkyou/screens/LessonHomePage/LessonHomePage.dart';
@@ -12,6 +13,7 @@ import 'package:benkyou/screens/LessonHomePage/LessonPage.dart';
 import 'package:benkyou/screens/LessonHomePage/LessonPageArguments.dart';
 import 'package:benkyou/screens/ListCardPage/ListCardPage.dart';
 import 'package:benkyou/screens/ListCardPage/ListCardPageArguments.dart';
+import 'package:benkyou/screens/ListDialogs/ListDialogPage.dart';
 import 'package:benkyou/screens/LoginPage/LoginPage.dart';
 import 'package:benkyou/screens/ModifyCardPage/ModifyCardPage.dart';
 import 'package:benkyou/screens/ModifyCardPage/ModifyCardPageArguments.dart';
@@ -159,6 +161,17 @@ void main() {
                 },
               );
             }
+
+            if (settings.name == InDialogPage.routeName) {
+              final InDialogPageArguments args = settings.arguments;
+              return MaterialPageRoute(
+                builder: (context) {
+                  return InDialogPage(
+                    dialogId: args.dialogId,
+                  );
+                },
+              );
+            }
             assert(false, 'Need to implement ${settings.name}');
             return null;
           },
@@ -168,7 +181,8 @@ void main() {
             LoginPage.routeName: (context) => LoginPage(),
             LessonHomePage.routeName: (context) => LessonHomePage(),
             HomePage.routeName: (context) => HomePage(),
-            InDialogPage.routeName: (context) => InDialogPage(),
+//            InDialogPage.routeName: (context) => InDialogPage(),
+            ListDialogPage.routeName: (context) => ListDialogPage(),
             DialogPage.routeName: (context) => DialogPage(),
             CreateUserPage.routeName: (context) => CreateUserPage(),
             BrowseDeckPage.routeName: (context) => BrowseDeckPage(),
