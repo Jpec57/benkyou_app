@@ -21,6 +21,7 @@ class LocalizationWidget {
       'home': 'Home',
       'loading': 'Loading...',
       'next': 'Next',
+      'review_all_decks': 'Review all decks',
       'kanji': 'Kanji',
       'create_account': 'Create account',
       'username': 'Username',

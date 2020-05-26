@@ -1,6 +1,7 @@
 import 'dart:math';
-
+import 'package:vector_math/vector_math_64.dart' as vector;
 import 'package:benkyou/models/Answer.dart';
+import 'package:benkyou/models/DeckCard.dart';
 import 'package:benkyou/models/UserCard.dart';
 import 'package:benkyou/models/UserCardProcessedInfo.dart';
 import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
@@ -35,7 +36,9 @@ class ReviewPage extends StatefulWidget {
   State<StatefulWidget> createState() => ReviewPageState();
 }
 
-class ReviewPageState extends State<ReviewPage> {
+class ReviewPageState extends State<ReviewPage> with SingleTickerProviderStateMixin {
+  AnimationController _shakeAnimationController;
+  Animation<double> _shakeAnimation;
   bool isAnswerVisible = false;
   bool isAnswerCorrect = false;
   bool _isPlayingAnimation = false;
@@ -53,6 +56,7 @@ class ReviewPageState extends State<ReviewPage> {
   UserCard currentCard;
   FlutterTts _flutterTts;
   bool isPlaying = false;
+  TextEditingController _hiddenAnswerController;
 
   @override
   void initState() {
@@ -65,7 +69,27 @@ class ReviewPageState extends State<ReviewPage> {
     //first card
     initializeTts();
     _answerController = new TextEditingController();
+    //TODO Add converter
+//    _answerController.addListener(() {
+//      final text = _answerController.text;
+//      var res = onConversionChanged(text, currentCard.card.answerLanguageCode == LANGUAGE_CODE_JAPANESE, _answerController, _hiddenAnswerController);
+//      print("text ${res.text}");
+//      print("base offset ${_answerController.selection.baseOffset}");
+//      print("extent offset ${_answerController.selection.extentOffset}");
+//      setState(() {
+//        _answerController.value =  _answerController.value.copyWith(
+//          text: res.text,
+//          selection: TextSelection(baseOffset: res.offset, extentOffset: res.offset),
+//          composing: TextRange.empty,
+//        );
+//      });
+//    });
+
+
+
     _focusNode = new FocusNode();
+    _hiddenAnswerController = TextEditingController();
+    setShakeAnimation();
   }
 
   void updateCurrentUserCard(UserCard updatedCard){
@@ -129,6 +153,8 @@ class ReviewPageState extends State<ReviewPage> {
     super.dispose();
     _focusNode.dispose();
     _flutterTts.stop();
+    _hiddenAnswerController.dispose();
+    _answerController.dispose();
   }
 
   int generateRandomIndex(List list) {
@@ -306,8 +332,12 @@ class ReviewPageState extends State<ReviewPage> {
       _speak(toSpeak, toEnglish ? "ja-JP" : "en-GB");
     } else {
       await _sendReview(_processedCards);
-      Navigator.pushReplacementNamed(context, DeckPage.routeName,
-          arguments: DeckPageArguments(currentCard.deck.id));
+      if (widget.deckId == null){
+        Navigator.pushReplacementNamed(context, DeckHomePage.routeName);
+      } else {
+        Navigator.pushReplacementNamed(context, DeckPage.routeName,
+            arguments: DeckPageArguments(currentCard.deck.id));
+      }
     }
     FocusScope.of(context).requestFocus(_focusNode);
     setState(() {
@@ -370,6 +400,22 @@ class ReviewPageState extends State<ReviewPage> {
       }
     }
     return Colors.transparent;
+  }
+  void setShakeAnimation() {
+    _shakeAnimation = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 1, milliseconds: 500),
+    )..addListener(() => setState(() {}));
+
+    _shakeAnimation = Tween<double>(
+      begin: 10.0,
+      end: 80.0,
+    ).animate(_shakeAnimationController);
+  }
+  vector.Vector3 _shake() {
+    double progress = _shakeAnimationController.value;
+    double offset = sin(progress * pi * 10.0);
+    return vector.Vector3(offset * 5, 0.0, 0.0);
   }
 
   @override
@@ -557,8 +603,28 @@ class ReviewPageState extends State<ReviewPage> {
                         onFieldSubmitted: (value) {
                           if (_answerController.text.isNotEmpty) {
                             _processAnswer();
+                          } else {
+                            _shakeAnimationController.forward().whenComplete(() {
+                              _shakeAnimationController.reset();
+                            });
                           }
                         },
+                        onChanged: (text){
+                          //TODO Add converter
+                          if (false && text.isNotEmpty){
+                            InputTextOffset res = onConversionChanged(text, currentCard.card.answerLanguageCode == LANGUAGE_CODE_JAPANESE, _answerController, _hiddenAnswerController);
+                            print("text here :  ${res.text}");
+                            print("base offset ${_answerController.selection.baseOffset}");
+                            print("extent offset ${_answerController.selection.extentOffset}");
+                            print("extent offset ${res.offset}");
+                            setState(() {
+                              _answerController.value =  _answerController.value.copyWith(
+                                text: res.text,
+                                selection: TextSelection(baseOffset: res.offset, extentOffset: res.offset),
+                              );
+                            });
+                          }
+                          },
                         controller: _answerController,
                         decoration: InputDecoration(
                           hintText: toEnglish

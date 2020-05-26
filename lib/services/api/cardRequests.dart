@@ -106,6 +106,17 @@ Future<List<UserCard>> getReviewCardsForDeck(int deckId) async {
   return parsedCards;
 }
 
+Future<List<UserCard>> getReviewCards() async {
+  HttpClientResponse cardResponse = await getLocaleGetRequestResponse("/users/decks/review");
+  var cards = await getJsonFromHttpResponse(cardResponse);
+  if (!isRequestValid(cardResponse.statusCode)){
+    print(cards);
+    return null;
+  }
+  List<UserCard> parsedCards = decodeUserCardJsonArray(cards);
+  return parsedCards;
+}
+
 Future<bool> postReview(List<UserCardProcessedInfo> cards) async {
   Map body = new Map();
   body.putIfAbsent("cards", ()=> convertUserCardProcessedInfoListToJson(cards));

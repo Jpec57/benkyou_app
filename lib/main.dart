@@ -38,7 +38,7 @@ import 'dsn.dart';
 final SentryClient _sentry = new SentryClient(dsn: DSN);
 
 const bool DEBUG = false;
-const bool SENTRY = false;
+const bool SENTRY = true;
 
 void main() {
   // This captures errors reported by the Flutter framework.

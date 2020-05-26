@@ -617,6 +617,13 @@ int getCursorPosition(String before, String after) {
   return i + 1 + bonus;
 }
 
+class InputTextOffset{
+  String text;
+  int offset;
+
+  InputTextOffset(this.text, this.offset);
+}
+
 //TODO dirty function...
 onConversionChanged(
     String text,
@@ -624,18 +631,16 @@ onConversionChanged(
     TextEditingController inputController,
     TextEditingController rawInputController) {
   if (mustConvertToKana) {
+    int originalLength = rawInputController.text.length;
     rawInputController.text = getRomConversion(text, onlyRomaji: false);
     print(getRomConversion(text, onlyRomaji: false));
     String japanese =
     getJapaneseTranslation(rawInputController.text, hasSpace: true);
+    int japaneseLength = japanese.length;
+    int length = japaneseLength > originalLength ? japaneseLength : originalLength;
 //    int cursor = getCursorPosition(previousValue, japanese);
-    inputController.text = japanese;
-    inputController.selection =
-        TextSelection.fromPosition(TextPosition(offset: japanese.length));
-//      titleEditingController.selection = TextSelection.fromPosition(TextPosition(offset: cursor));
-//      previousValue = japanese;
-    return {'text': japanese, 'selection': TextSelection.fromPosition(TextPosition(offset: japanese.length))};
+    return InputTextOffset(japanese, length);
 
   }
-  return {'text': text, 'selection': TextSelection.fromPosition(TextPosition(offset: text.length))};
+  return InputTextOffset(text, text.length);
 }

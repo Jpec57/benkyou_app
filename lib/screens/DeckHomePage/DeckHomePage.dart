@@ -1,7 +1,10 @@
 import 'dart:io';
+import 'package:benkyou/models/UserCard.dart';
 import 'package:benkyou/models/UserCardReviewCount.dart';
 import 'package:benkyou/screens/DeckHomePage/CreateDeckDialog.dart';
 import 'package:benkyou/screens/LoginPage/LoginPage.dart';
+import 'package:benkyou/screens/ReviewPage/ReviewPage.dart';
+import 'package:benkyou/screens/ReviewPage/ReviewPageArguments.dart';
 import 'package:benkyou/services/api/cardRequests.dart';
 import 'package:benkyou/services/rest.dart';
 import 'package:benkyou/utils/colors.dart';
@@ -19,8 +22,6 @@ import 'DeckContainer.dart';
 class DeckHomePage extends StatefulWidget {
   static const routeName = '/';
 
-//  static const routeName = '/home/deck';
-
   @override
   State<StatefulWidget> createState() => DeckHomePageState();
 }
@@ -28,6 +29,7 @@ class DeckHomePage extends StatefulWidget {
 class DeckHomePageState extends State<DeckHomePage> {
   Future<List<Deck>> personalDecks;
   Future<List<UserCardReviewCount>> personalDeckCounts;
+  Future<List<UserCard>> _allReviewCards;
 
   Future<List<Deck>> _fetchPersonalDecks() async {
     List<Deck> parsedDecks = [];
@@ -35,7 +37,7 @@ class DeckHomePageState extends State<DeckHomePage> {
         await getLocaleGetRequestResponse("/users/decks");
     if (!isRequestValid(response.statusCode)) {
       var jsonResponse = await getJsonFromHttpResponse(response);
-      if (response.statusCode == 401){
+      if (response.statusCode == 401) {
         Navigator.of(context).pushNamed(LoginPage.routeName);
         return null;
       }
@@ -54,6 +56,7 @@ class DeckHomePageState extends State<DeckHomePage> {
     super.initState();
     personalDecks = _fetchPersonalDecks();
     personalDeckCounts = getReviewCardCountsForAllDecks();
+    _allReviewCards = getReviewCards();
   }
 
   void _createNewDeck() async {
@@ -141,6 +144,58 @@ class DeckHomePageState extends State<DeckHomePage> {
     );
   }
 
+  Widget _renderAllDecksReviewWidget() {
+    return FutureBuilder(
+      future: _allReviewCards,
+      builder: (BuildContext context,
+          AsyncSnapshot<List<UserCard>> allCardsSnapshot) {
+        switch (allCardsSnapshot.connectionState) {
+          case ConnectionState.done:
+            List<UserCard> cards = allCardsSnapshot.data;
+            int length = cards.length;
+            if (length == 0) {
+              return Container();
+            }
+            return Padding(
+              padding: const EdgeInsets.only(left: 10, right: 10),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, ReviewPage.routeName,
+                      arguments: ReviewPageArguments(cards: cards));
+                },
+                child: Container(
+                  width: double.infinity,
+                  height: 100,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5.0),
+                      color: Color(COLOR_ORANGE)),
+                  child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(LocalizationWidget.of(context).getLocalizeValue('review_all_decks'), style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                          Text('($length)', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+                        ],
+                      )
+                  ),
+                ),
+              ),
+            );
+          case ConnectionState.waiting:
+            return Center(
+              child: Text(
+                  LocalizationWidget.of(context).getLocalizeValue('loading')),
+            );
+          default:
+            return Center(
+              child: Text(LocalizationWidget.of(context)
+                  .getLocalizeValue('no_internet_connection')),
+            );
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -158,23 +213,23 @@ class DeckHomePageState extends State<DeckHomePage> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              LocalizationWidget.of(context).getLocalizeValue('deck_info_1'),
-                            textAlign: TextAlign.justify,
-                            style: TextStyle(
-
-                            ),
+                              LocalizationWidget.of(context)
+                                  .getLocalizeValue('deck_info_1'),
+                              textAlign: TextAlign.justify,
+                              style: TextStyle(),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 8.0),
                               child: Text(
-                                LocalizationWidget.of(context).getLocalizeValue('deck_info_2'),
-
+                                LocalizationWidget.of(context)
+                                    .getLocalizeValue('deck_info_2'),
                               ),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 8.0),
                               child: Text(
-                                  LocalizationWidget.of(context).getLocalizeValue('deck_info_3'),
+                                LocalizationWidget.of(context)
+                                    .getLocalizeValue('deck_info_3'),
                               ),
                             )
                           ],
@@ -202,14 +257,21 @@ class DeckHomePageState extends State<DeckHomePage> {
                             child: Text(LocalizationWidget.of(context)
                                 .getLocalizeValue('no_deck_create')));
                       }
-                      return GridView.count(
-                          crossAxisCount: 2,
-                          key: ValueKey('deck-grid'),
-                          children:
-                              List.generate(deckSnapshot.data.length, (index) {
-                            Deck deck = deckSnapshot.data[index];
-                            return _renderDeckStack(deck);
-                          }));
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _renderAllDecksReviewWidget(),
+                          GridView.count(
+                              shrinkWrap: true,
+                              crossAxisCount: 2,
+                              key: ValueKey('deck-grid'),
+                              children: List.generate(deckSnapshot.data.length,
+                                  (index) {
+                                Deck deck = deckSnapshot.data[index];
+                                return _renderDeckStack(deck);
+                              })),
+                        ],
+                      );
                     }
                     return Center(
                         child: Text(LocalizationWidget.of(context)
