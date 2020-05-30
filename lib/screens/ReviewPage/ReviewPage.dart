@@ -256,7 +256,7 @@ class ReviewPageState extends State<ReviewPage> with SingleTickerProviderStateMi
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                      child: Text(LocalizationWidget.of(context).getLocalizeValue('add_note')),
+                      child: Text(LocalizationWidget.of(context).getLocalizeValue('add_answer')),
                     ),
                   ],
                 ),

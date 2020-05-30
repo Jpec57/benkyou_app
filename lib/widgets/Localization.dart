@@ -91,6 +91,8 @@ class LocalizationWidget {
       'no': "No",
       'yes': 'Yes',
       'add_note': 'Add a note',
+      'add_answer': 'Add answer',
+      'add_edit_text': 'Add/ Edit text',
       'edit_note': 'Edit note',
       'possible_answers': 'Possible answers',
       'users_note': "User's note",

@@ -15,6 +15,7 @@ class CompleteTextDialog extends StatefulWidget{
 }
 
 class CompleteTextDialogState extends State<CompleteTextDialog>{
+  final _formKey = GlobalKey<FormState>();
   TextEditingController _controller;
 
   @override
@@ -36,7 +37,7 @@ class CompleteTextDialogState extends State<CompleteTextDialog>{
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(32.0))),
       contentPadding: EdgeInsets.all(10.0),
-      title: Text(LocalizationWidget.of(context).getLocalizeValue('confirm_action')),
+      title: Text(LocalizationWidget.of(context).getLocalizeValue('add_edit_text')),
       content: GestureDetector(
         onTap: () {
           FocusScopeNode currentFocus = FocusScope.of(context);
@@ -52,12 +53,15 @@ class CompleteTextDialogState extends State<CompleteTextDialog>{
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                TextFormField(
-                  controller: _controller,
-                  decoration: InputDecoration(
-                    hintText: LocalizationWidget.of(context)
-                        .getLocalizeValue('enter_something_here'),
-                    labelStyle: TextStyle(),
+                Form(
+                  key: _formKey,
+                  child: TextFormField(
+                    controller: _controller,
+                    decoration: InputDecoration(
+                      hintText: LocalizationWidget.of(context)
+                          .getLocalizeValue('enter_something_here'),
+                      labelStyle: TextStyle(),
+                    ),
                   ),
                 ),
                 Padding(
