@@ -22,6 +22,7 @@ class CreateDeckDialogState extends State<CreateDeckDialog> {
   TextEditingController _titleController;
   TextEditingController _descriptionController;
   final _formKey = GlobalKey<FormState>();
+  bool _isSubmitting = false;
 
   @override
   void initState() {
@@ -129,16 +130,20 @@ class CreateDeckDialogState extends State<CreateDeckDialog> {
                           style: TextStyle(color: Colors.white),
                         ),
                         onPressed: () async {
-                          if (_formKey.currentState.validate()){
-                            await postDeck(_titleController.text, _descriptionController.text,
-                              deckId: widget.isEditing ? widget.deck.id : null
-                            );
-                            Navigator.pop(context);
-                            if (widget.callback != null){
-                              widget.callback();
-                            } else {
-                              Navigator.pushReplacementNamed(context, DeckHomePage.routeName);
+                          if (!_isSubmitting){
+                            _isSubmitting = true;
+                            if (_formKey.currentState.validate()){
+                              await postDeck(_titleController.text, _descriptionController.text,
+                                  deckId: widget.isEditing ? widget.deck.id : null
+                              );
+                              Navigator.pop(context);
+                              if (widget.callback != null){
+                                widget.callback();
+                              } else {
+                                Navigator.pushReplacementNamed(context, DeckHomePage.routeName);
+                              }
                             }
+                            _isSubmitting = false;
                           }
                         },
                       ),

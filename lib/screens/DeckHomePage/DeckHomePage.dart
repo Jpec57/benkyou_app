@@ -171,13 +171,22 @@ class DeckHomePageState extends State<DeckHomePage> {
                       color: Color(COLOR_ORANGE)),
                   child: Center(
                       child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(LocalizationWidget.of(context).getLocalizeValue('review_all_decks'), style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-                          Text('($length)', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
-                        ],
-                      )
-                  ),
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                          LocalizationWidget.of(context)
+                              .getLocalizeValue('review_all_decks'),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold)),
+                      Text(
+                        '($length)',
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  )),
                 ),
               ),
             );
@@ -239,49 +248,52 @@ class DeckHomePageState extends State<DeckHomePage> {
           ),
         ],
       ),
-      body: Padding(
-          padding: const EdgeInsets.all(5.0),
-          child: FutureBuilder(
-              future: personalDecks,
-              builder: (BuildContext context,
-                  AsyncSnapshot<List<Deck>> deckSnapshot) {
-                switch (deckSnapshot.connectionState) {
-                  case ConnectionState.none:
-                    return Center(
-                        child: Text(LocalizationWidget.of(context)
-                            .getLocalizeValue('no_internet_connection')));
-                  case ConnectionState.done:
-                    if (deckSnapshot.hasData) {
-                      if (deckSnapshot.data.length == 0) {
-                        return Center(
-                            child: Text(LocalizationWidget.of(context)
-                                .getLocalizeValue('no_deck_create')));
-                      }
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _renderAllDecksReviewWidget(),
-                          GridView.count(
-                              shrinkWrap: true,
-                              crossAxisCount: 2,
-                              key: ValueKey('deck-grid'),
-                              children: List.generate(deckSnapshot.data.length,
-                                  (index) {
-                                Deck deck = deckSnapshot.data[index];
-                                return _renderDeckStack(deck);
-                              })),
-                        ],
-                      );
-                    }
+      body: FutureBuilder(
+          future: personalDecks,
+          builder: (BuildContext context,
+              AsyncSnapshot<List<Deck>> deckSnapshot) {
+            switch (deckSnapshot.connectionState) {
+              case ConnectionState.none:
+                return Center(
+                    child: Text(LocalizationWidget.of(context)
+                        .getLocalizeValue('no_internet_connection')));
+              case ConnectionState.done:
+                if (deckSnapshot.hasData) {
+                  if (deckSnapshot.data.length == 0) {
                     return Center(
                         child: Text(LocalizationWidget.of(context)
                             .getLocalizeValue('no_deck_create')));
-                  default:
-                    return Center(
-                        child: Text(LocalizationWidget.of(context)
-                            .getLocalizeValue('loading')));
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _renderAllDecksReviewWidget(),
+                        Expanded(
+                          child: GridView.count(
+                              shrinkWrap: true,
+                              crossAxisCount: 2,
+                              key: ValueKey('deck-grid'),
+                              children: List.generate(
+                                  deckSnapshot.data.length, (index) {
+                                Deck deck = deckSnapshot.data[index];
+                                return _renderDeckStack(deck);
+                              })),
+                        ),
+                      ],
+                    ),
+                  );
                 }
-              })),
+                return Center(
+                    child: Text(LocalizationWidget.of(context)
+                        .getLocalizeValue('no_deck_create')));
+              default:
+                return Center(
+                    child: Text(LocalizationWidget.of(context)
+                        .getLocalizeValue('loading')));
+            }
+          }),
       floatingActionButton: FloatingActionButton(
         onPressed: _createNewDeck,
         backgroundColor: Color(COLOR_ORANGE),
