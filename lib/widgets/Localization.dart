@@ -57,6 +57,7 @@ class LocalizationWidget {
           "You will be able to resume reading and this word will come back later in review"
           " to make sure that you will progressively remember it.",
 
+      'what_did_hear': 'What did you hear ?',
       'empty_deck': 'Empty deck',
       'empty_deck_publish_error': 'Your deck must have at least one card to be published.',
       'start': 'Start',

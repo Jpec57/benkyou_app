@@ -1,13 +1,11 @@
 import 'package:benkyou/screens/BrowseDeckPage/BrowseDeckPage.dart';
-import 'package:benkyou/screens/DialogPage/DialogPage.dart';
-import 'package:benkyou/screens/DialogPage/InDialogPage.dart';
 import 'package:benkyou/screens/GrammarReviewPage/GrammarReviewPage.dart';
-import 'package:benkyou/screens/HomePage/HomePage.dart';
 import 'package:benkyou/screens/LessonHomePage/LessonHomePage.dart';
 import 'package:benkyou/screens/ListCardPage/ListCardPage.dart';
 import 'package:benkyou/screens/ListCardPage/ListCardPageArguments.dart';
 import 'package:benkyou/screens/ListDialogs/ListDialogPage.dart';
 import 'package:benkyou/screens/ProfilePage/ProfilePage.dart';
+import 'package:benkyou/screens/ThemePages/ThemeLearningHomePage.dart';
 import 'package:benkyou/services/api/userRequests.dart';
 import 'package:benkyou/widgets/LoadingCircle.dart';
 import 'package:benkyou/widgets/Localization.dart';
@@ -204,6 +202,15 @@ class MainDrawerState extends State<MainDrawer>{
               Navigator.pushNamed(
                 context,
                 LessonHomePage.routeName,
+              );
+            },
+          ),
+          ListTile(
+            title: Text(LocalizationWidget.of(context).getLocalizeValue('themes')),
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                ThemeLearningHomePage.routeName,
               );
             },
           ),

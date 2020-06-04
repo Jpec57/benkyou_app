@@ -23,6 +23,10 @@ import 'package:benkyou/screens/ProfilePage/ProfilePage.dart';
 import 'package:benkyou/screens/ProfilePage/ProfilePageArguments.dart';
 import 'package:benkyou/screens/ReviewPage/ReviewPage.dart';
 import 'package:benkyou/screens/ReviewPage/ReviewPageArguments.dart';
+import 'package:benkyou/screens/ThemePages/ThemeLearningHomePage.dart';
+import 'package:benkyou/screens/ThemePages/ThemeListeningPartPage.dart';
+import 'package:benkyou/screens/ThemePages/ThemeListeningPartPageArguments.dart';
+import 'package:benkyou/screens/ThemePages/ThemeTinderWordPage.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/Localization.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +42,7 @@ import 'dsn.dart';
 final SentryClient _sentry = new SentryClient(dsn: DSN);
 
 const bool DEBUG = false;
-const bool SENTRY = true;
+const bool SENTRY = false;
 
 void main() {
   // This captures errors reported by the Flutter framework.
@@ -72,7 +76,8 @@ void main() {
           theme: ThemeData(
             primaryColor: Color(COLOR_DARK_BLUE),
           ),
-          initialRoute: DeckHomePage.routeName,
+          initialRoute: ThemeLearningHomePage.routeName,
+//          initialRoute: DeckHomePage.routeName,
           onGenerateRoute: (settings) {
             if (settings.name == DeckPage.routeName) {
               final DeckPageArguments args = settings.arguments;
@@ -172,6 +177,26 @@ void main() {
                 },
               );
             }
+            if (settings.name == ThemeTinderWordPage.routeName) {
+              final ThemeListeningPartPageArguments args = settings.arguments;
+              return MaterialPageRoute(
+                builder: (context) {
+                  return ThemeListeningPartPage(
+                    chosenThemeId: args.chosenThemeId,
+                  );
+                },
+              );
+            }
+            if (settings.name == ThemeListeningPartPage.routeName) {
+              final ThemeListeningPartPageArguments args = settings.arguments;
+              return MaterialPageRoute(
+                builder: (context) {
+                  return ThemeListeningPartPage(
+                    chosenThemeId: args.chosenThemeId,
+                  );
+                },
+              );
+            }
             assert(false, 'Need to implement ${settings.name}');
             return null;
           },
@@ -181,6 +206,7 @@ void main() {
             LoginPage.routeName: (context) => LoginPage(),
             LessonHomePage.routeName: (context) => LessonHomePage(),
             HomePage.routeName: (context) => HomePage(),
+            ThemeLearningHomePage.routeName: (context) => ThemeLearningHomePage(),
 //            InDialogPage.routeName: (context) => InDialogPage(),
             ListDialogPage.routeName: (context) => ListDialogPage(),
             DialogPage.routeName: (context) => DialogPage(),

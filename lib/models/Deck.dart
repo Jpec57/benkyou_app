@@ -1,3 +1,5 @@
+import 'package:benkyou/utils/utils.dart';
+
 import 'DeckCard.dart';
 import 'User.dart';
 
@@ -12,12 +14,16 @@ class Deck {
 
   Deck.fromJson(Map<String, dynamic> json)
       : id = json['id'],
-        title = json['title'],
+        title = getFromJson(json, 'title'),
         author = User.fromJson(json['author']),
-        description = json['description'],
+        description = getFromJson(json, 'description'),
         cards = decodeDeckCardJsonArray(json['cards']),
         users = decodeUserJsonArray(json['users']),
         isPublic = json['isPublic'] ?? false
+  ;
+
+  Deck.fromId(Map<String, dynamic> json)
+      : id = json['id']
   ;
 
   @override
