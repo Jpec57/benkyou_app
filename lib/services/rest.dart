@@ -25,7 +25,7 @@ bool isRequestValid(int statusCode){
 
 getJsonFromHttpResponse(HttpClientResponse response) async{
   String reply = await response.transform(utf8.decoder).join();
-//  print(reply);
+  print(reply);
   return json.decode(reply);
 }
 

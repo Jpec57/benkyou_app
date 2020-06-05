@@ -14,7 +14,7 @@ description: A new Flutter application to learn Japanese
 version: 1.0.17+17
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.2 <3.0.0"
 #  flutter: ^1.6.7
 
 dependencies:

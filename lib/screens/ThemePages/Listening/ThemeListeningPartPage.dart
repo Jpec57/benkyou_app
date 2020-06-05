@@ -1,23 +1,27 @@
 import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
+import 'package:benkyou/models/DeckTheme.dart';
 import 'package:benkyou/models/Sentence.dart';
+import 'package:benkyou/screens/ThemePages/Writing/ThemeWritingPartPage.dart';
+import 'package:benkyou/screens/ThemePages/Writing/ThemeWritingPartPageArguments.dart';
 import 'package:benkyou/services/api/sentenceRequests.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/Localization.dart';
 import 'package:benkyou/widgets/MainDrawer.dart';
 import 'package:benkyou/widgets/ThemeListeningPlayerWidget.dart';
+import 'package:benkyou/widgets/ThemeTransitionDialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
-import 'ThemeLearningHomePage.dart';
+import '../ThemeLearningHomePage.dart';
 
 class ThemeListeningPartPage extends StatefulWidget {
   static const routeName = '/themes/listening';
-  final int chosenThemeId;
+  final DeckTheme chosenTheme;
 
-  const ThemeListeningPartPage({Key key, @required this.chosenThemeId})
+  const ThemeListeningPartPage({Key key, @required this.chosenTheme})
       : super(key: key);
 
   @override
@@ -39,10 +43,16 @@ class ThemeListeningPartPageState extends State<ThemeListeningPartPage>
   void initState() {
     super.initState();
     _initSentences();
+    WidgetsBinding.instance.addPostFrameCallback((_) async{
+      showDialog(context: context, builder: (BuildContext context) => ThemeTransitionDialog(name: 'Listening comprehension'));
+      Future.delayed(Duration(seconds: 3), (){
+        Navigator.of(context).pop();
+      });
+    });
   }
 
   void _initSentences() async {
-    _sentences = getRandomThemeSentencesRequest(widget.chosenThemeId, 5);
+    _sentences = getRandomThemeSentencesRequest(widget.chosenTheme.id, 2);
     _possibleAnswersPerSentence = _generatePossibleAnswersForSentences(_sentences);
   }
 
@@ -56,9 +66,10 @@ class ThemeListeningPartPageState extends State<ThemeListeningPartPage>
         setState(() {
           _currentIndex = _currentIndex + 1;
           _badOpacity = 1;
+          _currentProgressValue = _currentIndex / nbSentences;
         });
       } else {
-        Navigator.of(context).pushNamed(ThemeLearningHomePage.routeName);
+        Navigator.of(context).pushNamed(ThemeWritingPartPage.routeName, arguments: ThemeWritingPartPageArguments(widget.chosenTheme));
       }
     });
   }
@@ -190,8 +201,6 @@ class ThemeListeningPartPageState extends State<ThemeListeningPartPage>
                 );
               case ConnectionState.done:
                 List<Sentence> sentences = sentenceSnapshot.data;
-
-                print(sentences);
                 if (sentences != null && sentences.length > 0) {
                   return FutureBuilder(
                     future: _possibleAnswersPerSentence,

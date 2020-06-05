@@ -1,8 +1,11 @@
 import 'package:benkyou/models/DeckTheme.dart';
 import 'package:benkyou/screens/DialogPage/InDialogPageArguments.dart';
-import 'package:benkyou/screens/ThemePages/ThemeListeningPartPage.dart';
-import 'package:benkyou/screens/ThemePages/ThemeListeningPartPageArguments.dart';
+import 'package:benkyou/screens/ThemePages/Listening/ThemeListeningPartPage.dart';
+import 'package:benkyou/screens/ThemePages/Listening/ThemeListeningPartPageArguments.dart';
+import 'package:benkyou/screens/ThemePages/Word/ThemeTinderWordPage.dart';
+import 'package:benkyou/screens/ThemePages/Word/ThemeTinderWordPageArguments.dart';
 import 'package:benkyou/services/api/themeRequests.dart';
+import 'package:benkyou/transitions/ScaleRoute.dart';
 import 'package:benkyou/widgets/Localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +34,7 @@ class ThemeLearningHomePageState extends State<ThemeLearningHomePage> {
     double side = MediaQuery.of(context).size.width * 0.4;
     return GestureDetector(
       onTap: (){
-        Navigator.of(context).pushNamed(ThemeListeningPartPage.routeName, arguments: ThemeListeningPartPageArguments(theme.id));
+        Navigator.of(context).push(ScaleRoute(page: ThemeTinderWordPage(theme: theme,)));
       },
       child: Padding(
         padding: const EdgeInsets.all(5.0),

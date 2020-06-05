@@ -176,3 +176,14 @@ Future<List<DeckCard>> getCardsByQuestionInDeck(int deckId, String question) asy
   List<DeckCard> parsedCards = decodeDeckCardJsonArray(cards);
   return parsedCards;
 }
+
+Future<List<DeckCard>> getRandomThemeCardsInDeck(int deckId, int number) async {
+  HttpClientResponse cardResponse = await getLocaleGetRequestResponse("/themes/decks/$deckId/cards/random/$number");
+  List<dynamic> cards = await getJsonFromHttpResponse(cardResponse);
+  if (!isRequestValid(cardResponse.statusCode)){
+    return null;
+  }
+  List<DeckCard> parsedCards = decodeDeckCardJsonArray(cards);
+  print(parsedCards);
+  return parsedCards;
+}

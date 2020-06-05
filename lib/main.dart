@@ -24,9 +24,12 @@ import 'package:benkyou/screens/ProfilePage/ProfilePageArguments.dart';
 import 'package:benkyou/screens/ReviewPage/ReviewPage.dart';
 import 'package:benkyou/screens/ReviewPage/ReviewPageArguments.dart';
 import 'package:benkyou/screens/ThemePages/ThemeLearningHomePage.dart';
-import 'package:benkyou/screens/ThemePages/ThemeListeningPartPage.dart';
-import 'package:benkyou/screens/ThemePages/ThemeListeningPartPageArguments.dart';
-import 'package:benkyou/screens/ThemePages/ThemeTinderWordPage.dart';
+import 'package:benkyou/screens/ThemePages/Listening/ThemeListeningPartPage.dart';
+import 'package:benkyou/screens/ThemePages/Listening/ThemeListeningPartPageArguments.dart';
+import 'package:benkyou/screens/ThemePages/Word/ThemeTinderWordPage.dart';
+import 'package:benkyou/screens/ThemePages/Word/ThemeTinderWordPageArguments.dart';
+import 'package:benkyou/screens/ThemePages/Writing/ThemeWritingPartPage.dart';
+import 'package:benkyou/screens/ThemePages/Writing/ThemeWritingPartPageArguments.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/Localization.dart';
 import 'package:flutter/material.dart';
@@ -178,11 +181,11 @@ void main() {
               );
             }
             if (settings.name == ThemeTinderWordPage.routeName) {
-              final ThemeListeningPartPageArguments args = settings.arguments;
+              final ThemeTinderWordPageArguments args = settings.arguments;
               return MaterialPageRoute(
                 builder: (context) {
-                  return ThemeListeningPartPage(
-                    chosenThemeId: args.chosenThemeId,
+                  return ThemeTinderWordPage(
+                    theme: args.theme,
                   );
                 },
               );
@@ -192,7 +195,17 @@ void main() {
               return MaterialPageRoute(
                 builder: (context) {
                   return ThemeListeningPartPage(
-                    chosenThemeId: args.chosenThemeId,
+                    chosenTheme: args.chosenTheme,
+                  );
+                },
+              );
+            }
+            if (settings.name == ThemeWritingPartPage.routeName) {
+              final ThemeWritingPartPageArguments args = settings.arguments;
+              return MaterialPageRoute(
+                builder: (context) {
+                  return ThemeWritingPartPage(
+                    theme: args.theme,
                   );
                 },
               );
