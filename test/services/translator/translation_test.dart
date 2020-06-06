@@ -28,6 +28,16 @@ void main() {
     });
     //END
 
+    test('hedoro', () {
+      String test = getKatakana('hedoro');
+      expect(test, "ヘドロ");
+    });
+
+    test('hedoro', () {
+      String test = getHiragana('hedoro');
+      expect(test, "へどろ");
+    });
+
     test('arigatou', () {
       String test = getHiragana('arigatou');
       expect(test, "ありがとう");

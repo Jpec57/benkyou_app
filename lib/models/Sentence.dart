@@ -1,4 +1,5 @@
 import 'package:benkyou/models/User.dart';
+import 'package:benkyou/utils/utils.dart';
 
 import 'DeckTheme.dart';
 
@@ -6,6 +7,7 @@ class Sentence {
   int id;
   int languageCode;
   String text;
+  String hint;
   User author;
   List<Sentence> translations;
   bool isQuestion;
@@ -23,6 +25,7 @@ class Sentence {
         translations = decodeSentencesJsonArray(json['translations']),
         isQuestion = json['isQuestion'] == 'true',
         complexity = json['complexity'],
+        hint = getFromJson(json, 'hint'),
         sentenceThemes = decodeDeckThemesJsonArray(json['sentenceThemes'])
   ;
 

@@ -1,5 +1,6 @@
 import 'package:benkyou/models/Sentence.dart';
 import 'package:benkyou/utils/colors.dart';
+import 'package:benkyou/widgets/Localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -17,6 +18,7 @@ class ThemeListeningPlayerWidget extends StatefulWidget{
 
 class ThemeListeningPlayerWidgetState extends State<ThemeListeningPlayerWidget>{
   double _textSpeed = 1;
+  int _remainingListening;
   FlutterTts _flutterTts;
   bool isRecordPlaying = false;
   TtsState ttsState = TtsState.stopped;
@@ -26,7 +28,14 @@ class ThemeListeningPlayerWidgetState extends State<ThemeListeningPlayerWidget>{
   @override
   void initState() {
     super.initState();
+    _remainingListening = 4;
     initializeTts();
+  }
+
+  @override
+  void didUpdateWidget(ThemeListeningPlayerWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _remainingListening = 4;
   }
 
   @override
@@ -62,10 +71,13 @@ class ThemeListeningPlayerWidgetState extends State<ThemeListeningPlayerWidget>{
   }
 
   Future _speak(String text) async {
-    await setTtsLanguage('ja-JP');
-    if (text != null && text.isNotEmpty) {
-      var result = await _flutterTts.speak(text);
-      if (result == 1) setState(() => ttsState = TtsState.playing);
+    if (_remainingListening > 0){
+      _remainingListening--;
+      await setTtsLanguage('ja-JP');
+      if (text != null && text.isNotEmpty) {
+        var result = await _flutterTts.speak(text);
+        if (result == 1) setState(() => ttsState = TtsState.playing);
+      }
     }
   }
 
@@ -100,6 +112,19 @@ class ThemeListeningPlayerWidgetState extends State<ThemeListeningPlayerWidget>{
             ),
             height: MediaQuery.of(context).size.width * 0.35,
             child: Stack(children: [
+              Align(
+                alignment: Alignment.bottomLeft,
+                child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text("$_remainingListening", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),),
+                      Text(LocalizationWidget.of(context).getLocalizeValue('remaining'))
+                    ],
+                  ),
+                ),
+              ),
               GestureDetector(
                 onTap: () {
                   if (!isRecordPlaying && widget.sentence.text.isNotEmpty) {

@@ -46,5 +46,15 @@ void main (){
 
   });
 
+  group('getSentenceBadVariations', (){
+    test("トムはボストンのけんせつがいしゃにつとめていた。", (){
+      String text = "トムはボストンのけんせつがいしゃにつとめていた。";
+      List<String> res = getSentenceBadVariations('トムはボストンのけんせつがいしゃにつとめていた。');
+//      for (String str in res){
+//        expect(2, stringDistance(str, text));
+//      }
+    });
+  });
+
 
 }

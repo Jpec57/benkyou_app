@@ -84,6 +84,9 @@ class ThemeWritingPartPageState extends State<ThemeWritingPartPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Writing'),
+      ),
       body: FutureBuilder(
         future: _sentences,
         builder: (BuildContext context, AsyncSnapshot<dynamic> sentenceSnap) {

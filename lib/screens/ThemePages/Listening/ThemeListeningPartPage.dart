@@ -7,6 +7,7 @@ import 'package:benkyou/screens/ThemePages/Writing/ThemeWritingPartPage.dart';
 import 'package:benkyou/screens/ThemePages/Writing/ThemeWritingPartPageArguments.dart';
 import 'package:benkyou/services/api/sentenceRequests.dart';
 import 'package:benkyou/utils/colors.dart';
+import 'package:benkyou/utils/string.dart';
 import 'package:benkyou/widgets/Localization.dart';
 import 'package:benkyou/widgets/MainDrawer.dart';
 import 'package:benkyou/widgets/ThemeListeningPlayerWidget.dart';
@@ -119,12 +120,11 @@ class ThemeListeningPartPageState extends State<ThemeListeningPartPage>
     Random random = new Random();
     List<List<String>> answersForSentences = [];
     for (Sentence sent in sents){
-      String answer = sent.text;
+      print(sent.hint);
+      String answer = sent.hint != null ? sent.hint : sent.text;
       List<String> possibleAnswers = [
         answer,
-        "${answer}a",
-        "${answer}b",
-        "${answer}c"
+        ...getSentenceBadVariations(answer)
       ];
       possibleAnswers.shuffle(random);
       answersForSentences.add(possibleAnswers);
@@ -133,6 +133,7 @@ class ThemeListeningPartPageState extends State<ThemeListeningPartPage>
   }
 
   Widget _renderListeningPage(Sentence sentence, List<String> possibleAnswers) {
+    String answer = sentence.hint != null ? sentence.hint : sentence.text;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -166,7 +167,7 @@ class ThemeListeningPartPageState extends State<ThemeListeningPartPage>
                         itemCount: possibleAnswers.length,
                         itemBuilder: (context, index) {
                           return __renderPossibleAnswerTile(
-                              possibleAnswers[index], possibleAnswers[index] == sentence.text);
+                              possibleAnswers[index], possibleAnswers[index] == answer);
                         }))
               ],
             ),

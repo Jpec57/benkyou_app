@@ -21,6 +21,7 @@ class LocalizationWidget {
       'home': 'Home',
       'loading': 'Loading...',
       'next': 'Next',
+      'remaining': 'Remaining',
       'translate': 'Translate',
       'review_all_decks': 'Review all decks',
       'kanji': 'Kanji',
