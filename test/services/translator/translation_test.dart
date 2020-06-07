@@ -28,10 +28,6 @@ void main() {
     });
     //END
 
-    test('hedoro', () {
-      String test = getKatakana('hedoro');
-      expect(test, "ヘドロ");
-    });
 
     test('hedoro', () {
       String test = getHiragana('hedoro');
@@ -181,6 +177,21 @@ void main() {
   ///
   ///
   group('Katakana', (){
+
+    group('alphabet', (){
+      test("alphabet test", (){
+        String test = getKatakana(
+            "a i u e o n ka ki ku ke ko ga gi gu ge go sa si su se so "
+                "za zi zu ze zo ta ti tu te to da di du de do na ni nu ne no"
+                " ha hi fi fa fu he ho ba bi bu be bo pa pi pu pe po "
+                "ma mi mu me mo ya yu yo ra ri ru re ro wa wo ja ju jo ji vi");
+        expect(test, "ア イ ウ エ オ ン カ キ ク ケ コ ガ ギ グ ゲ ゴ サ シ ス セ "
+            "ソ ザ ジ ズ ゼ ゾ タ チ ツ テ ト ダ ヂ ヅ デ ド ナ ニ ヌ ネ ノ ハ ヒ フィ"
+            " ファ フ ヘ ホ バ ビ ブ ベ ボ パ ピ プ ペ ポ マ ミ ム メ モ ヤ ユ ヨ ラ リ"
+            " ル レ ロ ワ ヲ ジャ ジュ ジョ ジ ヴィ");
+      });
+    });
+
     test('arigatou', () {
       String test = getKatakana('arigatou');
       expect(test, "アリガトウ");
@@ -196,6 +207,16 @@ void main() {
         String test = getKatakana('wa', isStaticAnalysis : true);
         expect(test, "ハ");
       });
+    });
+
+    test('muho', () {
+      String test = getKatakana('muho');
+      expect(test, "ムホ");
+    });
+
+    test('hedoro', () {
+      String test = getKatakana('hedoro');
+      expect(test, "ヘドロ");
     });
 
     group("syllables", (){
@@ -308,6 +329,8 @@ void main() {
         expect(test, "コレハカミサマガサズケテクダサッテニチガイナイ");
       });
     });
+
+
 
 
     group('compound syllables', (){

@@ -79,8 +79,8 @@ void main() {
           theme: ThemeData(
             primaryColor: Color(COLOR_DARK_BLUE),
           ),
-          initialRoute: ThemeLearningHomePage.routeName,
-//          initialRoute: DeckHomePage.routeName,
+//          initialRoute: ThemeLearningHomePage.routeName,
+          initialRoute: DeckHomePage.routeName,
           onGenerateRoute: (settings) {
             if (settings.name == DeckPage.routeName) {
               final DeckPageArguments args = settings.arguments;
