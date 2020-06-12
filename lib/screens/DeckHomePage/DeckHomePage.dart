@@ -151,11 +151,11 @@ class DeckHomePageState extends State<DeckHomePage> {
           AsyncSnapshot<List<UserCard>> allCardsSnapshot) {
         switch (allCardsSnapshot.connectionState) {
           case ConnectionState.done:
-            List<UserCard> cards = allCardsSnapshot.data;
-            int length = cards.length;
-            if (length == 0) {
+            if (allCardsSnapshot.data != null || allCardsSnapshot.data.length == 0){
               return Container();
             }
+            List<UserCard> cards = allCardsSnapshot.data;
+            int length = cards.length;
             return Padding(
               padding: const EdgeInsets.only(left: 10, right: 10),
               child: GestureDetector(
