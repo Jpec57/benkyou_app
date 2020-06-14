@@ -151,7 +151,8 @@ class DeckHomePageState extends State<DeckHomePage> {
           AsyncSnapshot<List<UserCard>> allCardsSnapshot) {
         switch (allCardsSnapshot.connectionState) {
           case ConnectionState.done:
-            if (allCardsSnapshot.data != null || allCardsSnapshot.data.length == 0){
+            print(allCardsSnapshot.data);
+            if (allCardsSnapshot.data == null || allCardsSnapshot.data.length == 0){
               return Container();
             }
             List<UserCard> cards = allCardsSnapshot.data;

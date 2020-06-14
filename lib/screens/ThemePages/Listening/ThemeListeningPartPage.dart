@@ -6,17 +6,13 @@ import 'package:benkyou/models/Sentence.dart';
 import 'package:benkyou/screens/ThemePages/Writing/ThemeWritingPartPage.dart';
 import 'package:benkyou/screens/ThemePages/Writing/ThemeWritingPartPageArguments.dart';
 import 'package:benkyou/services/api/sentenceRequests.dart';
-import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/utils/string.dart';
 import 'package:benkyou/widgets/Localization.dart';
-import 'package:benkyou/widgets/MainDrawer.dart';
 import 'package:benkyou/widgets/ThemeListeningPlayerWidget.dart';
 import 'package:benkyou/widgets/ThemeTransitionDialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 
-import '../ThemeLearningHomePage.dart';
 
 class ThemeListeningPartPage extends StatefulWidget {
   static const routeName = '/themes/listening';

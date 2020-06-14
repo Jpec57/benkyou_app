@@ -25,7 +25,6 @@ bool isRequestValid(int statusCode){
 
 getJsonFromHttpResponse(HttpClientResponse response) async{
   String reply = await response.transform(utf8.decoder).join();
-  print(reply);
   return json.decode(reply);
 }
 
@@ -48,7 +47,6 @@ Future<HttpClientResponse> getLocaleGetRequestResponse(String uri, {canHandleGen
   if (DEBUG){
     url = 'https://10.0.2.2:8000$uri';
   } else {
-//    url = 'http://51.158.152.165:8000$uri';
     url = 'https://jpec.be/$uri';
   }
   HttpClientRequest request = await client.getUrl(Uri.parse(url));
@@ -73,7 +71,6 @@ Future<HttpClientResponse> getLocalePostRequestResponse(String uri, Map body, {c
   if (DEBUG){
     url = 'https://10.0.2.2:8000$uri';
   } else {
-//    url = 'http://51.158.152.165:8000$uri';
     url = 'https://jpec.be/$uri';
   }
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -101,7 +98,6 @@ Future<HttpClientResponse> getLocaleDeleteRequestResponse(String uri, {canHandle
   if (DEBUG){
     url = 'https://10.0.2.2:8000$uri';
   } else {
-//    url = 'http://51.158.152.165:8000$uri';
     url = 'https://jpec.be/$uri';
   }
   HttpClientRequest request = await client.deleteUrl(Uri.parse(url));
