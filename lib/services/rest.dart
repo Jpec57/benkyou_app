@@ -25,19 +25,8 @@ bool isRequestValid(int statusCode){
 
 getJsonFromHttpResponse(HttpClientResponse response) async{
   String reply = await response.transform(utf8.decoder).join();
+  print(reply);
   return json.decode(reply);
-}
-
-Future<HttpClientResponse> getRemoteGetRequestResponse(String url, {canHandleGenericErrors = true}) async {
-  HttpClient client = new HttpClient();
-  client.badCertificateCallback = ((X509Certificate cert, String host, int port) => true);
-  HttpClientRequest request = await client.getUrl(Uri.parse(url));
-  request.headers.set(HttpHeaders.contentTypeHeader, 'application/json');
-  HttpClientResponse response = await request.close();
-  if (canHandleGenericErrors){
-    response = await handleGenericErrors(response);
-  }
-  return response;
 }
 
 Future<HttpClientResponse> getLocaleGetRequestResponse(String uri, {canHandleGenericErrors = true}) async {
@@ -47,7 +36,7 @@ Future<HttpClientResponse> getLocaleGetRequestResponse(String uri, {canHandleGen
   if (DEBUG){
     url = 'https://10.0.2.2:8000$uri';
   } else {
-    url = 'https://jpec.be/$uri';
+    url = 'https://jpec.be$uri';
   }
   HttpClientRequest request = await client.getUrl(Uri.parse(url));
 
@@ -71,7 +60,7 @@ Future<HttpClientResponse> getLocalePostRequestResponse(String uri, Map body, {c
   if (DEBUG){
     url = 'https://10.0.2.2:8000$uri';
   } else {
-    url = 'https://jpec.be/$uri';
+    url = 'https://jpec.be$uri';
   }
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   String apiToken = sharedPreferences.get('apiToken');
@@ -98,7 +87,7 @@ Future<HttpClientResponse> getLocaleDeleteRequestResponse(String uri, {canHandle
   if (DEBUG){
     url = 'https://10.0.2.2:8000$uri';
   } else {
-    url = 'https://jpec.be/$uri';
+    url = 'https://jpec.be$uri';
   }
   HttpClientRequest request = await client.deleteUrl(Uri.parse(url));
 

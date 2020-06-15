@@ -15,9 +15,9 @@ class Deck {
   Deck.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         title = getFromJson(json, 'title'),
-        author = User.fromJson(json['author']),
+        author = json['author'] != null ? User.fromJson(json['author']) : null,
         description = getFromJson(json, 'description'),
-        cards = decodeDeckCardJsonArray(json['cards']),
+        cards = json.containsKey('cards') ? decodeDeckCardJsonArray(json['cards']) : [],
         users = decodeUserJsonArray(json['users']),
         isPublic = json['isPublic'] ?? false
   ;

@@ -113,7 +113,7 @@ class PreviewPublicDeckPageState extends State<PreviewPublicDeckPage>{
                                   onTap: (){
                                     //TODO login
                                   },
-                                  child: Text(LocalizationWidget.of(context).getLocalizeValue('by') + " ${deck.author.username}", style: TextStyle(
+                                  child: Text(LocalizationWidget.of(context).getLocalizeValue('by') + " ${deck.author != null ? deck.author.username : "Jpec"}", style: TextStyle(
                                       shadows: <Shadow>[
                                         Shadow(
                                           offset: Offset(2.0, 2.0),
@@ -172,7 +172,7 @@ class PreviewPublicDeckPageState extends State<PreviewPublicDeckPage>{
                               DeckHomePage.routeName,
                           );
                         } else {
-                          if (shared.get('username') != deck.author.username){
+                          if (deck.author == null || shared.get('username') != deck.author.username){
                             showLoadingDialog(context);
                             Deck importedDeck = await importDeck(deck.id);
                             Navigator.pop(context);

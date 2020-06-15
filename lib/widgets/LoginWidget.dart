@@ -110,7 +110,6 @@ class LoginWidgetState extends State<LoginWidget>{
                           bool res = await loginRequest(_usernameController.text, _passwordController.text);
                           Navigator.pop(context);
                           if (!res){
-                            Get.snackbar(LocalizationWidget.of(context).getLocalizeValue(LocalizationWidget.of(context).getLocalizeValue('generic_error')), 'An error occurred. Please contact the support for any help.', snackPosition: SnackPosition.BOTTOM);
                             Navigator.pop(context);
                           } else {
                             Navigator.pushReplacementNamed(
@@ -119,7 +118,8 @@ class LoginWidgetState extends State<LoginWidget>{
                             );
                             SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
                             String username = sharedPreferences.getString('username');
-                            Get.snackbar(LocalizationWidget.of(context).getLocalizeValue('welcome_back') + ' $username!', '久しぶりだな麦わら', snackPosition: SnackPosition.BOTTOM);}
+                            Get.snackbar(LocalizationWidget.of(context).getLocalizeValue('welcome_back') + ' $username!', '久しぶりだな麦わら', snackPosition: SnackPosition.BOTTOM);
+                          }
                         }
                       },
                     ),

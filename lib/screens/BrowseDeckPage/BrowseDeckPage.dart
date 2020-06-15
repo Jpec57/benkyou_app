@@ -49,7 +49,7 @@ class BrowseDeckPageState extends State<BrowseDeckPage> {
                       fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "${deck.author.username}",
+                  "${deck.author != null ? deck.author.username : "Jpec"}",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       color: Colors.white,

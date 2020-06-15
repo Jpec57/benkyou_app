@@ -28,27 +28,35 @@ class LoginPageState extends State<LoginPage>{
         title: Text('Login'),
       ),
       drawer: MainDrawer(),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 50.0, bottom: 8.0, left: 30, right: 30),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 20.0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Image(
-                        image:AssetImage("lib/imgs/app_icon.png"),
-                      height: 100,
-                    ),
-                    Expanded(child: Center(child: Text('Benkyou', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),))),
-                  ],
+      body: GestureDetector(
+        onTap: (){
+          FocusScopeNode currentFocus = FocusScope.of(context);
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
+        child: Padding(
+          padding: const EdgeInsets.only(top: 50.0, bottom: 8.0, left: 30, right: 30),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20.0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Image(
+                          image:AssetImage("lib/imgs/app_icon.png"),
+                        height: 100,
+                      ),
+                      Expanded(child: Center(child: Text('Benkyou', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),))),
+                    ],
+                  ),
                 ),
-              ),
-              LoginWidget()
-            ],
+                LoginWidget()
+              ],
+            ),
           ),
         ),
       ),

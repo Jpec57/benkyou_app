@@ -14,11 +14,12 @@ Future<bool> loginRequest(String username, String password) async {
   HttpClientResponse tokenResponse = await getLocalePostRequestResponse("/login", map);
   if (!isRequestValid(tokenResponse.statusCode)){
     print(tokenResponse.statusCode);
-    if (tokenResponse.statusCode == 404){
+    if (tokenResponse.statusCode == 400){
       Get.snackbar('Incorrect credentials', 'The username or password is incorrect.');
+    } else {
+      Get.snackbar('Error', 'An error occurred. Please contact the support for any help.', snackPosition: SnackPosition.BOTTOM);
     }
     String reply = await tokenResponse.transform(utf8.decoder).join();
-    print(reply);
     return false;
   }
   var token = await getJsonFromHttpResponse(tokenResponse);
@@ -64,7 +65,6 @@ Future<User> getMyProfileRequest() async {
     return null;
   }
   var json = await getJsonFromHttpResponse(response);
-  print(json);
   return User.fromJson(json);
 }
 
@@ -75,6 +75,5 @@ Future<User> getUserRequest(int userId) async {
     return null;
   }
   var json = await getJsonFromHttpResponse(response);
-  print(json);
   return User.fromJson(json);
 }

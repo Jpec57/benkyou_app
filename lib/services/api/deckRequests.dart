@@ -37,6 +37,7 @@ Future<List<Deck>> getPublicDecks() async {
   }
   List<dynamic> decks = await getJsonFromHttpResponse(response);
   for (Map<String, dynamic> deck in decks){
+    print(deck);
     parsedDecks.add(Deck.fromJson(deck));
   }
 
