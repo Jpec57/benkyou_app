@@ -108,8 +108,8 @@ class LoginWidgetState extends State<LoginWidget>{
                         if (_formKey.currentState.validate()) {
                           showLoadingDialog(context);
                           bool res = await loginRequest(_usernameController.text, _passwordController.text);
-                          Navigator.pop(context);
                           if (!res){
+                            Navigator.pop(context);
                             Navigator.pop(context);
                           } else {
                             Navigator.pushReplacementNamed(
@@ -130,7 +130,7 @@ class LoginWidgetState extends State<LoginWidget>{
                     child: RaisedButton(
                       color: Color(COLOR_ORANGE),
                       child: Text(
-                        LocalizationWidget.of(context).getLocalizeValue('not_member_yet').toUpperCase(),
+                        LocalizationWidget.of(context).getLocalizeValue('not_member_yet').toUpperCase(),textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Colors.white
                         ),

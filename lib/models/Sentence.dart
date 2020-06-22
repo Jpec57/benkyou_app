@@ -29,6 +29,10 @@ class Sentence {
         sentenceThemes = decodeDeckThemesJsonArray(json['sentenceThemes'])
   ;
 
+  @override
+  String toString() {
+    return 'Sentence{id: $id, languageCode: $languageCode, text: $text, hint: $hint, author: $author, translations: $translations, isQuestion: $isQuestion, complexity: $complexity, sentenceThemes: $sentenceThemes}';
+  }
 }
 
 //TODO

@@ -36,6 +36,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:sentry/io_client.dart';
+import 'models/DeckTheme.dart';
 import 'screens/DeckPage/DeckPage.dart';
 import 'screens/DeckPage/DeckPageArguments.dart';
 import 'screens/DeckHomePage/DeckHomePage.dart';
@@ -45,7 +46,183 @@ import 'dsn.dart';
 final SentryClient _sentry = new SentryClient(dsn: DSN);
 
 const bool DEBUG = false;
-const bool SENTRY = true;
+const bool SENTRY = false;
+
+class App extends StatelessWidget {
+  final Widget home;
+
+  const App({Key key, @required this.home}) : super(key: key);
+
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      localizationsDelegates: [
+        MyLocalizationsDelegate(),
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale(EN_LOCALE),
+        const Locale(FR_LOCALE),
+        const Locale(JAP_LOCALE),
+      ],
+      title: 'Benkyou',
+      navigatorKey: Get.key,
+      theme: ThemeData(
+        primaryColor: Color(COLOR_DARK_BLUE),
+      ),
+      home: home,
+      onGenerateRoute: (settings) {
+        if (settings.name == DeckPage.routeName) {
+          final DeckPageArguments args = settings.arguments;
+
+          return MaterialPageRoute(
+            builder: (context) {
+              return DeckPage(
+                id: args.id,
+              );
+            },
+          );
+        }
+        if (settings.name == ReviewPage.routeName) {
+          final ReviewPageArguments args = settings.arguments;
+          return MaterialPageRoute(
+            builder: (context) {
+              return ReviewPage(
+                cards: args.cards,
+              );
+            },
+          );
+        }
+
+        if (settings.name == LessonPage.routeName) {
+          final LessonPageArguments args = settings.arguments;
+          return MaterialPageRoute(
+            builder: (context) {
+              return LessonPage(
+                lessonId: args.lessonId,
+              );
+            },
+          );
+        }
+
+        if (settings.name == CreateCardPage.routeName) {
+          final CreateCardPageArguments args = settings.arguments;
+          return MaterialPageRoute(
+            builder: (context) {
+              return CreateCardPage(
+                deckId: args.deckId,
+              );
+            },
+          );
+        }
+
+        if (settings.name == ModifyCardPage.routeName) {
+          final ModifyCardPageArguments args = settings.arguments;
+          return MaterialPageRoute(
+            builder: (context) {
+              return ModifyCardPage(
+                userCard: args.userCard,
+              );
+            },
+          );
+        }
+
+        if (settings.name == ListCardPage.routeName) {
+          final ListCardPageArguments args = settings.arguments;
+          return MaterialPageRoute(
+            builder: (context) {
+              return ListCardPage(
+                deckId: args.deckId,
+              );
+            },
+          );
+        }
+
+        if (settings.name == ProfilePage.routeName) {
+          final ProfilePageArguments args = settings.arguments;
+          return MaterialPageRoute(
+            builder: (context) {
+              return ProfilePage(
+                userId: args != null ? args.userId : null,
+              );
+            },
+          );
+        }
+
+        if (settings.name == PreviewPublicDeckPage.routeName) {
+          final PreviewPublicDeckPageArguments args = settings.arguments;
+          return MaterialPageRoute(
+            builder: (context) {
+              return PreviewPublicDeckPage(
+                deckId: args.deckId,
+              );
+            },
+          );
+        }
+
+        if (settings.name == InDialogPage.routeName) {
+          final InDialogPageArguments args = settings.arguments;
+          return MaterialPageRoute(
+            builder: (context) {
+              return InDialogPage(
+                dialogId: args.dialogId,
+              );
+            },
+          );
+        }
+        if (settings.name == ThemeTinderWordPage.routeName) {
+          final ThemeTinderWordPageArguments args = settings.arguments;
+          return MaterialPageRoute(
+            builder: (context) {
+              return ThemeTinderWordPage(
+                theme: args.theme,
+              );
+            },
+          );
+        }
+        if (settings.name == ThemeListeningPartPage.routeName) {
+          final ThemeListeningPartPageArguments args = settings.arguments;
+          return MaterialPageRoute(
+            builder: (context) {
+              return ThemeListeningPartPage(
+                chosenTheme: args.chosenTheme,
+              );
+            },
+          );
+        }
+        if (settings.name == ThemeWritingPartPage.routeName) {
+          final ThemeWritingPartPageArguments args = settings.arguments;
+          return MaterialPageRoute(
+            builder: (context) {
+              return ThemeWritingPartPage(
+                theme: args.theme,
+              );
+            },
+          );
+        }
+        assert(false, 'Need to implement ${settings.name}');
+        return null;
+      },
+      routes: {
+//        DeckHomePage.routeName: (context) => DeckHomePage(),
+        GrammarReviewPage.routeName: (context) => GrammarReviewPage(),
+        LoginPage.routeName: (context) => LoginPage(),
+        LessonHomePage.routeName: (context) => LessonHomePage(),
+        //TODO delete ?
+//        HomePage.routeName: (context) => HomePage(),
+        ThemeLearningHomePage.routeName: (context) => ThemeLearningHomePage(),
+//            InDialogPage.routeName: (context) => InDialogPage(),
+        ListDialogPage.routeName: (context) => ListDialogPage(),
+        DialogPage.routeName: (context) => DialogPage(),
+        CreateUserPage.routeName: (context) => CreateUserPage(),
+        BrowseDeckPage.routeName: (context) => BrowseDeckPage(),
+      },);
+  }
+}
+
 
 void main() {
   // This captures errors reported by the Flutter framework.
@@ -62,171 +239,10 @@ void main() {
 
   runZoned(
         () =>
-        runApp(MaterialApp(
-          localizationsDelegates: [
-            MyLocalizationsDelegate(),
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: [
-            const Locale(EN_LOCALE),
-            const Locale(FR_LOCALE),
-            const Locale(JAP_LOCALE),
-          ],
-          title: 'Benkyou',
-          navigatorKey: Get.key,
-          theme: ThemeData(
-            primaryColor: Color(COLOR_DARK_BLUE),
-          ),
-//          initialRoute: ThemeLearningHomePage.routeName,
-          initialRoute: DeckHomePage.routeName,
-          onGenerateRoute: (settings) {
-            if (settings.name == DeckPage.routeName) {
-              final DeckPageArguments args = settings.arguments;
-
-              return MaterialPageRoute(
-                builder: (context) {
-                  return DeckPage(
-                    id: args.id,
-                  );
-                },
-              );
-            }
-            if (settings.name == ReviewPage.routeName) {
-              final ReviewPageArguments args = settings.arguments;
-              return MaterialPageRoute(
-                builder: (context) {
-                  return ReviewPage(
-                    cards: args.cards,
-                  );
-                },
-              );
-            }
-
-            if (settings.name == LessonPage.routeName) {
-              final LessonPageArguments args = settings.arguments;
-              return MaterialPageRoute(
-                builder: (context) {
-                  return LessonPage(
-                    lessonId: args.lessonId,
-                  );
-                },
-              );
-            }
-
-            if (settings.name == CreateCardPage.routeName) {
-              final CreateCardPageArguments args = settings.arguments;
-              return MaterialPageRoute(
-                builder: (context) {
-                  return CreateCardPage(
-                    deckId: args.deckId,
-                  );
-                },
-              );
-            }
-
-            if (settings.name == ModifyCardPage.routeName) {
-              final ModifyCardPageArguments args = settings.arguments;
-              return MaterialPageRoute(
-                builder: (context) {
-                  return ModifyCardPage(
-                    userCard: args.userCard,
-                  );
-                },
-              );
-            }
-
-            if (settings.name == ListCardPage.routeName) {
-              final ListCardPageArguments args = settings.arguments;
-              return MaterialPageRoute(
-                builder: (context) {
-                  return ListCardPage(
-                    deckId: args.deckId,
-                  );
-                },
-              );
-            }
-
-            if (settings.name == ProfilePage.routeName) {
-              final ProfilePageArguments args = settings.arguments;
-              return MaterialPageRoute(
-                builder: (context) {
-                  return ProfilePage(
-                    userId: args != null ? args.userId : null,
-                  );
-                },
-              );
-            }
-
-            if (settings.name == PreviewPublicDeckPage.routeName) {
-              final PreviewPublicDeckPageArguments args = settings.arguments;
-              return MaterialPageRoute(
-                builder: (context) {
-                  return PreviewPublicDeckPage(
-                    deckId: args.deckId,
-                  );
-                },
-              );
-            }
-
-            if (settings.name == InDialogPage.routeName) {
-              final InDialogPageArguments args = settings.arguments;
-              return MaterialPageRoute(
-                builder: (context) {
-                  return InDialogPage(
-                    dialogId: args.dialogId,
-                  );
-                },
-              );
-            }
-            if (settings.name == ThemeTinderWordPage.routeName) {
-              final ThemeTinderWordPageArguments args = settings.arguments;
-              return MaterialPageRoute(
-                builder: (context) {
-                  return ThemeTinderWordPage(
-                    theme: args.theme,
-                  );
-                },
-              );
-            }
-            if (settings.name == ThemeListeningPartPage.routeName) {
-              final ThemeListeningPartPageArguments args = settings.arguments;
-              return MaterialPageRoute(
-                builder: (context) {
-                  return ThemeListeningPartPage(
-                    chosenTheme: args.chosenTheme,
-                  );
-                },
-              );
-            }
-            if (settings.name == ThemeWritingPartPage.routeName) {
-              final ThemeWritingPartPageArguments args = settings.arguments;
-              return MaterialPageRoute(
-                builder: (context) {
-                  return ThemeWritingPartPage(
-                    theme: args.theme,
-                  );
-                },
-              );
-            }
-            assert(false, 'Need to implement ${settings.name}');
-            return null;
-          },
-          routes: {
-            DeckHomePage.routeName: (context) => DeckHomePage(),
-            GrammarReviewPage.routeName: (context) => GrammarReviewPage(),
-            LoginPage.routeName: (context) => LoginPage(),
-            LessonHomePage.routeName: (context) => LessonHomePage(),
-            HomePage.routeName: (context) => HomePage(),
-            ThemeLearningHomePage.routeName: (context) => ThemeLearningHomePage(),
-//            InDialogPage.routeName: (context) => InDialogPage(),
-            ListDialogPage.routeName: (context) => ListDialogPage(),
-            DialogPage.routeName: (context) => DialogPage(),
-            CreateUserPage.routeName: (context) => CreateUserPage(),
-            BrowseDeckPage.routeName: (context) => BrowseDeckPage(),
-          },)
-        ),
+        runApp(App(
+//          home: ThemeWritingPartPage(theme: new DeckTheme.fromJson({"id":21,"name":"Work","backgroundImg": null,"deck":{"id":59}})),
+          home: DeckHomePage(),
+        )),
     onError: (Object error, StackTrace stackTrace) {
       try {
         if (SENTRY){

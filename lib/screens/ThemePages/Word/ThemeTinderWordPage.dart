@@ -239,11 +239,11 @@ class ThemeTinderWordPageState extends State<ThemeTinderWordPage> with TickerPro
               AsyncSnapshot<List<DeckCard>> cardSnapshot) {
             switch (cardSnapshot.connectionState) {
               case ConnectionState.waiting:
-                return Center(
-                  child: Text(LocalizationWidget.of(context)
-                      .getLocalizeValue('loading')),
-                );
+                return Center(child: CircularProgressIndicator());
               case ConnectionState.done:
+                if (!cardSnapshot.hasData){
+                  return Center(child: CircularProgressIndicator());
+                }
                 return _renderTinderLikeWidget(_fetchedCards);
               default:
                 return Center(

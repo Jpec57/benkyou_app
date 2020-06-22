@@ -121,8 +121,9 @@ Future<bool> postReview(List<UserCardProcessedInfo> cards) async {
   Map body = new Map();
   body.putIfAbsent("cards", ()=> convertUserCardProcessedInfoListToJson(cards));
   HttpClientResponse response = await getLocalePostRequestResponse("/review", body);
+  var json = await getJsonFromHttpResponse(response);
   if (!isRequestValid(response.statusCode)){
-    print(response);
+    print(json);
     return false;
   }
   return true;

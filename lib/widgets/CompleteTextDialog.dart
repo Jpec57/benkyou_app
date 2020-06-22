@@ -65,10 +65,8 @@ class CompleteTextDialogState extends State<CompleteTextDialog>{
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 15.0),
-                  child: Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 5.0),
+                  padding: const EdgeInsets.only(left: 5.0, top: 15.0),
+                  child: IntrinsicHeight(
                       child: RaisedButton(
                         color: Color(COLOR_ORANGE),
                         child: Text(LocalizationWidget.of(context).getLocalizeValue('save').toUpperCase(),
@@ -81,7 +79,6 @@ class CompleteTextDialogState extends State<CompleteTextDialog>{
                           Navigator.pop(context);
                         },),
                     ),
-                  ),
                 )
               ],
             ),

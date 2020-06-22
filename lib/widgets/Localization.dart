@@ -29,6 +29,7 @@ class LocalizationWidget {
       'username': 'Username',
       'enter_username': 'Please enter your username',
       'email': 'Email',
+      'check': 'Check',
       'themes': 'Themes',
       'theme_words': 'Theme words',
       'enter_email': 'Please enter your email',

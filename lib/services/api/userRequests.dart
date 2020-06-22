@@ -12,6 +12,7 @@ Future<bool> loginRequest(String username, String password) async {
   map.putIfAbsent("email", () => username);
   map.putIfAbsent("password", () => password);
   HttpClientResponse tokenResponse = await getLocalePostRequestResponse("/login", map);
+  print(tokenResponse.statusCode);
   if (!isRequestValid(tokenResponse.statusCode)){
     print(tokenResponse.statusCode);
     if (tokenResponse.statusCode == 400){
