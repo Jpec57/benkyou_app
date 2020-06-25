@@ -333,10 +333,9 @@ class ReviewPageState extends State<ReviewPage> with SingleTickerProviderStateMi
     } else {
       await _sendReview(_processedCards);
       if (widget.deckId == null){
-        Navigator.pushReplacementNamed(context, DeckHomePage.routeName);
+        Navigator.pushNamedAndRemoveUntil(context, DeckHomePage.routeName, ModalRoute.withName(DeckHomePage.routeName));
       } else {
-        Navigator.pushReplacementNamed(context, DeckPage.routeName,
-            arguments: DeckPageArguments(currentCard.deck.id));
+        Navigator.pushNamedAndRemoveUntil(context, DeckPage.routeName, ModalRoute.withName(DeckPage.routeName), arguments: DeckPageArguments(currentCard.deck.id));
       }
     }
     FocusScope.of(context).requestFocus(_focusNode);
@@ -430,9 +429,9 @@ class ReviewPageState extends State<ReviewPage> with SingleTickerProviderStateMi
           onPressed: () {
             if (_processedCards == null || _processedCards.length == 0){
               if (widget.deckId != null){
-                Navigator.pushReplacementNamed(context, DeckPage.routeName, arguments: DeckPageArguments(widget.deckId));
+                Navigator.pushNamedAndRemoveUntil(context, DeckPage.routeName, ModalRoute.withName(DeckPage.routeName), arguments: DeckPageArguments(widget.deckId));
               } else {
-                Navigator.pushReplacementNamed(context, DeckHomePage.routeName);
+                Navigator.pushNamedAndRemoveUntil(context, DeckHomePage.routeName, ModalRoute.withName(DeckHomePage.routeName));
               }
             } else {
               showDialog(

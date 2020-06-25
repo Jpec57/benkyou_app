@@ -46,7 +46,7 @@ import 'dsn.dart';
 final SentryClient _sentry = new SentryClient(dsn: DSN);
 
 const bool DEBUG = false;
-const bool SENTRY = false;
+const bool SENTRY = true;
 
 class App extends StatelessWidget {
   final Widget home;
@@ -207,7 +207,6 @@ class App extends StatelessWidget {
         return null;
       },
       routes: {
-//        DeckHomePage.routeName: (context) => DeckHomePage(),
         GrammarReviewPage.routeName: (context) => GrammarReviewPage(),
         LoginPage.routeName: (context) => LoginPage(),
         LessonHomePage.routeName: (context) => LessonHomePage(),
@@ -240,7 +239,9 @@ void main() {
   runZoned(
         () =>
         runApp(App(
+//          home: ThemeListeningPartPage(chosenTheme: new DeckTheme.fromJson({"id":21,"name":"Work","backgroundImg": null,"deck":{"id":59}})),
 //          home: ThemeWritingPartPage(theme: new DeckTheme.fromJson({"id":21,"name":"Work","backgroundImg": null,"deck":{"id":59}})),
+//          home: ThemeTinderWordPage(theme: new DeckTheme.fromJson({"id":21,"name":"Work","backgroundImg": null,"deck":{"id":59}})),
           home: DeckHomePage(),
         )),
     onError: (Object error, StackTrace stackTrace) {

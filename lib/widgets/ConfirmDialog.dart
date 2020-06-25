@@ -8,8 +8,9 @@ class ConfirmDialog extends StatelessWidget{
   final String action;
   final Function positiveCallback;
   final Function negativeCallback;
+  final bool shouldAlwaysPop;
 
-  const ConfirmDialog({Key key, @required this.action, @required this.positiveCallback, this.negativeCallback}) : super(key: key);
+  const ConfirmDialog({Key key, @required this.action, @required this.positiveCallback, this.negativeCallback, this.shouldAlwaysPop = true}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +44,9 @@ class ConfirmDialog extends StatelessWidget{
                         child: Padding(
                           padding: const EdgeInsets.only(right: 5.0),
                           child: RaisedButton(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20)
+                            ),
                             color: Color(COLOR_DARK_BLUE),
                             child: Text(LocalizationWidget.of(context).getLocalizeValue('no').toUpperCase(),
                               style: TextStyle(
@@ -60,6 +64,9 @@ class ConfirmDialog extends StatelessWidget{
                         child: Padding(
                           padding: const EdgeInsets.only(left: 5.0),
                           child: RaisedButton(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20)
+                            ),
                             color: Color(COLOR_ORANGE),
                             child: Text(LocalizationWidget.of(context).getLocalizeValue('yes').toUpperCase(),
                               style: TextStyle(
@@ -68,7 +75,9 @@ class ConfirmDialog extends StatelessWidget{
                             ),
                             onPressed: () async {
                               positiveCallback();
-                              Navigator.pop(context);
+                              if (shouldAlwaysPop){
+                                Navigator.pop(context);
+                              }
                             },),
                         ),
                       ),

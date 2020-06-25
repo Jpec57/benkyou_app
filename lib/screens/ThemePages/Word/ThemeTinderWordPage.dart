@@ -3,13 +3,19 @@ import 'dart:math';
 import 'package:benkyou/models/DeckCard.dart';
 import 'package:benkyou/models/DeckTheme.dart';
 import 'package:benkyou/models/UserCard.dart';
+import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
+import 'package:benkyou/screens/HomePage/HomePage.dart';
 import 'package:benkyou/screens/ThemePages/Listening/ThemeListeningPartPageArguments.dart';
+import 'package:benkyou/screens/ThemePages/ThemeLearningHomePage.dart';
 import 'package:benkyou/services/api/cardRequests.dart';
 import 'package:benkyou/utils/colors.dart';
+import 'package:benkyou/widgets/ConfirmDialog.dart';
 import 'package:benkyou/widgets/Localization.dart';
 import 'package:benkyou/widgets/ThemeTransitionDialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:get/get.dart';
 
 import '../Listening/ThemeListeningPartPage.dart';
 
@@ -52,7 +58,7 @@ class ThemeTinderWordPageState extends State<ThemeTinderWordPage> with TickerPro
     initCards();
     WidgetsBinding.instance.addPostFrameCallback((_) async{
       showDialog(context: context, builder: (BuildContext context) => ThemeTransitionDialog(name: 'Vocabulary'));
-      Future.delayed(Duration(seconds: 3), (){
+      Future.delayed(Duration(seconds: 1), (){
         Navigator.of(context).pop();
       });
     });
@@ -112,7 +118,8 @@ class ThemeTinderWordPageState extends State<ThemeTinderWordPage> with TickerPro
 
     return Positioned.fill(
       left: index * 5.0,
-      top: index * 2.0,
+      top: index * 8.0,
+      bottom: -8.0 * index,
       //TODO use Draggable
       child: RotationTransition(
         turns: Tween(begin: 0.0, end: (isCorrect ? 1 : -1) * 0.02).animate(_animationController),
@@ -126,8 +133,11 @@ class ThemeTinderWordPageState extends State<ThemeTinderWordPage> with TickerPro
             borderRadius: BorderRadius.circular(10),
             child: Card(
               elevation: 8,
+              shadowColor: Colors.black26,
               child: Container(
-                color: Colors.orangeAccent,
+                decoration: BoxDecoration(
+                  color: Color(COLOR_MID_DARK_GREY),
+                ),
                 child: Center(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -195,7 +205,7 @@ class ThemeTinderWordPageState extends State<ThemeTinderWordPage> with TickerPro
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                        color: Colors.blueGrey, shape: BoxShape.circle),
+                        color: Colors.red, shape: BoxShape.circle),
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Icon(Icons.close, size: 50, color: Colors.white,),
@@ -210,7 +220,7 @@ class ThemeTinderWordPageState extends State<ThemeTinderWordPage> with TickerPro
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                        color: Color(COLOR_ORANGE), shape: BoxShape.circle),
+                        color: Colors.green, shape: BoxShape.circle),
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Icon(Icons.check, size: 50, color: Colors.white,),
@@ -228,31 +238,45 @@ class ThemeTinderWordPageState extends State<ThemeTinderWordPage> with TickerPro
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(
-              LocalizationWidget.of(context).getLocalizeValue('theme_words')),
-        ),
-        body: FutureBuilder(
-          future: _cards,
-          builder: (BuildContext context,
-              AsyncSnapshot<List<DeckCard>> cardSnapshot) {
-            switch (cardSnapshot.connectionState) {
-              case ConnectionState.waiting:
-                return Center(child: CircularProgressIndicator());
-              case ConnectionState.done:
-                if (!cardSnapshot.hasData){
-                  return Center(child: CircularProgressIndicator());
-                }
-                return _renderTinderLikeWidget(_fetchedCards);
-              default:
-                return Center(
-                  child: Text(LocalizationWidget.of(context)
-                      .getLocalizeValue('generic_error')),
-                );
-            }
+    return WillPopScope(
+      onWillPop: () {
+        Get.dialog(ConfirmDialog(
+          action: LocalizationWidget.of(context).getLocalizeValue('quit_session'),
+          positiveCallback: () async {
+            Navigator.of(context).pushNamedAndRemoveUntil(
+                ThemeLearningHomePage.routeName, ModalRoute.withName(ThemeLearningHomePage.routeName)
+            );
           },
+          shouldAlwaysPop: false,
         ));
+        return Future.value(false);
+      },
+      child: Scaffold(
+          appBar: AppBar(
+            title: Text(
+                LocalizationWidget.of(context).getLocalizeValue('theme_vocab')),
+          ),
+          body: FutureBuilder(
+            future: _cards,
+            builder: (BuildContext context,
+                AsyncSnapshot<List<DeckCard>> cardSnapshot) {
+              switch (cardSnapshot.connectionState) {
+                case ConnectionState.waiting:
+                  return Center(child: CircularProgressIndicator());
+                case ConnectionState.done:
+                  if (!cardSnapshot.hasData){
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  return _renderTinderLikeWidget(_fetchedCards);
+                default:
+                  return Center(
+                    child: Text(LocalizationWidget.of(context)
+                        .getLocalizeValue('generic_error')),
+                  );
+              }
+            },
+          )),
+    );
   }
 
   @override

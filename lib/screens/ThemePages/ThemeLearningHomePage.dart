@@ -1,11 +1,8 @@
 import 'package:benkyou/models/DeckTheme.dart';
-import 'package:benkyou/screens/DialogPage/InDialogPageArguments.dart';
-import 'package:benkyou/screens/ThemePages/Listening/ThemeListeningPartPage.dart';
-import 'package:benkyou/screens/ThemePages/Listening/ThemeListeningPartPageArguments.dart';
 import 'package:benkyou/screens/ThemePages/Word/ThemeTinderWordPage.dart';
-import 'package:benkyou/screens/ThemePages/Word/ThemeTinderWordPageArguments.dart';
 import 'package:benkyou/services/api/themeRequests.dart';
 import 'package:benkyou/transitions/ScaleRoute.dart';
+import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/Localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +16,13 @@ class ThemeLearningHomePage extends StatefulWidget {
 
 class ThemeLearningHomePageState extends State<ThemeLearningHomePage> {
   Future<List<DeckTheme>> _themes;
+  List<Color> _colors = [
+    Color(0xff3E3C45),
+    Color(COLOR_MUSTARD),
+    Color(COLOR_MUSTARD),
+    Color(0xffC2C2CF),
+
+  ];
 
   void setThemes(){
     _themes = getThemesRequest();
@@ -30,7 +34,7 @@ class ThemeLearningHomePageState extends State<ThemeLearningHomePage> {
     setThemes();
   }
 
-  Widget _renderThemes(DeckTheme theme){
+  Widget _renderThemes(DeckTheme theme, int index){
     double side = MediaQuery.of(context).size.width * 0.4;
     return GestureDetector(
       onTap: (){
@@ -42,21 +46,23 @@ class ThemeLearningHomePageState extends State<ThemeLearningHomePage> {
           borderRadius: BorderRadius.all(Radius.circular(8.0)),
           child: Container(
             decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage("lib/imgs/japan.png"),
-                fit: BoxFit.cover
-              )
+              color: _colors[index % _colors.length]
+//              image: DecorationImage(
+//                image: AssetImage("lib/imgs/japan.png"),
+//                fit: BoxFit.cover
+//              )
             ),
             height: side,
             width: side,
             child: Center(child: Text(theme.name.toUpperCase(), style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
+              color: Colors.white,
               shadows: <Shadow>[
                 Shadow(
                   offset: Offset(2.0, 2.0),
                   blurRadius: 3.0,
-                  color: Colors.grey,
+                  color: Colors.black26,
                 ),
               ],
             ),)),
@@ -85,7 +91,7 @@ class ThemeLearningHomePageState extends State<ThemeLearningHomePage> {
                 return GridView.count(
                   shrinkWrap: true,
                   crossAxisCount: 2,
-                  children: List.generate(themes.length, (index) => _renderThemes(themes[index])),);
+                  children: List.generate(themes.length, (index) => _renderThemes(themes[index], index)),);
               }
               return Center(child: Text(LocalizationWidget.of(context).getLocalizeValue('empty')),);
             default:

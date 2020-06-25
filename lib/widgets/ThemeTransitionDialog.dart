@@ -22,7 +22,7 @@ class ThemeTransitionDialog extends StatelessWidget{
         content: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
-          color: Colors.green,
+          color: Color(COLOR_MID_DARK_GREY),
           child: Center(child:
           Padding(
             padding: const EdgeInsets.all(20.0),
