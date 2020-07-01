@@ -27,9 +27,12 @@ class DeckHomePage extends StatefulWidget {
 }
 
 class DeckHomePageState extends State<DeckHomePage> {
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+  new GlobalKey<RefreshIndicatorState>();
   Future<List<Deck>> personalDecks;
   Future<List<UserCardReviewCount>> personalDeckCounts;
   Future<List<UserCard>> _allReviewCards;
+  Future<int> _totalCount;
 
   Future<List<Deck>> _fetchPersonalDecks() async {
     List<Deck> parsedDecks = [];
@@ -54,9 +57,7 @@ class DeckHomePageState extends State<DeckHomePage> {
   @override
   void initState() {
     super.initState();
-    personalDecks = _fetchPersonalDecks();
-    personalDeckCounts = getReviewCardCountsForAllDecks();
-    _allReviewCards = getReviewCards();
+    reloadDecks();
   }
 
   void _createNewDeck() async {
@@ -80,6 +81,8 @@ class DeckHomePageState extends State<DeckHomePage> {
     setState(() {
       personalDecks = getPersonalDecks();
       personalDeckCounts = getReviewCardCountsForAllDecks();
+      _allReviewCards = getReviewCards();
+      _totalCount = getUserCardsCount();
     });
   }
 
@@ -206,6 +209,12 @@ class DeckHomePageState extends State<DeckHomePage> {
     );
   }
 
+  Future<void> _refresh() async {
+    reloadDecks();
+    setState(() {
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -272,16 +281,58 @@ class DeckHomePageState extends State<DeckHomePage> {
                       children: [
                         _renderAllDecksReviewWidget(),
                         Expanded(
-                          child: GridView.count(
-                              shrinkWrap: true,
-                              crossAxisCount: 2,
-                              key: ValueKey('deck-grid'),
-                              children: List.generate(
-                                  deckSnapshot.data.length, (index) {
-                                Deck deck = deckSnapshot.data[index];
-                                return _renderDeckStack(deck);
-                              })),
+                          child: RefreshIndicator(
+                            key: _refreshIndicatorKey,
+                            onRefresh: _refresh,
+                            child: GridView.count(
+                                shrinkWrap: true,
+                                crossAxisCount: 2,
+                                key: ValueKey('deck-grid'),
+                                children: List.generate(
+                                    deckSnapshot.data.length, (index) {
+                                  Deck deck = deckSnapshot.data[index];
+                                  return _renderDeckStack(deck);
+                                })),
+                          ),
                         ),
+                        FutureBuilder(
+                          future: _totalCount,
+                          builder:
+                              (BuildContext context, AsyncSnapshot<int> countSnap) {
+                            switch (countSnap.connectionState) {
+                              case ConnectionState.waiting:
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              case ConnectionState.done:
+                               if (countSnap.hasData) {
+                                 return Padding(
+                                   padding: const EdgeInsets.only(top: 5.0),
+                                   child: RichText(
+                                     text: TextSpan(
+                                       text: '',
+                                       style: DefaultTextStyle.of(context).style,
+                                       children: <TextSpan>[
+                                         TextSpan(text: 'Total: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                                         TextSpan(text: '${countSnap.data} cards'),
+                                       ],
+                                     ),
+                                   ),
+                                 );
+                                }
+                                return Container();
+                              case ConnectionState.none:
+                                return Center(
+                                    child: Text(LocalizationWidget.of(context)
+                                        .getLocalizeValue(
+                                            'no_internet_connection')));
+                              default:
+                                return Center(
+                                    child: Text(LocalizationWidget.of(context)
+                                        .getLocalizeValue('empty')));
+                            }
+                          },
+                        )
                       ],
                     ),
                   );

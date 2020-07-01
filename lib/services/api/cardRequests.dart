@@ -188,3 +188,13 @@ Future<List<DeckCard>> getRandomThemeCardsInDeck(int deckId, int number) async {
   print(parsedCards);
   return parsedCards;
 }
+
+Future<int> getUserCardsCount() async {
+  HttpClientResponse cardResponse = await getLocaleGetRequestResponse("/users/cards/vocab/number");
+  var count = await getJsonFromHttpResponse(cardResponse);
+  if (!isRequestValid(cardResponse.statusCode)){
+    return null;
+  }
+  print(count['number']);
+  return int.parse(count['number']);
+}

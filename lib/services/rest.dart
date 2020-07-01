@@ -20,10 +20,15 @@ Future<HttpClientResponse> handleGenericErrors(HttpClientResponse response) asyn
 }
 
 bool isRequestValid(int statusCode){
+  if (statusCode == 401){
+    Get.snackbar('API Token expired', 'Your token has expired. Please log in again.', snackPosition: SnackPosition.BOTTOM);
+    logoutRequest(shouldRedirect: true);
+  }
   return (statusCode >= 200 && statusCode < 300);
 }
 
 getJsonFromHttpResponse(HttpClientResponse response) async{
+
   String reply = await response.transform(utf8.decoder).join();
   print(reply);
   return json.decode(reply);

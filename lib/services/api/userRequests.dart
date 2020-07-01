@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:benkyou/models/User.dart';
+import 'package:benkyou/screens/LoginPage/LoginPage.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -49,9 +50,12 @@ Future<void> _resetSharedPreferences() async {
   sharedPreferences.remove('email');
 }
 
-Future<bool> logoutRequest() async {
+Future<bool> logoutRequest({bool shouldRedirect = false}) async {
   HttpClientResponse response = await getLocaleGetRequestResponse("/logout", canHandleGenericErrors: false);
   await _resetSharedPreferences();
+  if (shouldRedirect){
+    Get.to(LoginPage());
+  }
   if (!isRequestValid(response.statusCode)){
     print(await getJsonFromHttpResponse(response));
     return false;
