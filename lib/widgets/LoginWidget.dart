@@ -110,7 +110,6 @@ class LoginWidgetState extends State<LoginWidget>{
                           bool res = await loginRequest(_usernameController.text, _passwordController.text);
                           if (!res){
                             Navigator.pop(context);
-                            Navigator.pop(context);
                           } else {
                             Navigator.pushReplacementNamed(
                               context,

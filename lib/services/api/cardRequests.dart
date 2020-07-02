@@ -185,7 +185,6 @@ Future<List<DeckCard>> getRandomThemeCardsInDeck(int deckId, int number) async {
     return null;
   }
   List<DeckCard> parsedCards = decodeDeckCardJsonArray(cards);
-  print(parsedCards);
   return parsedCards;
 }
 
@@ -195,6 +194,32 @@ Future<int> getUserCardsCount() async {
   if (!isRequestValid(cardResponse.statusCode)){
     return null;
   }
-  print(count['number']);
+  return int.parse(count['number']);
+}
+Future<bool> getToUnlockNewCards(int deckId) async {
+  HttpClientResponse cardResponse = await getLocaleGetRequestResponse("/users/decks/$deckId/cards/unlock");
+  var count = await getJsonFromHttpResponse(cardResponse);
+  if (!isRequestValid(cardResponse.statusCode)){
+    return false;
+  }
+  return true;
+}
+
+Future<List<DeckCard>> getLockedCards(int deckId) async {
+  HttpClientResponse cardResponse = await getLocaleGetRequestResponse("/users/decks/$deckId/locked-cards/unlock");
+  var cards = await getJsonFromHttpResponse(cardResponse);
+  if (!isRequestValid(cardResponse.statusCode)){
+    return null;
+  }
+  List<DeckCard> parsedCards = decodeDeckCardJsonArray(cards);
+  return parsedCards;
+}
+
+Future<int> getLockedCardsCount(int deckId) async {
+  HttpClientResponse cardResponse = await getLocaleGetRequestResponse("/users/decks/$deckId/locked-cards/count");
+  var count = await getJsonFromHttpResponse(cardResponse);
+  if (!isRequestValid(cardResponse.statusCode)){
+    return null;
+  }
   return int.parse(count['number']);
 }

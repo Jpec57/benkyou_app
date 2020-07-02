@@ -32,6 +32,7 @@ class DeckPageState extends State<DeckPage> {
   Future<List<UserCard>> userCards;
   Future<List<UserCard>> reviewCards;
   Future<Deck> deck;
+  Future<int> _toUnlockCardsCount;
 
   @override
   void initState() {
@@ -39,6 +40,7 @@ class DeckPageState extends State<DeckPage> {
     deck = getDeck(widget.id);
     userCards = getUserCardsForDeck(widget.id);
     reviewCards = getReviewCardsForDeck(widget.id);
+    _toUnlockCardsCount = getLockedCardsCount(widget.id);
   }
 
   void _createNewCard() {
@@ -100,14 +102,56 @@ class DeckPageState extends State<DeckPage> {
         });
   }
 
+  Widget _renderUnlockCardWidget(){
+    return FutureBuilder(
+      future: _toUnlockCardsCount,
+      builder: (BuildContext context, AsyncSnapshot<int> countSnapshot) {
+        switch (countSnapshot.connectionState) {
+          case ConnectionState.waiting:
+            return Center(child: Text(LocalizationWidget.of(context).getLocalizeValue('loading')));
+          case ConnectionState.done:
+            if (countSnapshot.hasData && countSnapshot.data > 0) {
+              int count = countSnapshot.data;
+              String str;
+              if (count > 20){
+                str = 'Add 20 cards to review.';
+              } else {
+                str = 'Add $count card(s) to review.';
+              }
+              return RaisedButton(
+                child: Text(str, style: TextStyle(color: Colors.white),),
+                color: Color(0xff800505),
+                onPressed: () async {
+                  await getToUnlockNewCards(widget.id);
+                  setState(() {
+                    reviewCards = getReviewCardsForDeck(widget.id);
+                    _toUnlockCardsCount = getLockedCardsCount(widget.id);
+                  });
+              },
+
+              );
+            }
+            return Container();
+          case ConnectionState.none:
+            return Center(
+                child: Text(LocalizationWidget.of(context)
+                    .getLocalizeValue('no_internet_connection')));
+          default:
+            return Center(
+                child: Text(
+                    LocalizationWidget.of(context).getLocalizeValue('empty')));
+        }
+      },
+    );
+  }
+
   Widget _renderDeckPageContent(Deck deck) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         _renderReviewSchedule(),
-        _renderSRSPreview(),
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
           child: FutureBuilder(
             future: userCards,
             builder: (BuildContext context,
@@ -118,11 +162,11 @@ class DeckPageState extends State<DeckPage> {
                 case ConnectionState.done:
                   if (userCardSnapshot.hasData) {
                     List<UserCard> cards = userCardSnapshot.data;
-                    print(cards);
                     return SingleChildScrollView(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
                           RichText(
                             textAlign: TextAlign.center,
@@ -150,12 +194,31 @@ class DeckPageState extends State<DeckPage> {
                                       cardsToReviewSnapshot) {
                                 switch (cardsToReviewSnapshot.connectionState) {
                                   case ConnectionState.waiting:
-                                    return Text(LocalizationWidget.of(context).getLocalizeValue('loading'));
+                                    return Center(child: Text(LocalizationWidget.of(context).getLocalizeValue('loading')));
                                   case ConnectionState.done:
                                     if (cardsToReviewSnapshot.hasData) {
                                       List<UserCard> cardsToReview =
                                           cardsToReviewSnapshot.data;
                                       int length = cardsToReview.length;
+//                                      return GestureDetector(
+//                                        onTap: (){
+//                                          if (length > 0) {
+//                                            Navigator.pushNamed(
+//                                                context, ReviewPage.routeName,
+//                                                arguments: ReviewPageArguments(
+//                                                    cards: cardsToReview, deckId: widget.id));
+//                                          } else {
+//                                            Get.snackbar('No review', 'There is nothing to review, you have to wait ;)', snackPosition: SnackPosition.BOTTOM);
+//                                          }
+//                                        },
+//                                        child: Container(
+//                                          color: Color(COLOR_DARK_BLUE),
+//                                          child: Text(
+//                                            "$length Review${length > 0 ? 's' : ''}",
+//                                            style: TextStyle(color: Colors.white),
+//                                          ),
+//                                        ),
+//                                      );
                                       return ButtonTheme(
                                         minWidth: MediaQuery.of(context).size.width * 0.6,
                                         child: RaisedButton(
@@ -171,10 +234,7 @@ class DeckPageState extends State<DeckPage> {
                                                   arguments: ReviewPageArguments(
                                                       cards: cardsToReview, deckId: widget.id));
                                             } else {
-                                              Scaffold.of(context).showSnackBar(
-                                                  SnackBar(
-                                                      content: Text(
-                                                          'There is nothing to review, you have to wait ;)')));
+                                                  Get.snackbar('No review', 'There is nothing to review, you have to wait ;)', snackPosition: SnackPosition.BOTTOM);
                                             }
                                           },
                                         ),
@@ -185,7 +245,9 @@ class DeckPageState extends State<DeckPage> {
                                       child: Text("0 Review",
                                         style: TextStyle(color: Colors.white),
                                       ),
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        Get.snackbar('No review', 'There is nothing to review, you have to wait ;)', snackPosition: SnackPosition.BOTTOM);
+                                      },
                                     );
                                   default:
                                     return RaisedButton(
@@ -199,6 +261,7 @@ class DeckPageState extends State<DeckPage> {
                               },
                             ),
                           ),
+                          _renderUnlockCardWidget()
                         ],
                       ),
                     );
@@ -224,6 +287,7 @@ class DeckPageState extends State<DeckPage> {
             },
           ),
         ),
+        _renderSRSPreview(),
       ],
     );
   }

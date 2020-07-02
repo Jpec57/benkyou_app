@@ -17,7 +17,7 @@ Future<bool> loginRequest(String username, String password) async {
   if (!isRequestValid(tokenResponse.statusCode)){
     print(tokenResponse.statusCode);
     if (tokenResponse.statusCode == 400){
-      Get.snackbar('Incorrect credentials', 'The username or password is incorrect.');
+      Get.snackbar('Incorrect credentials', 'The username or password is incorrect.', snackPosition: SnackPosition.BOTTOM);
     } else {
       Get.snackbar('Error', 'An error occurred. Please contact the support for any help.', snackPosition: SnackPosition.BOTTOM);
     }

@@ -26,8 +26,8 @@ class LoginPageState extends State<LoginPage>{
     return Scaffold(
       appBar: AppBar(
         title: Text('Login'),
+        leading: Container(),
       ),
-      drawer: MainDrawer(),
       body: GestureDetector(
         onTap: (){
           FocusScopeNode currentFocus = FocusScope.of(context);
@@ -35,14 +35,14 @@ class LoginPageState extends State<LoginPage>{
             currentFocus.unfocus();
           }
         },
-        child: Padding(
-          padding: const EdgeInsets.only(top: 50.0, bottom: 8.0, left: 30, right: 30),
-          child: SingleChildScrollView(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 8.0, left: 30, right: 30),
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 20.0),
+                  padding: const EdgeInsets.only(top: 50.0, bottom: 20.0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [
