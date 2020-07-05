@@ -31,6 +31,7 @@ class DeckHomePageState extends State<DeckHomePage> {
   new GlobalKey<RefreshIndicatorState>();
   Future<List<Deck>> personalDecks;
   Future<List<UserCardReviewCount>> personalDeckCounts;
+  Future<List<UserCardReviewCount>> _awaitingCardCounts;
   Future<List<UserCard>> _allReviewCards;
   Future<int> _totalCount;
 
@@ -83,67 +84,117 @@ class DeckHomePageState extends State<DeckHomePage> {
       personalDeckCounts = getReviewCardCountsForAllDecks();
       _allReviewCards = getReviewCards();
       _totalCount = getUserCardsCount();
+      _awaitingCardCounts = getAwaitingCardCountsForAllDecks();
     });
   }
-
-  Widget _renderDeck(Deck deck) {
-    return Padding(
-      padding:
-          const EdgeInsets.only(right: 12.0, left: 10, top: 10, bottom: 10),
-      child: DeckContainer(
-        deck: deck,
-      ),
-    );
-  }
-
-  Widget _renderDeckWithReviewCount(Deck deck, int count) {
-    return Stack(
-      children: <Widget>[
-        _renderDeck(deck),
-        Align(
-          alignment: Alignment.topRight,
-          child: Container(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                '$count',
-                style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-              ),
-            ),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Color(COLOR_ORANGE),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _renderDeckStack(Deck deck) {
+  
+  Widget _renderDeckAwaitingCount(Deck deck){
     return FutureBuilder(
-      future: personalDeckCounts,
+      future: _awaitingCardCounts,
       builder: (BuildContext context,
-          AsyncSnapshot<List<UserCardReviewCount>> countSnapshot) {
-        switch (countSnapshot.connectionState) {
+          AsyncSnapshot<dynamic> awaitingCountSnap) {
+        switch (awaitingCountSnap.connectionState) {
+          case ConnectionState.waiting:
+            return Center(child: CircularProgressIndicator(),);
           case ConnectionState.done:
-            if (countSnapshot.hasData) {
+            if (awaitingCountSnap.hasData) {
+              var data = awaitingCountSnap.data;
               for (UserCardReviewCount userCardReviewCount
-                  in countSnapshot.data) {
+              in data) {
                 if (deck.id == userCardReviewCount.deckId) {
-                  int count = userCardReviewCount.count;
-                  if (count > 0) {
-                    return _renderDeckWithReviewCount(deck, count);
+                  int awaitingCount = userCardReviewCount.count;
+                  if (awaitingCount > 0) {
+                    return Align(
+                      alignment: Alignment.topLeft,
+                      child: Container(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            '$awaitingCount',
+                            style:
+                            TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color(COLOR_DARK_MUSTARD),
+                        ),
+                      ),
+                    );
                   }
                 }
               }
+              return Container();
             }
-            return _renderDeck(deck);
+            return Container();
+          case ConnectionState.none:
+            return Container();
           default:
-            return _renderDeck(deck);
+            return Container();
         }
-      },
+      },);
+  }
+  
+  Widget _renderDeckReviewCount(Deck deck){
+    return FutureBuilder(
+      future: personalDeckCounts,
+      builder: (BuildContext context,
+          AsyncSnapshot<dynamic> reviewCountSnap) {
+        switch (reviewCountSnap.connectionState) {
+          case ConnectionState.waiting:
+            return Center(child: CircularProgressIndicator(),);
+          case ConnectionState.done:
+            if (reviewCountSnap.hasData) {
+              var data = reviewCountSnap.data;
+              for (UserCardReviewCount userCardReviewCount
+              in data) {
+                if (deck.id == userCardReviewCount.deckId) {
+                  int reviewCount = userCardReviewCount.count;
+                  if (reviewCount > 0) {
+                    return Align(
+                      alignment: Alignment.topRight,
+                      child: Container(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            '$reviewCount',
+                            style:
+                            TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color(COLOR_ORANGE),
+                        ),
+                      ),
+                    );
+                  }
+                }
+              }
+              return Container();
+            }
+            return Container();
+          case ConnectionState.none:
+            return Container();
+          default:
+            return Container();
+        }
+      },);
+  }
+
+  Widget _renderDeckStack(Deck deck) {
+    return Stack(
+      children: <Widget>[
+        Padding(
+          padding:
+          const EdgeInsets.only(right: 12.0, left: 10, top: 10, bottom: 10),
+          child: DeckContainer(
+            deck: deck,
+          ),
+        ),
+        _renderDeckAwaitingCount(deck),
+        _renderDeckReviewCount(deck),
+      ],
     );
   }
 
@@ -258,33 +309,34 @@ class DeckHomePageState extends State<DeckHomePage> {
           ),
         ],
       ),
-      body: FutureBuilder(
-          future: personalDecks,
-          builder: (BuildContext context,
-              AsyncSnapshot<List<Deck>> deckSnapshot) {
-            switch (deckSnapshot.connectionState) {
-              case ConnectionState.none:
-                return Center(
-                    child: Text(LocalizationWidget.of(context)
-                        .getLocalizeValue('no_internet_connection')));
-              case ConnectionState.done:
-                if (deckSnapshot.hasData) {
-                  if (deckSnapshot.data.length == 0) {
-                    return Center(
-                        child: Text(LocalizationWidget.of(context)
-                            .getLocalizeValue('no_deck_create')));
-                  }
-                  return Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _renderAllDecksReviewWidget(),
-                        Expanded(
-                          child: RefreshIndicator(
-                            key: _refreshIndicatorKey,
-                            onRefresh: _refresh,
-                            child: GridView.count(
+      body: Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _renderAllDecksReviewWidget(),
+            Expanded(
+              child: RefreshIndicator(
+                key: _refreshIndicatorKey,
+                onRefresh: _refresh,
+                child:
+                FutureBuilder(
+                    future: personalDecks,
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<Deck>> deckSnapshot) {
+                      switch (deckSnapshot.connectionState) {
+                        case ConnectionState.none:
+                          return Center(
+                              child: Text(LocalizationWidget.of(context)
+                                  .getLocalizeValue('no_internet_connection')));
+                        case ConnectionState.done:
+                          if (deckSnapshot.hasData) {
+                            if (deckSnapshot.data.length == 0) {
+                              return Center(
+                                  child: Text(LocalizationWidget.of(context)
+                                      .getLocalizeValue('no_deck_create')));
+                            }
+                            return GridView.count(
                                 shrinkWrap: true,
                                 crossAxisCount: 2,
                                 key: ValueKey('deck-grid'),
@@ -292,60 +344,55 @@ class DeckHomePageState extends State<DeckHomePage> {
                                     deckSnapshot.data.length, (index) {
                                   Deck deck = deckSnapshot.data[index];
                                   return _renderDeckStack(deck);
-                                })),
+                                }));
+                          }
+                          return Center(
+                              child: Text(LocalizationWidget.of(context)
+                                  .getLocalizeValue('no_deck_create')));
+                        default:
+                          return Center(
+                              child: CircularProgressIndicator());
+                      }
+                    })
+              ),
+            ),
+            FutureBuilder(
+              future: _totalCount,
+              builder:
+                  (BuildContext context, AsyncSnapshot<int> countSnap) {
+                switch (countSnap.connectionState) {
+                  case ConnectionState.waiting:
+                    return Center(
+                      child: Text(
+                          LocalizationWidget.of(context).getLocalizeValue('loading')),
+                    );
+                  case ConnectionState.done:
+                    if (countSnap.hasData) {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 5.0),
+                        child: RichText(
+                          text: TextSpan(
+                            text: '',
+                            style: DefaultTextStyle.of(context).style,
+                            children: <TextSpan>[
+                              TextSpan(text: 'Total: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                              TextSpan(text: '${countSnap.data} cards'),
+                            ],
                           ),
                         ),
-                        FutureBuilder(
-                          future: _totalCount,
-                          builder:
-                              (BuildContext context, AsyncSnapshot<int> countSnap) {
-                            switch (countSnap.connectionState) {
-                              case ConnectionState.waiting:
-                                return Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              case ConnectionState.done:
-                               if (countSnap.hasData) {
-                                 return Padding(
-                                   padding: const EdgeInsets.only(top: 5.0),
-                                   child: RichText(
-                                     text: TextSpan(
-                                       text: '',
-                                       style: DefaultTextStyle.of(context).style,
-                                       children: <TextSpan>[
-                                         TextSpan(text: 'Total: ', style: TextStyle(fontWeight: FontWeight.bold)),
-                                         TextSpan(text: '${countSnap.data} cards'),
-                                       ],
-                                     ),
-                                   ),
-                                 );
-                                }
-                                return Container();
-                              case ConnectionState.none:
-                                return Center(
-                                    child: Text(LocalizationWidget.of(context)
-                                        .getLocalizeValue(
-                                            'no_internet_connection')));
-                              default:
-                                return Center(
-                                    child: Text(LocalizationWidget.of(context)
-                                        .getLocalizeValue('empty')));
-                            }
-                          },
-                        )
-                      ],
-                    ),
-                  );
+                      );
+                    }
+                    return Container();
+                  case ConnectionState.none:
+                    return Container();
+                  default:
+                    return Container();
                 }
-                return Center(
-                    child: Text(LocalizationWidget.of(context)
-                        .getLocalizeValue('no_deck_create')));
-              default:
-                return Center(
-                    child: Text(LocalizationWidget.of(context)
-                        .getLocalizeValue('loading')));
-            }
-          }),
+              },
+            )
+          ],
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _createNewDeck,
         backgroundColor: Color(COLOR_ORANGE),

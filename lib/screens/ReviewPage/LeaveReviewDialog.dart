@@ -53,6 +53,9 @@ class LeaveReviewDialogState extends State<LeaveReviewDialog>{
                           child: Padding(
                             padding: const EdgeInsets.only(right: 8.0),
                             child: RaisedButton(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)
+                              ),
                               color: Color(COLOR_DARK_BLUE),
                               child: Text(
                                 LocalizationWidget.of(context).getLocalizeValue('no').toUpperCase(),
@@ -71,6 +74,9 @@ class LeaveReviewDialogState extends State<LeaveReviewDialog>{
                             padding: const EdgeInsets.only(left: 8.0),
                             child: RaisedButton(
                               color: Color(COLOR_ORANGE),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)
+                              ),
                               child: Text(
                                 LocalizationWidget.of(context).getLocalizeValue('yes').toUpperCase(),
                                 style: TextStyle(

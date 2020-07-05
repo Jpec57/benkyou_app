@@ -95,6 +95,17 @@ Future<List<UserCardReviewCount>> getReviewCardCountsForAllDecks() async {
   return parsedCounts;
 }
 
+Future<List<UserCardReviewCount>> getAwaitingCardCountsForAllDecks() async {
+  HttpClientResponse countResponse = await getLocaleGetRequestResponse("/decks/user-card/awaiting/counts");
+  var counts = await getJsonFromHttpResponse(countResponse);
+  if (!isRequestValid(countResponse.statusCode)){
+    print(counts);
+    return null;
+  }
+  List<UserCardReviewCount> parsedCounts = decodeUserCardReviewCountJsonArray(counts);
+  return parsedCounts;
+}
+
 Future<List<UserCard>> getReviewCardsForDeck(int deckId) async {
   HttpClientResponse cardResponse = await getLocaleGetRequestResponse("/users/decks/$deckId/review");
   var cards = await getJsonFromHttpResponse(cardResponse);

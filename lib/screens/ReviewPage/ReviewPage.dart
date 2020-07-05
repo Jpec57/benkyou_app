@@ -455,7 +455,8 @@ class ReviewPageState extends State<ReviewPage> with SingleTickerProviderStateMi
             IntrinsicHeight(
               child: Container(
                 constraints: BoxConstraints(
-                  minHeight: MediaQuery.of(context).size.height * 0.2
+                  minHeight: MediaQuery.of(context).size.height * 0.2,
+                  maxHeight: MediaQuery.of(context).size.height * 0.2,
                 ),
                 color: Color(COLOR_GREY),
                 child: Stack(

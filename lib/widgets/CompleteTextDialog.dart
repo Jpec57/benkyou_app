@@ -68,6 +68,9 @@ class CompleteTextDialogState extends State<CompleteTextDialog>{
                   padding: const EdgeInsets.only(left: 5.0, top: 15.0),
                   child: IntrinsicHeight(
                       child: RaisedButton(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)
+                        ),
                         color: Color(COLOR_ORANGE),
                         child: Text(LocalizationWidget.of(context).getLocalizeValue('save').toUpperCase(),
                           style: TextStyle(

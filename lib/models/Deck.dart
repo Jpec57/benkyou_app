@@ -11,6 +11,7 @@ class Deck {
   List<DeckCard> cards;
   List<User> users;
   bool isPublic;
+  bool isOfficial;
 
   Deck.fromJson(Map<String, dynamic> json)
       : id = json['id'],
@@ -19,7 +20,8 @@ class Deck {
         description = getFromJson(json, 'description'),
         cards = json.containsKey('cards') ? decodeDeckCardJsonArray(json['cards']) : [],
         users = decodeUserJsonArray(json['users']),
-        isPublic = json['isPublic'] ?? false
+        isPublic = json['isPublic'] ?? false,
+        isOfficial = json['isOfficial'] ?? false
   ;
 
   Deck.fromId(Map<String, dynamic> json)

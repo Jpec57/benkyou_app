@@ -4,6 +4,7 @@ import 'package:benkyou/services/api/themeRequests.dart';
 import 'package:benkyou/transitions/ScaleRoute.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/Localization.dart';
+import 'package:benkyou/widgets/MainDrawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -79,6 +80,7 @@ class ThemeLearningHomePageState extends State<ThemeLearningHomePage> {
       appBar: AppBar(
         title: Text('Choose a theme'),
       ),
+      drawer: MainDrawer(),
       body: FutureBuilder(
         future: _themes,
         builder: (BuildContext context, AsyncSnapshot<List<DeckTheme>> themeSnapshot) {

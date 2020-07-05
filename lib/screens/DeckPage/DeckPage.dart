@@ -120,7 +120,7 @@ class DeckPageState extends State<DeckPage> {
               }
               return RaisedButton(
                 child: Text(str, style: TextStyle(color: Colors.white),),
-                color: Color(0xff800505),
+                color: Color(COLOR_DARK_MUSTARD),
                 onPressed: () async {
                   await getToUnlockNewCards(widget.id);
                   setState(() {
@@ -168,21 +168,24 @@ class DeckPageState extends State<DeckPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
-                          RichText(
-                            textAlign: TextAlign.center,
-                            text: new TextSpan(
-                              // Note: Styles for TextSpans must be explicitly defined.
-                              // Child text spans will inherit styles from parent
-                              style: new TextStyle(
-                                fontSize: 16.0,
-                                color: Colors.black,
-                              ),
-                              children: <TextSpan>[
-                                new TextSpan(text: 'Deck ${deck.title} contains '),
-                                new TextSpan(text: '${cards.length}', style: new TextStyle(fontWeight: FontWeight.bold)),
-                                new TextSpan(text: ' cards.'),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: RichText(
+                              textAlign: TextAlign.center,
+                              text: new TextSpan(
+                                // Note: Styles for TextSpans must be explicitly defined.
+                                // Child text spans will inherit styles from parent
+                                style: new TextStyle(
+                                  fontSize: 16.0,
+                                  color: Colors.black,
+                                ),
+                                children: <TextSpan>[
+                                  new TextSpan(text: 'Deck ${deck.title} contains '),
+                                  new TextSpan(text: '${cards.length}', style: new TextStyle(fontWeight: FontWeight.bold)),
+                                  new TextSpan(text: ' cards.'),
 
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                           Padding(
@@ -200,25 +203,6 @@ class DeckPageState extends State<DeckPage> {
                                       List<UserCard> cardsToReview =
                                           cardsToReviewSnapshot.data;
                                       int length = cardsToReview.length;
-//                                      return GestureDetector(
-//                                        onTap: (){
-//                                          if (length > 0) {
-//                                            Navigator.pushNamed(
-//                                                context, ReviewPage.routeName,
-//                                                arguments: ReviewPageArguments(
-//                                                    cards: cardsToReview, deckId: widget.id));
-//                                          } else {
-//                                            Get.snackbar('No review', 'There is nothing to review, you have to wait ;)', snackPosition: SnackPosition.BOTTOM);
-//                                          }
-//                                        },
-//                                        child: Container(
-//                                          color: Color(COLOR_DARK_BLUE),
-//                                          child: Text(
-//                                            "$length Review${length > 0 ? 's' : ''}",
-//                                            style: TextStyle(color: Colors.white),
-//                                          ),
-//                                        ),
-//                                      );
                                       return ButtonTheme(
                                         minWidth: MediaQuery.of(context).size.width * 0.6,
                                         child: RaisedButton(
