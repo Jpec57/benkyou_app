@@ -74,7 +74,7 @@ class ThemeListeningPartPageState extends State<ThemeListeningPartPage>
     }
     setState(() {
       _badOpacity = 0;
-      _answerContainerHeight =  MediaQuery.of(context).size.height * 0.3;
+      _answerContainerHeight =  MediaQuery.of(context).size.height * 0.4;
       _currentProgressValue = (_nbErrors + _nbSuccess) / nbSentences;
     });
   }
@@ -192,9 +192,6 @@ class ThemeListeningPartPageState extends State<ThemeListeningPartPage>
         } else {
           Navigator.of(context).pushNamed(ThemeWritingPartPage.routeName, arguments: ThemeWritingPartPageArguments(widget.chosenTheme));
         }
-//        if (!_isCorrect){
-//          sentences.shuffle();
-//        }
         setState(() {
           _answerContainerHeight =  0;
           _badOpacity = 1;

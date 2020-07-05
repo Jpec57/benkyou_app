@@ -46,7 +46,7 @@ import 'dsn.dart';
 final SentryClient _sentry = new SentryClient(dsn: DSN);
 
 const bool DEBUG = false;
-const bool SENTRY = false;
+const bool SENTRY = true;
 
 class App extends StatelessWidget {
   final Widget home;

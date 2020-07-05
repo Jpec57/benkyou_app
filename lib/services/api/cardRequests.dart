@@ -177,6 +177,18 @@ Future<DeckCard> postCard(int deckId, Map body) async {
   return parsedCards;
 }
 
+Future<List<DeckCard>> getDeckCards(int deckId, {int offset = 0}) async {
+  HttpClientResponse cardResponse = await getLocaleGetRequestResponse("/decks/$deckId/cards/$offset");
+  var cards = await getJsonFromHttpResponse(cardResponse);
+  if (!isRequestValid(cardResponse.statusCode)){
+    print(cards);
+    return null;
+  }
+  List<DeckCard> parsedCards = decodeDeckCardJsonArray(cards);
+  print(parsedCards);
+  return parsedCards;
+}
+
 Future<List<DeckCard>> getCardsByQuestionInDeck(int deckId, String question) async {
   Map map = new Map();
   map.putIfAbsent('question', () => question);
