@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "661336284427",
+    "firebase_url": "https://benkyou-6e624.firebaseio.com",
+    "project_id": "benkyou-6e624",
+    "storage_bucket": "benkyou-6e624.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:661336284427:android:1e343046ffd50d5392d60e",
+        "android_client_info": {
+          "package_name": "com.jpec.benkyou_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "661336284427-95uic63b372gpdkd5oj1h8s7g0quuks7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqTW6PzMAPbsjtpfrvNfrvYbFFLJaI488"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "661336284427-95uic63b372gpdkd5oj1h8s7g0quuks7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
