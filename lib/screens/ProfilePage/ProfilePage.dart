@@ -2,6 +2,7 @@ import 'package:benkyou/models/User.dart';
 import 'package:benkyou/services/api/userRequests.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/CurvePainter.dart';
+import 'package:benkyou/widgets/ExperienceBar.dart';
 import 'package:benkyou/widgets/Localization.dart';
 import 'package:benkyou/widgets/MainDrawer.dart';
 import 'package:flutter/cupertino.dart';
@@ -53,7 +54,8 @@ class ProfilePageState extends State<ProfilePage> {
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Text(LocalizationWidget.of(context)
-                    .getLocalizeValue('likes').toUpperCase()),
+                    .getLocalizeValue('likes')
+                    .toUpperCase()),
               ],
             ))),
           ),
@@ -74,7 +76,8 @@ class ProfilePageState extends State<ProfilePage> {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               Text(LocalizationWidget.of(context)
-        .getLocalizeValue('followers').toUpperCase()),
+                  .getLocalizeValue('followers')
+                  .toUpperCase()),
             ],
           ))),
           Container(
@@ -94,9 +97,103 @@ class ProfilePageState extends State<ProfilePage> {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               Text(LocalizationWidget.of(context)
-                  .getLocalizeValue('following').toUpperCase()),
+                  .getLocalizeValue('following')
+                  .toUpperCase()),
             ],
           ))),
+        ],
+      ),
+    );
+  }
+
+  Widget _renderProfileHeader(Size phoneSize, User user) {
+    return Container(
+      height: phoneSize.height * 0.18,
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: Container(
+              color: Color(COLOR_DARK_BLUE),
+              child: CustomPaint(
+                painter: CurvePainter(),
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.lerp(
+                Alignment.topCenter, Alignment.bottomCenter, 0.9),
+            child: CircleAvatar(
+              radius: 50,
+              backgroundColor: Colors.transparent,
+              child: Padding(
+                padding: const EdgeInsets.all(3.0),
+                child: Image(
+                  image: AssetImage("lib/imgs/app_icon.png"),
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _renderLessonsWidget(Size phoneSize) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          LocalizationWidget.of(context).getLocalizeValue('my_lessons'),
+          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+        ),
+        Container(
+          height: phoneSize.width * 0.25 + 20,
+          child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: 10,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.only(right: 5.0, top: 10),
+                  child: Container(
+                    width: phoneSize.width * 0.25,
+                    height: phoneSize.width * 0.25,
+                    decoration: BoxDecoration(
+                        color: Colors.grey,
+                        borderRadius: BorderRadius.all(Radius.circular(5))),
+                  ),
+                );
+              }),
+        ),
+      ],
+    );
+  }
+
+  Widget _renderExperienceResumeWidget(User user) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 15, bottom: 15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            LocalizationWidget.of(context).getLocalizeValue('experience'),
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 10, right: 10),
+            child: Column(
+              children: [
+                ExperienceBar(
+                  skill: "Vocab",
+                  percent: 0.20,
+                ),
+                ExperienceBar(
+                  skill: "Grammar",
+                  percent: 0.50,
+                )
+              ],
+            ),
+          )
         ],
       ),
     );
@@ -107,6 +204,7 @@ class ProfilePageState extends State<ProfilePage> {
     var phoneSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
         title:
             Text(LocalizationWidget.of(context).getLocalizeValue('my_profile')),
       ),
@@ -128,35 +226,7 @@ class ProfilePageState extends State<ProfilePage> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Container(
-                        height: phoneSize.height * 0.18,
-                        child: Stack(
-                          children: [
-                            Positioned.fill(
-                              child: Container(
-                                color: Colors.amber,
-                                child: CustomPaint(
-                                  painter: CurvePainter(),
-                                ),
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.lerp(Alignment.topCenter,
-                                  Alignment.bottomCenter, 0.9),
-                              child: CircleAvatar(
-                                radius: 50,
-                                backgroundColor: Color(COLOR_ORANGE),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(3.0),
-                                  child: Image(
-                                    image: AssetImage("lib/imgs/app_icon.png"),
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
+                      _renderProfileHeader(phoneSize, user),
                       Container(
                         color: Colors.white,
                         child: Padding(
@@ -172,33 +242,8 @@ class ProfilePageState extends State<ProfilePage> {
                                 ),
                               ),
                               _renderKeyNumberRow(user),
-                              Text(
-                                LocalizationWidget.of(context)
-                                    .getLocalizeValue('my_lessons'),
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w600, fontSize: 18),
-                              ),
-                              Container(
-                                height: phoneSize.width * 0.25 + 20,
-                                child: ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: 10,
-                                    scrollDirection: Axis.horizontal,
-                                    itemBuilder: (context, index) {
-                                      return Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 5.0, top: 10),
-                                        child: Container(
-                                          width: phoneSize.width * 0.25,
-                                          height: phoneSize.width * 0.25,
-                                          decoration: BoxDecoration(
-                                              color: Colors.grey,
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(5))),
-                                        ),
-                                      );
-                                    }),
-                              ),
+                              _renderLessonsWidget(phoneSize),
+                              _renderExperienceResumeWidget(user)
                             ],
                           ),
                         ),

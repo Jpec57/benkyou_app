@@ -11,7 +11,7 @@ description: A new Flutter application to learn Japanese
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.25+25
+version: 1.0.26+26
 
 environment:
   sdk: ">=2.2.2 <3.0.0"
@@ -38,6 +38,12 @@ dependencies:
   cupertino_icons: ^0.1.2
   sentry: ">=3.0.0 <4.0.0"
   flutter_tts: ^1.1.0
+  firebase_ml_vision: '^0.9.4'
+  firebase_core: ^0.4.0+9
+  cloud_firestore: ^0.12.9+5
+  firebase_analytics: ^5.0.2
+  image_picker: ^0.6.7+4
+
 flutter_icons:
   android: "launcher_icon"
   ios: true

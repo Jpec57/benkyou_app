@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:benkyou/screens/BrowseDeckPage/BrowseDeckPage.dart';
 import 'package:benkyou/screens/CreateCardPage/CreateCardPage.dart';
 import 'package:benkyou/screens/CreateCardPage/CreateCardPageArguments.dart';
@@ -7,7 +8,6 @@ import 'package:benkyou/screens/DialogPage/DialogPage.dart';
 import 'package:benkyou/screens/DialogPage/InDialogPage.dart';
 import 'package:benkyou/screens/DialogPage/InDialogPageArguments.dart';
 import 'package:benkyou/screens/GrammarReviewPage/GrammarReviewPage.dart';
-import 'package:benkyou/screens/HomePage/HomePage.dart';
 import 'package:benkyou/screens/LessonHomePage/LessonHomePage.dart';
 import 'package:benkyou/screens/LessonHomePage/LessonPage.dart';
 import 'package:benkyou/screens/LessonHomePage/LessonPageArguments.dart';
@@ -23,9 +23,9 @@ import 'package:benkyou/screens/ProfilePage/ProfilePage.dart';
 import 'package:benkyou/screens/ProfilePage/ProfilePageArguments.dart';
 import 'package:benkyou/screens/ReviewPage/ReviewPage.dart';
 import 'package:benkyou/screens/ReviewPage/ReviewPageArguments.dart';
-import 'package:benkyou/screens/ThemePages/ThemeLearningHomePage.dart';
 import 'package:benkyou/screens/ThemePages/Listening/ThemeListeningPartPage.dart';
 import 'package:benkyou/screens/ThemePages/Listening/ThemeListeningPartPageArguments.dart';
+import 'package:benkyou/screens/ThemePages/ThemeLearningHomePage.dart';
 import 'package:benkyou/screens/ThemePages/Word/ThemeTinderWordPage.dart';
 import 'package:benkyou/screens/ThemePages/Word/ThemeTinderWordPageArguments.dart';
 import 'package:benkyou/screens/ThemePages/Writing/ThemeWritingPartPage.dart';
@@ -36,23 +36,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:sentry/io_client.dart';
-import 'models/DeckTheme.dart';
-import 'screens/DeckPage/DeckPage.dart';
-import 'screens/DeckPage/DeckPageArguments.dart';
-import 'screens/DeckHomePage/DeckHomePage.dart';
 
 import 'dsn.dart';
+import 'screens/DeckHomePage/DeckHomePage.dart';
+import 'screens/DeckPage/DeckPage.dart';
+import 'screens/DeckPage/DeckPageArguments.dart';
 
 final SentryClient _sentry = new SentryClient(dsn: DSN);
 
 const bool DEBUG = false;
-const bool SENTRY = true;
+const bool SENTRY = false;
 
 class App extends StatelessWidget {
   final Widget home;
 
   const App({Key key, @required this.home}) : super(key: key);
-
 
   @override
   Widget build(BuildContext context) {
@@ -218,10 +216,10 @@ class App extends StatelessWidget {
         DialogPage.routeName: (context) => DialogPage(),
         CreateUserPage.routeName: (context) => CreateUserPage(),
         BrowseDeckPage.routeName: (context) => BrowseDeckPage(),
-      },);
+      },
+    );
   }
 }
-
 
 void main() {
   // This captures errors reported by the Flutter framework.
@@ -237,16 +235,15 @@ void main() {
   };
 
   runZoned(
-        () =>
-        runApp(App(
+    () => runApp(App(
 //          home: ThemeListeningPartPage(chosenTheme: new DeckTheme.fromJson({"id":21,"name":"Work","backgroundImg": null,"deck":{"id":59}})),
 //          home: ThemeWritingPartPage(theme: new DeckTheme.fromJson({"id":21,"name":"Work","backgroundImg": null,"deck":{"id":59}})),
 //          home: ThemeTinderWordPage(theme: new DeckTheme.fromJson({"id":21,"name":"Work","backgroundImg": null,"deck":{"id":59}})),
-          home: DeckHomePage(),
-        )),
+      home: DeckHomePage(),
+    )),
     onError: (Object error, StackTrace stackTrace) {
       try {
-        if (SENTRY){
+        if (SENTRY) {
           _sentry.captureException(
             exception: error,
             stackTrace: stackTrace,

@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:vector_math/vector_math_64.dart' as vector;
+
 import 'package:benkyou/models/Answer.dart';
 import 'package:benkyou/models/DeckCard.dart';
 import 'package:benkyou/models/UserCard.dart';
@@ -22,6 +22,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get/get.dart';
+import 'package:vector_math/vector_math_64.dart' as vector;
 
 class ReviewPage extends StatefulWidget {
   static const routeName = '/review';
@@ -36,7 +37,8 @@ class ReviewPage extends StatefulWidget {
   State<StatefulWidget> createState() => ReviewPageState();
 }
 
-class ReviewPageState extends State<ReviewPage> with SingleTickerProviderStateMixin {
+class ReviewPageState extends State<ReviewPage>
+    with SingleTickerProviderStateMixin {
   AnimationController _shakeAnimationController;
   Animation<double> _shakeAnimation;
   bool isAnswerVisible = false;
@@ -85,14 +87,12 @@ class ReviewPageState extends State<ReviewPage> with SingleTickerProviderStateMi
 //      });
 //    });
 
-
-
     _focusNode = new FocusNode();
     _hiddenAnswerController = TextEditingController();
     setShakeAnimation();
   }
 
-  void updateCurrentUserCard(UserCard updatedCard){
+  void updateCurrentUserCard(UserCard updatedCard) {
     _remainingCards[currentIndex] = updatedCard;
     setState(() {
       currentCard = updatedCard;
@@ -187,7 +187,8 @@ class ReviewPageState extends State<ReviewPage> with SingleTickerProviderStateMi
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(LocalizationWidget.of(context).getLocalizeValue('edit_note')),
+                  child: Text(LocalizationWidget.of(context)
+                      .getLocalizeValue('edit_note')),
                 ),
               ],
             ),
@@ -234,19 +235,26 @@ class ReviewPageState extends State<ReviewPage> with SingleTickerProviderStateMi
             child: Padding(
               padding: const EdgeInsets.only(bottom: 30.0),
               child: GestureDetector(
-                onTap: (){
+                onTap: () {
                   showDialog(
                       context: context,
                       builder: (BuildContext context) => CompleteTextDialog(
-                        text: '', positiveCallback: (text) async{
-                          UserCard updatedUserCard = await addUserAnswer(currentCard.id, text);
-                          if (updatedUserCard != null){
-                            updateCurrentUserCard(updatedUserCard);
-                          } else {
-                            Get.snackbar(LocalizationWidget.of(context).getLocalizeValue('error'), LocalizationWidget.of(context).getLocalizeValue('generic_error'), snackPosition: SnackPosition.BOTTOM);
-                          }
-                      },
-                      ));
+                            text: '',
+                            positiveCallback: (text) async {
+                              UserCard updatedUserCard =
+                                  await addUserAnswer(currentCard.id, text);
+                              if (updatedUserCard != null) {
+                                updateCurrentUserCard(updatedUserCard);
+                              } else {
+                                Get.snackbar(
+                                    LocalizationWidget.of(context)
+                                        .getLocalizeValue('error'),
+                                    LocalizationWidget.of(context)
+                                        .getLocalizeValue('generic_error'),
+                                    snackPosition: SnackPosition.BOTTOM);
+                              }
+                            },
+                          ));
                 },
                 child: Row(
                   children: [
@@ -256,15 +264,14 @@ class ReviewPageState extends State<ReviewPage> with SingleTickerProviderStateMi
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                      child: Text(LocalizationWidget.of(context).getLocalizeValue('add_answer')),
+                      child: Text(LocalizationWidget.of(context)
+                          .getLocalizeValue('add_answer')),
                     ),
                   ],
                 ),
               ),
             ),
           ),
-
-
           Text(LocalizationWidget.of(context).getLocalizeValue('users_note')),
           Divider(
             thickness: 1,
@@ -273,19 +280,26 @@ class ReviewPageState extends State<ReviewPage> with SingleTickerProviderStateMi
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: GestureDetector(
-                onTap: (){
+                onTap: () {
                   showDialog(
                       context: context,
                       builder: (BuildContext context) => CompleteTextDialog(
-                        text: currentCard.userNote, positiveCallback: (text) async{
-                          UserCard updatedUserCard = await postUserNote(currentCard.id, text);
-                          if (updatedUserCard != null){
-                            updateCurrentUserCard(updatedUserCard);
-                          } else {
-                            Get.snackbar(LocalizationWidget.of(context).getLocalizeValue('error'), LocalizationWidget.of(context).getLocalizeValue('generic_error'), snackPosition: SnackPosition.BOTTOM);
-                          }
-                      },
-                      ));
+                            text: currentCard.userNote,
+                            positiveCallback: (text) async {
+                              UserCard updatedUserCard =
+                                  await postUserNote(currentCard.id, text);
+                              if (updatedUserCard != null) {
+                                updateCurrentUserCard(updatedUserCard);
+                              } else {
+                                Get.snackbar(
+                                    LocalizationWidget.of(context)
+                                        .getLocalizeValue('error'),
+                                    LocalizationWidget.of(context)
+                                        .getLocalizeValue('generic_error'),
+                                    snackPosition: SnackPosition.BOTTOM);
+                              }
+                            },
+                          ));
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
@@ -332,10 +346,13 @@ class ReviewPageState extends State<ReviewPage> with SingleTickerProviderStateMi
       _speak(toSpeak, toEnglish ? "ja-JP" : "en-GB");
     } else {
       await _sendReview(_processedCards);
-      if (widget.deckId == null){
-        Navigator.pushNamedAndRemoveUntil(context, DeckHomePage.routeName, ModalRoute.withName(DeckHomePage.routeName));
+      if (widget.deckId == null) {
+        Navigator.pushNamedAndRemoveUntil(context, DeckHomePage.routeName,
+            ModalRoute.withName(DeckHomePage.routeName));
       } else {
-        Navigator.pushNamedAndRemoveUntil(context, DeckPage.routeName, ModalRoute.withName(DeckPage.routeName), arguments: DeckPageArguments(currentCard.deck.id));
+        Navigator.pushNamedAndRemoveUntil(context, DeckPage.routeName,
+            ModalRoute.withName(DeckPage.routeName),
+            arguments: DeckPageArguments(currentCard.deck.id));
       }
     }
     FocusScope.of(context).requestFocus(_focusNode);
@@ -400,6 +417,7 @@ class ReviewPageState extends State<ReviewPage> with SingleTickerProviderStateMi
     }
     return Colors.transparent;
   }
+
   void setShakeAnimation() {
     _shakeAnimation = AnimationController(
       vsync: this,
@@ -411,6 +429,7 @@ class ReviewPageState extends State<ReviewPage> with SingleTickerProviderStateMi
       end: 80.0,
     ).animate(_shakeAnimationController);
   }
+
   vector.Vector3 _shake() {
     double progress = _shakeAnimationController.value;
     double offset = sin(progress * pi * 10.0);
@@ -427,11 +446,16 @@ class ReviewPageState extends State<ReviewPage> with SingleTickerProviderStateMi
         title: Text(LocalizationWidget.of(context).getLocalizeValue('review')),
         leading: IconButton(
           onPressed: () {
-            if (_processedCards == null || _processedCards.length == 0){
-              if (widget.deckId != null){
-                Navigator.pushNamedAndRemoveUntil(context, DeckPage.routeName, ModalRoute.withName(DeckPage.routeName), arguments: DeckPageArguments(widget.deckId));
+            if (_processedCards == null || _processedCards.length == 0) {
+              if (widget.deckId != null) {
+                Navigator.pushNamedAndRemoveUntil(context, DeckPage.routeName,
+                    ModalRoute.withName(DeckPage.routeName),
+                    arguments: DeckPageArguments(widget.deckId));
               } else {
-                Navigator.pushNamedAndRemoveUntil(context, DeckHomePage.routeName, ModalRoute.withName(DeckHomePage.routeName));
+                Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    DeckHomePage.routeName,
+                    ModalRoute.withName(DeckHomePage.routeName));
               }
             } else {
               showDialog(
@@ -465,12 +489,11 @@ class ReviewPageState extends State<ReviewPage> with SingleTickerProviderStateMi
                       child: GestureDetector(
                         onTap: () {
                           String toSpeak = currentCard != null
-                              ? currentCard.card.question.split(',')[0] : '';
+                              ? currentCard.card.question.split(',')[0]
+                              : '';
                           isPlaying
                               ? _stop()
-                              : _speak(
-                                  toSpeak,
-                                  toEnglish ? "ja-JP" : "en-GB");
+                              : _speak(toSpeak, toEnglish ? "ja-JP" : "en-GB");
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -493,24 +516,26 @@ class ReviewPageState extends State<ReviewPage> with SingleTickerProviderStateMi
                       child: Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: Center(
-                            child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Text(
-                              currentCard != null
-                                  ? (currentCard.card.hint ?? '')
-                                  : '',
-                              textAlign: TextAlign.center,
-                            ),
-                            Text(
-                              currentCard != null
-                                  ? currentCard.card.question
-                                  : '',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w600, fontSize: 24),
-                            ),
-                          ],
+                            child: SingleChildScrollView(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Text(
+                                currentCard != null
+                                    ? (currentCard.card.hint ?? '')
+                                    : '',
+                                textAlign: TextAlign.center,
+                              ),
+                              Text(
+                                currentCard != null
+                                    ? currentCard.card.question
+                                    : '',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w600, fontSize: 24),
+                              ),
+                            ],
+                          ),
                         )),
                       ),
                     )
@@ -528,10 +553,10 @@ class ReviewPageState extends State<ReviewPage> with SingleTickerProviderStateMi
                       child: Center(
                         child: Text(
                           (toEnglish
-                              ? LocalizationWidget.of(context)
-                              .getLocalizeValue('english')
-                              : LocalizationWidget.of(context)
-                              .getLocalizeValue('japanese'))
+                                  ? LocalizationWidget.of(context)
+                                      .getLocalizeValue('english')
+                                  : LocalizationWidget.of(context)
+                                      .getLocalizeValue('japanese'))
                               .toUpperCase(),
                           style: TextStyle(
                               color: Colors.white, fontWeight: FontWeight.bold),
@@ -564,7 +589,8 @@ class ReviewPageState extends State<ReviewPage> with SingleTickerProviderStateMi
                     Align(
                       alignment: Alignment.centerRight,
                       child: Opacity(
-                        opacity: _isPlayingAnimation && !isAnswerCorrect ? 1 : 0,
+                        opacity:
+                            _isPlayingAnimation && !isAnswerCorrect ? 1 : 0,
                         child: SizedBox(
                           height: 50,
                           width: 50,
@@ -604,27 +630,39 @@ class ReviewPageState extends State<ReviewPage> with SingleTickerProviderStateMi
                           if (_answerController.text.isNotEmpty) {
                             _processAnswer();
                           } else {
-                            _shakeAnimationController.forward().whenComplete(() {
+                            _shakeAnimationController
+                                .forward()
+                                .whenComplete(() {
                               _shakeAnimationController.reset();
                             });
                           }
                         },
-                        onChanged: (text){
+                        onChanged: (text) {
                           //TODO Add converter
-                          if (false && text.isNotEmpty){
-                            InputTextOffset res = onConversionChanged(text, currentCard.card.answerLanguageCode == LANGUAGE_CODE_JAPANESE, _answerController, _hiddenAnswerController);
+                          if (false && text.isNotEmpty) {
+                            InputTextOffset res = onConversionChanged(
+                                text,
+                                currentCard.card.answerLanguageCode ==
+                                    LANGUAGE_CODE_JAPANESE,
+                                _answerController,
+                                _hiddenAnswerController);
                             print("text here :  ${res.text}");
-                            print("base offset ${_answerController.selection.baseOffset}");
-                            print("extent offset ${_answerController.selection.extentOffset}");
+                            print(
+                                "base offset ${_answerController.selection.baseOffset}");
+                            print(
+                                "extent offset ${_answerController.selection.extentOffset}");
                             print("extent offset ${res.offset}");
                             setState(() {
-                              _answerController.value =  _answerController.value.copyWith(
+                              _answerController.value =
+                                  _answerController.value.copyWith(
                                 text: res.text,
-                                selection: TextSelection(baseOffset: res.offset, extentOffset: res.offset),
+                                selection: TextSelection(
+                                    baseOffset: res.offset,
+                                    extentOffset: res.offset),
                               );
                             });
                           }
-                          },
+                        },
                         controller: _answerController,
                         decoration: InputDecoration(
                           hintText: toEnglish
