@@ -27,6 +27,7 @@ class LocalizationWidget {
       'translate_in_japanese': 'Translate in japanese',
       'quit_session': 'Quit current session ?',
       'kanji': 'Kanji',
+      'experience': 'Experience',
       'create_account': 'Create account',
       'username': 'Username',
       'enter_username': 'Please enter your username',
@@ -57,16 +58,16 @@ class LocalizationWidget {
       'action_to_create_deck': 'to create a deck.',
       'add_deck': 'Add a deck',
       'preview_deck': 'Preview deck',
-
       'empty_deck_create_card': "The deck is empty. Please create a card.",
-      'card_explanation': "A card is a unknown word you encounter while reading that you want to remember. "
-          "By simply entering the word, the Jisho API will translate it for you. "
-          "You will be able to resume reading and this word will come back later in review"
-          " to make sure that you will progressively remember it.",
-
+      'card_explanation':
+          "A card is a unknown word you encounter while reading that you want to remember. "
+              "By simply entering the word, the Jisho API will translate it for you. "
+              "You will be able to resume reading and this word will come back later in review"
+              " to make sure that you will progressively remember it.",
       'what_did_hear': 'What did you hear ?',
       'empty_deck': 'Empty deck',
-      'empty_deck_publish_error': 'Your deck must have at least one card to be published.',
+      'empty_deck_publish_error':
+          'Your deck must have at least one card to be published.',
       'start': 'Start',
       'stop': 'Stop',
       'lessons': 'Lessons',
@@ -94,7 +95,8 @@ class LocalizationWidget {
       'import_deck': "Import this deck",
       'no_data': "No data.",
       'stop_review': 'Stop review',
-      'quit_review_before_end_mess': "Do you want to leave the review ? Your progression will be saved.",
+      'quit_review_before_end_mess':
+          "Do you want to leave the review ? Your progression will be saved.",
       'save': 'Save',
       'no': "No",
       'yes': 'Yes',
@@ -116,10 +118,12 @@ class LocalizationWidget {
       'no_card_yet': 'There is no card yet.',
       'no_connection': 'No connection',
       'searching': 'Searching...',
-      'kana_kanji_start_search': "Please enter a kana or a kanji to start searching.",
+      'kana_kanji_start_search':
+          "Please enter a kana or a kanji to start searching.",
       'not_member_yet': "Not a member yet ? Register here",
       'welcome_back': 'Welcome back',
-      'generic_error': 'An error occurred. Please contact the support for any help.',
+      'generic_error':
+          'An error occurred. Please contact the support for any help.',
       'user_email': "Username / email",
       'enter_username_email': 'Please enter your username or email',
       'log_out': 'Log out',
@@ -136,27 +140,34 @@ class LocalizationWidget {
       'my_profile': 'My profile',
       'unpublish_your_deck': 'Unpublish your deck',
       'publish_your_deck': 'Publish your deck',
-      'confirm_private_deck': "Are you sure you want to make you deck private again ? All copies already done by users will not be deleted.",
-      'confirm_publish_deck': "Publishing your deck means that anybody will be able to see your deck in the 'Browse' section. Do you want to continue ?",
+      'confirm_private_deck':
+          "Are you sure you want to make you deck private again ? All copies already done by users will not be deleted.",
+      'confirm_publish_deck':
+          "Publishing your deck means that anybody will be able to see your deck in the 'Browse' section. Do you want to continue ?",
       'kana_kanji_tranform': 'Kana/Romaji to transform',
       'enter_kana_kanji': 'Enter kana or romaji here',
       'input_kanji_label': 'Enter kanji here',
       'is_card_reversible': 'Is card reversible ?',
-      'card_inverse_explanation': 'Another card inverting japanese and english will be created',
+      'card_inverse_explanation':
+          'Another card inverting japanese and english will be created',
       'prop_of_answer': 'Propositions of answer',
       'browse_online_deck': 'Browse Online Deck',
       'no_deck_create': 'No deck available. Please create one.',
       'powered_by_jisho': 'powered by Jisho',
-      'no_internet_connection': 'Internet connection issue: please refresh again later.',
+      'no_internet_connection':
+          'Internet connection issue: please refresh again later.',
       'create_card': 'Create a card',
       'info': 'Info',
       'close': 'Close',
       'following': 'Following',
       'followers': 'Followers',
       'likes': 'Likes',
-      'deck_info_1': 'When using Benkyou, you have to organize your review in decks. By this way, you will create a learning unit.',
-      'deck_info_2': 'For instance, if you read a lot of Pokemon manga, it could be interesting to create a deck named "Pokemon" or even "Pokemon Tome 1" since the vocabulary can quickly pile up...',
-      'deck_info_3': 'Later, you can even decide to share it with the community (or not) !',
+      'deck_info_1':
+          'When using Benkyou, you have to organize your review in decks. By this way, you will create a learning unit.',
+      'deck_info_2':
+          'For instance, if you read a lot of Pokemon manga, it could be interesting to create a deck named "Pokemon" or even "Pokemon Tome 1" since the vocabulary can quickly pile up...',
+      'deck_info_3':
+          'Later, you can even decide to share it with the community (or not) !',
       'grammar': 'Grammar',
       'list_dialogs': 'List of dialogs',
       'my_grammar_decks': 'My grammar decks',
@@ -165,19 +176,15 @@ class LocalizationWidget {
       'create_another_card': 'Create another card',
       'create_card_success': 'Your card have been successfully created !',
     },
-    FR_LOCALE: {
-      'home': 'Accueil',
-      'browse_online_deck': 'Parcourir les decks'
-
-    },
+    FR_LOCALE: {'home': 'Accueil', 'browse_online_deck': 'Parcourir les decks'},
     JAP_LOCALE: {
       'home': 'ie',
     },
   };
 
-  String getLocalizeValue(String key){
-    if (!_localizedValues[locale.languageCode].containsKey(key)){
-      if (!_localizedValues[EN_LOCALE].containsKey(key)){
+  String getLocalizeValue(String key) {
+    if (!_localizedValues[locale.languageCode].containsKey(key)) {
+      if (!_localizedValues[EN_LOCALE].containsKey(key)) {
         return key;
       }
       return _localizedValues[EN_LOCALE][key];
@@ -186,11 +193,13 @@ class LocalizationWidget {
   }
 }
 
-class MyLocalizationsDelegate extends LocalizationsDelegate<LocalizationWidget> {
+class MyLocalizationsDelegate
+    extends LocalizationsDelegate<LocalizationWidget> {
   const MyLocalizationsDelegate();
 
   @override
-  bool isSupported(Locale locale) => SUPPORTED_LOCALES.contains(locale.languageCode);
+  bool isSupported(Locale locale) =>
+      SUPPORTED_LOCALES.contains(locale.languageCode);
 
   @override
   Future<LocalizationWidget> load(Locale locale) {

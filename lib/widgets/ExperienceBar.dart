@@ -1,20 +1,25 @@
 import 'dart:ui';
 
+import 'package:benkyou/models/ExperienceLevelProgress.dart';
 import 'package:flutter/material.dart';
 
 class ExperienceBar extends StatelessWidget {
   final String skill;
   final Color emptyColor;
   final Color fullColor;
-  final double percent;
+  final ExperienceLevelProgress progress;
 
   const ExperienceBar(
       {Key key,
       @required this.skill,
-      @required this.percent,
+      @required this.progress,
       this.emptyColor = Colors.grey,
       this.fullColor = Colors.blue})
       : super(key: key);
+
+  double formatProcess(ExperienceLevelProgress p) {
+    return (p.maxXp - p.currentXp) / p.maxXp;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,13 +44,16 @@ class ExperienceBar extends StatelessWidget {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: FractionallySizedBox(
-                    widthFactor: percent,
+                    widthFactor: formatProcess(progress),
                     child: Container(
                       color: fullColor,
                     ),
                   ),
                 ),
               )),
+          Center(
+              child:
+                  Text("level ${progress.currentLevel} / ${progress.maxLevel}"))
         ],
       ),
     );

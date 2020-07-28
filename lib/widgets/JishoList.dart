@@ -8,29 +8,32 @@ class JishoList extends StatefulWidget {
   final String researchWord;
   final Function callback;
 
-  const JishoList({Key key, this.researchWord, this.callback}) : super(key: key);
+  const JishoList({Key key, this.researchWord, this.callback})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => JishoListState();
 }
 
 class JishoListState extends State<JishoList> {
-
-  String subtitleFormatter(JishoTranslation translation){
+  String subtitleFormatter(JishoTranslation translation) {
     String kanji = translation.kanji ?? '';
     String reading = translation.reading ?? '';
-    if (kanji.isNotEmpty && reading.isNotEmpty){
+    if (kanji.isNotEmpty && reading.isNotEmpty) {
       return '$kanji - $reading';
     }
     return '$kanji$reading';
   }
 
-  Widget returnList(BuildContext context){
-    if (widget.researchWord != null && widget.researchWord.isNotEmpty){
+  Widget returnList(BuildContext context) {
+    if (widget.researchWord != null && widget.researchWord.isNotEmpty) {
       return FutureBuilder(
-          future: JishoTranslation.getJishoTransLationListFromRequest(widget.researchWord),
-          builder: (BuildContext context, AsyncSnapshot<List<JishoTranslation>> snapshot){
-            switch (snapshot.connectionState){
+          //TODO Cache request
+          future: JishoTranslation.getJishoTransLationListFromRequest(
+              widget.researchWord),
+          builder: (BuildContext context,
+              AsyncSnapshot<List<JishoTranslation>> snapshot) {
+            switch (snapshot.connectionState) {
               case ConnectionState.done:
                 return SingleChildScrollView(
                   child: Padding(
@@ -38,14 +41,18 @@ class JishoListState extends State<JishoList> {
                     child: ListView.separated(
                       shrinkWrap: true,
                       itemCount: snapshot.data.length,
-                      itemBuilder: (BuildContext context, int index){
+                      itemBuilder: (BuildContext context, int index) {
                         return Container(
                           child: (ListTile(
-                            onTap: (){
+                            onTap: () {
                               widget.callback(snapshot.data[index]);
                             },
-                            title: Center(child: Text(snapshot.data[index].english.join('; '))),
-                            subtitle: Center(child: Text(subtitleFormatter(snapshot.data[index]))),
+                            title: Center(
+                                child: Text(
+                                    snapshot.data[index].english.join('; '))),
+                            subtitle: Center(
+                                child: Text(
+                                    subtitleFormatter(snapshot.data[index]))),
                           )),
                         );
                       },
@@ -56,19 +63,24 @@ class JishoListState extends State<JishoList> {
                   ),
                 );
               case ConnectionState.waiting:
-                return Text(LocalizationWidget.of(context).getLocalizeValue('searching'));
+                return Text(LocalizationWidget.of(context)
+                    .getLocalizeValue('searching'));
               case ConnectionState.none:
-                return Text(LocalizationWidget.of(context).getLocalizeValue('no_internet_connection'));
+                return Text(LocalizationWidget.of(context)
+                    .getLocalizeValue('no_internet_connection'));
               default:
-                return Text(LocalizationWidget.of(context).getLocalizeValue('empty'));
+                return Text(
+                    LocalizationWidget.of(context).getLocalizeValue('empty'));
             }
-          }
-      );
+          });
     }
     return Padding(
       padding: const EdgeInsets.only(top: 12.0),
       child: Container(
-        child: Text(LocalizationWidget.of(context).getLocalizeValue('kana_kanji_start_search'), style: TextStyle(fontStyle: FontStyle.italic)),
+        child: Text(
+            LocalizationWidget.of(context)
+                .getLocalizeValue('kana_kanji_start_search'),
+            style: TextStyle(fontStyle: FontStyle.italic)),
       ),
     );
   }

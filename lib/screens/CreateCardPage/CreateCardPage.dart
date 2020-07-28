@@ -4,6 +4,7 @@ import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
 import 'package:benkyou/screens/DeckPage/DeckPage.dart';
 import 'package:benkyou/screens/DeckPage/DeckPageArguments.dart';
 import 'package:benkyou/services/api/cardRequests.dart';
+import 'package:benkyou/services/localStorage/localStorageService.dart';
 import 'package:benkyou/services/translator/TextConversion.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/AddAnswerCardWidget.dart';
@@ -12,7 +13,6 @@ import 'package:benkyou/widgets/Localization.dart';
 import 'package:benkyou/widgets/MainDrawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 const ERR_KANA = 'There is no kana in your question.';
 const ERR_ANSWER = 'You must provide at least one answer.';
@@ -44,7 +44,6 @@ class CreateCardPageState extends State<CreateCardPage> {
   final FocusNode _kanjiFocusNode = FocusNode();
   final FocusNode _kanaFocusNode = FocusNode();
   bool _isQuestionErrorVisible = false;
-  bool _isReversible = true;
   GlobalKey<AddAnswerCardWidgetState> answerWidgetKey;
 
   void triggerJishoResearch(String text) async {
@@ -119,11 +118,11 @@ class CreateCardPageState extends State<CreateCardPage> {
       map.putIfAbsent('question', () => question);
       map.putIfAbsent('hint', () => hint);
       map.putIfAbsent('deck', () => widget.deckId);
-      if (_isReversible) {
-        map.putIfAbsent('isReversible', () => true);
-      }
+      map.putIfAbsent('isReversible', () => true);
       map.putIfAbsent('answers', () => answers);
       postCard(widget.deckId, map);
+      //TODO
+      setLastUsedDeckIdFromLocalStorage(widget.deckId);
 
       setState(() {
         _bottomButtonLabel = 'DONE';
@@ -252,9 +251,11 @@ class CreateCardPageState extends State<CreateCardPage> {
                             textInputAction: TextInputAction.next,
                             autofocus: true,
                             decoration: InputDecoration(
-                                labelText: LocalizationWidget.of(context).getLocalizeValue('kana_kanji_tranform'),
+                                labelText: LocalizationWidget.of(context)
+                                    .getLocalizeValue('kana_kanji_tranform'),
                                 labelStyle: TextStyle(fontSize: 20),
-                                hintText: LocalizationWidget.of(context).getLocalizeValue('enter_kana_kanji')),
+                                hintText: LocalizationWidget.of(context)
+                                    .getLocalizeValue('enter_kana_kanji')),
                           ),
                         ),
                       ),
@@ -280,65 +281,33 @@ class CreateCardPageState extends State<CreateCardPage> {
                               },
                               textInputAction: TextInputAction.next,
                               decoration: InputDecoration(
-                                  labelText: LocalizationWidget.of(context).getLocalizeValue('kanji'),
+                                  labelText: LocalizationWidget.of(context)
+                                      .getLocalizeValue('kanji'),
                                   labelStyle: TextStyle(fontSize: 20),
-                                  hintText: LocalizationWidget.of(context).getLocalizeValue('input_kanji_label')),
+                                  hintText: LocalizationWidget.of(context)
+                                      .getLocalizeValue('input_kanji_label')),
                             ),
                           ]),
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Expanded(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  Text(
-                                    LocalizationWidget.of(context).getLocalizeValue('is_card_reversible'),
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 5.0),
-                                    child: Text(
-                                      LocalizationWidget.of(context).getLocalizeValue('card_inverse_explanation'),
-                                      style: TextStyle(
-                                          fontStyle: FontStyle.italic,
-                                          fontSize: 12),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Switch(
-                              value: _isReversible,
-                              onChanged: (bool value) {
-                                setState(() {
-                                  _isReversible = !_isReversible;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10.0),
+                        padding: const EdgeInsets.only(top: 20.0),
                         child: AddAnswerCardWidget(key: answerWidgetKey),
                       ),
                       Container(
                         child: Text(
-                          LocalizationWidget.of(context).getLocalizeValue('prop_of_answer'),
+                          LocalizationWidget.of(context)
+                              .getLocalizeValue('prop_of_answer'),
                           style: TextStyle(fontSize: 20),
                           textAlign: TextAlign.start,
                         ),
                       ),
                       Container(
                         child: Text(
-                          LocalizationWidget.of(context).getLocalizeValue('powered_by_jisho'),
-                          style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+                          LocalizationWidget.of(context)
+                              .getLocalizeValue('powered_by_jisho'),
+                          style: TextStyle(
+                              fontSize: 16, fontStyle: FontStyle.italic),
                           textAlign: TextAlign.start,
                         ),
                       ),
@@ -365,7 +334,8 @@ class CreateCardPageState extends State<CreateCardPage> {
     setState(() {
       japanese = '';
       _researchWord = '';
-      _bottomButtonLabel = LocalizationWidget.of(context).getLocalizeValue('next').toUpperCase();
+      _bottomButtonLabel =
+          LocalizationWidget.of(context).getLocalizeValue('next').toUpperCase();
     });
     _pageController.animateToPage(0,
         duration: Duration(milliseconds: 500), curve: Curves.easeIn);
@@ -380,7 +350,8 @@ class CreateCardPageState extends State<CreateCardPage> {
           child: Container(
             child: Center(
               child: Text(
-                LocalizationWidget.of(context).getLocalizeValue('create_card_success'),
+                LocalizationWidget.of(context)
+                    .getLocalizeValue('create_card_success'),
                 style: TextStyle(
                   fontSize: 25,
                 ),
@@ -398,7 +369,9 @@ class CreateCardPageState extends State<CreateCardPage> {
             decoration: BoxDecoration(color: Color(COLOR_DARK_BLUE)),
             child: Center(
               child: Text(
-                LocalizationWidget.of(context).getLocalizeValue('create_another_card').toUpperCase(),
+                LocalizationWidget.of(context)
+                    .getLocalizeValue('create_another_card')
+                    .toUpperCase(),
                 style: TextStyle(fontSize: 30, color: Colors.white),
               ),
             ),
@@ -410,7 +383,8 @@ class CreateCardPageState extends State<CreateCardPage> {
 
   @override
   Widget build(BuildContext context) {
-    _bottomButtonLabel = LocalizationWidget.of(context).getLocalizeValue('next').toUpperCase();
+    _bottomButtonLabel =
+        LocalizationWidget.of(context).getLocalizeValue('next').toUpperCase();
 
     return WillPopScope(
       onWillPop: () async {
@@ -420,7 +394,8 @@ class CreateCardPageState extends State<CreateCardPage> {
       child: Scaffold(
         drawer: MainDrawer(),
         appBar: AppBar(
-          title: Text(LocalizationWidget.of(context).getLocalizeValue('create_card')),
+          title: Text(
+              LocalizationWidget.of(context).getLocalizeValue('create_card')),
         ),
         body: Column(
           children: <Widget>[

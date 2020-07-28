@@ -8,7 +8,9 @@ class AddAnswerCardWidget extends StatefulWidget {
   final int cardId;
   final bool isScrollable;
 
-  const AddAnswerCardWidget({@required Key key, this.hint, this.cardId, this.isScrollable = true}) : super(key: key);
+  const AddAnswerCardWidget(
+      {@required Key key, this.hint, this.cardId, this.isScrollable = true})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => AddAnswerCardWidgetState();
@@ -19,7 +21,7 @@ class AddAnswerCardWidgetState extends State<AddAnswerCardWidget> {
   DragUpdateDetails updateHorizontalDragDetails;
 
   List<TextEditingController> textEditingControllers =
-  <TextEditingController>[];
+      <TextEditingController>[];
 
   @override
   void initState() {
@@ -43,10 +45,10 @@ class AddAnswerCardWidgetState extends State<AddAnswerCardWidget> {
     super.dispose();
   }
 
-  List<String> getAnswerStrings(){
+  List<String> getAnswerStrings() {
     List<String> answers = [];
-    for (TextEditingController controller in textEditingControllers){
-      if (controller.text.isNotEmpty){
+    for (TextEditingController controller in textEditingControllers) {
+      if (controller.text.isNotEmpty) {
         answers.add(controller.text);
       }
     }
@@ -85,11 +87,12 @@ class AddAnswerCardWidgetState extends State<AddAnswerCardWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  LocalizationWidget.of(context).getLocalizeValue('possible_answers'),
+                  LocalizationWidget.of(context)
+                      .getLocalizeValue('possible_answers'),
                   style: TextStyle(fontSize: 20),
                 ),
                 GestureDetector(
-                  child: Icon(Icons.add),
+                  child: Icon(Icons.add_circle),
                   onTap: () {
                     addAnswer();
                   },
@@ -100,12 +103,14 @@ class AddAnswerCardWidgetState extends State<AddAnswerCardWidget> {
         ),
         Padding(
           padding: EdgeInsets.only(bottom: 50),
-          child:  ListView.builder(
-              physics: widget.isScrollable ? const AlwaysScrollableScrollPhysics() : const NeverScrollableScrollPhysics(),
+          child: ListView.builder(
+              physics: widget.isScrollable
+                  ? const AlwaysScrollableScrollPhysics()
+                  : const NeverScrollableScrollPhysics(),
               itemCount: textEditingControllers.length + 1,
               shrinkWrap: true,
               itemBuilder: (context, index) {
-                if (index == textEditingControllers.length){
+                if (index == textEditingControllers.length) {
                   return (Container());
                 }
                 return Padding(
@@ -141,7 +146,9 @@ class AddAnswerCardWidgetState extends State<AddAnswerCardWidget> {
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             labelStyle: TextStyle(fontSize: 20),
-                            hintText: LocalizationWidget.of(context).getLocalizeValue('possible_answer') + ' ${index + 1}',
+                            hintText: LocalizationWidget.of(context)
+                                    .getLocalizeValue('possible_answer') +
+                                ' ${index + 1}',
                           ),
                         ),
                       ),

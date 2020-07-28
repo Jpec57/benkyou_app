@@ -1,3 +1,4 @@
+import 'package:benkyou/models/ExperienceLevelProgress.dart';
 import 'package:benkyou/models/User.dart';
 import 'package:benkyou/services/api/userRequests.dart';
 import 'package:benkyou/utils/colors.dart';
@@ -170,6 +171,8 @@ class ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _renderExperienceResumeWidget(User user) {
+    ExperienceLevelProgress progress =
+        getExperienceLevelProgress(VOCAB_EXPERIENCE_LEVELS, user.vocabXp);
     return Padding(
       padding: const EdgeInsets.only(top: 15, bottom: 15),
       child: Column(
@@ -185,12 +188,12 @@ class ProfilePageState extends State<ProfilePage> {
               children: [
                 ExperienceBar(
                   skill: "Vocab",
-                  percent: 0.20,
+                  progress: progress,
                 ),
-                ExperienceBar(
-                  skill: "Grammar",
-                  percent: 0.50,
-                )
+//                ExperienceBar(
+//                  skill: "Grammar",
+//                  percent: 0.50,
+//                )
               ],
             ),
           )
