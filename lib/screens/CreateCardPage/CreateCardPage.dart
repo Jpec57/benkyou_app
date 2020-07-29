@@ -1,9 +1,11 @@
+import 'package:benkyou/models/Deck.dart';
 import 'package:benkyou/models/DeckCard.dart';
 import 'package:benkyou/models/JishoTranslation.dart';
 import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
 import 'package:benkyou/screens/DeckPage/DeckPage.dart';
 import 'package:benkyou/screens/DeckPage/DeckPageArguments.dart';
 import 'package:benkyou/services/api/cardRequests.dart';
+import 'package:benkyou/services/api/deckRequests.dart';
 import 'package:benkyou/services/localStorage/localStorageService.dart';
 import 'package:benkyou/services/translator/TextConversion.dart';
 import 'package:benkyou/utils/colors.dart';
@@ -31,6 +33,7 @@ class CreateCardPage extends StatefulWidget {
 }
 
 class CreateCardPageState extends State<CreateCardPage> {
+  Future<Deck> _deck;
   final _formKey = GlobalKey<FormState>();
   String _bottomButtonLabel = '';
   String japanese = '';
@@ -58,6 +61,7 @@ class CreateCardPageState extends State<CreateCardPage> {
     answerWidgetKey = new GlobalKey<AddAnswerCardWidgetState>();
     _kanjiEditingController = new TextEditingController();
     _kanaEditingController = new TextEditingController();
+    _deck = getDeck(widget.deckId);
 
     _kanjiFocusNode.addListener(() {
       triggerJishoResearch(_kanjiEditingController.text);
@@ -220,105 +224,131 @@ class CreateCardPageState extends State<CreateCardPage> {
             child: Form(
               key: _formKey,
               child: SingleChildScrollView(
-                child: Padding(
-                  padding: EdgeInsets.only(left: 50.0, right: 50.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Container(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(left: 50.0, right: 50.0),
+                      child: Column(
+                        children: [
+                          Container(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 10.0),
+                              child: TextFormField(
+                                controller: _kanaEditingController,
+                                focusNode: _kanaFocusNode,
+                                validator: (value) {
+                                  if (_isQuestionErrorVisible) {
+                                    return _error;
+                                  }
+                                  return null;
+                                },
+                                onChanged: (value) {
+                                  _isQuestionErrorVisible = false;
+                                  bool needtoBeParsed = stringNeedToBeParsed(
+                                      _kanaEditingController.text);
+                                  setState(() {
+                                    japanese = needtoBeParsed
+                                        ? "${getJapaneseTranslation(_kanaEditingController.text) ?? ''}"
+                                        : '';
+                                  });
+                                  _formKey.currentState.validate();
+                                },
+                                textInputAction: TextInputAction.next,
+                                autofocus: true,
+                                decoration: InputDecoration(
+                                    labelText: LocalizationWidget.of(context)
+                                        .getLocalizeValue(
+                                            'kana_kanji_tranform'),
+                                    labelStyle: TextStyle(fontSize: 20),
+                                    hintText: LocalizationWidget.of(context)
+                                        .getLocalizeValue('enter_kana_kanji')),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            child: Padding(
+                              padding: EdgeInsets.only(bottom: 10.0),
+                              child: Column(children: <Widget>[
+                                Text(japanese),
+                                TextFormField(
+                                  focusNode: _kanjiFocusNode,
+                                  controller: _kanjiEditingController,
+                                  onChanged: (text) {
+                                    _isQuestionErrorVisible = false;
+                                    _formKey.currentState.validate();
+                                  },
+                                  validator: (value) {
+                                    if (_isQuestionErrorVisible) {
+                                      if (_error != ERR_KANA) {
+                                        return _error;
+                                      }
+                                    }
+                                    return null;
+                                  },
+                                  textInputAction: TextInputAction.next,
+                                  decoration: InputDecoration(
+                                      labelText: LocalizationWidget.of(context)
+                                          .getLocalizeValue('kanji'),
+                                      labelStyle: TextStyle(fontSize: 20),
+                                      hintText: LocalizationWidget.of(context)
+                                          .getLocalizeValue(
+                                              'input_kanji_label')),
+                                ),
+                              ]),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 50.0),
+                            child: AddAnswerCardWidget(key: answerWidgetKey),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 30, right: 30),
+                      child: Card(
                         child: Padding(
-                          padding: EdgeInsets.only(top: 10.0),
-                          child: TextFormField(
-                            controller: _kanaEditingController,
-                            focusNode: _kanaFocusNode,
-                            validator: (value) {
-                              if (_isQuestionErrorVisible) {
-                                return _error;
-                              }
-                              return null;
-                            },
-                            onChanged: (value) {
-                              _isQuestionErrorVisible = false;
-                              bool needtoBeParsed = stringNeedToBeParsed(
-                                  _kanaEditingController.text);
-                              setState(() {
-                                japanese = needtoBeParsed
-                                    ? "${getJapaneseTranslation(_kanaEditingController.text) ?? ''}"
-                                    : '';
-                              });
-                              _formKey.currentState.validate();
-                            },
-                            textInputAction: TextInputAction.next,
-                            autofocus: true,
-                            decoration: InputDecoration(
-                                labelText: LocalizationWidget.of(context)
-                                    .getLocalizeValue('kana_kanji_tranform'),
-                                labelStyle: TextStyle(fontSize: 20),
-                                hintText: LocalizationWidget.of(context)
-                                    .getLocalizeValue('enter_kana_kanji')),
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Container(
+                                child: Text(
+                                  LocalizationWidget.of(context)
+                                      .getLocalizeValue('prop_of_answer'),
+                                  style: TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.w600),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(bottom: 5),
+                                child: Text(
+                                  LocalizationWidget.of(context)
+                                      .getLocalizeValue('powered_by_jisho'),
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontStyle: FontStyle.italic),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              Divider(),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 10, left: 10, right: 10, bottom: 30.0),
+                                child: JishoList(
+                                    researchWord: _researchWord,
+                                    callback: insertTranslationsCallback),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                      Container(
-                        child: Padding(
-                          padding: EdgeInsets.only(bottom: 10.0),
-                          child: Column(children: <Widget>[
-                            Text(japanese),
-                            TextFormField(
-                              focusNode: _kanjiFocusNode,
-                              controller: _kanjiEditingController,
-                              onChanged: (text) {
-                                _isQuestionErrorVisible = false;
-                                _formKey.currentState.validate();
-                              },
-                              validator: (value) {
-                                if (_isQuestionErrorVisible) {
-                                  if (_error != ERR_KANA) {
-                                    return _error;
-                                  }
-                                }
-                                return null;
-                              },
-                              textInputAction: TextInputAction.next,
-                              decoration: InputDecoration(
-                                  labelText: LocalizationWidget.of(context)
-                                      .getLocalizeValue('kanji'),
-                                  labelStyle: TextStyle(fontSize: 20),
-                                  hintText: LocalizationWidget.of(context)
-                                      .getLocalizeValue('input_kanji_label')),
-                            ),
-                          ]),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 20.0),
-                        child: AddAnswerCardWidget(key: answerWidgetKey),
-                      ),
-                      Container(
-                        child: Text(
-                          LocalizationWidget.of(context)
-                              .getLocalizeValue('prop_of_answer'),
-                          style: TextStyle(fontSize: 20),
-                          textAlign: TextAlign.start,
-                        ),
-                      ),
-                      Container(
-                        child: Text(
-                          LocalizationWidget.of(context)
-                              .getLocalizeValue('powered_by_jisho'),
-                          style: TextStyle(
-                              fontSize: 16, fontStyle: FontStyle.italic),
-                          textAlign: TextAlign.start,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 30.0),
-                        child: JishoList(
-                            researchWord: _researchWord,
-                            callback: insertTranslationsCallback),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -381,6 +411,27 @@ class CreateCardPageState extends State<CreateCardPage> {
     );
   }
 
+  Widget _renderHeader() {
+    Widget defaultHeader =
+        Text(LocalizationWidget.of(context).getLocalizeValue('create_card'));
+    return FutureBuilder(
+      future: _deck,
+      builder: (BuildContext context, AsyncSnapshot<Deck> deckSnap) {
+        switch (deckSnap.connectionState) {
+          case ConnectionState.done:
+            if (deckSnap.hasData) {
+              return Text(LocalizationWidget.of(context)
+                      .getLocalizeValue('create_card') +
+                  " in ${deckSnap.data.title}");
+            }
+            return defaultHeader;
+          default:
+            return defaultHeader;
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     _bottomButtonLabel =
@@ -394,8 +445,7 @@ class CreateCardPageState extends State<CreateCardPage> {
       child: Scaffold(
         drawer: MainDrawer(),
         appBar: AppBar(
-          title: Text(
-              LocalizationWidget.of(context).getLocalizeValue('create_card')),
+          title: _renderHeader(),
         ),
         body: Column(
           children: <Widget>[

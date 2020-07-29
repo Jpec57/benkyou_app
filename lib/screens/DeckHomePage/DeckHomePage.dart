@@ -114,7 +114,7 @@ class DeckHomePageState extends State<DeckHomePage> {
                       alignment: Alignment.topLeft,
                       child: Container(
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(10.0),
                           child: Text(
                             '$awaitingCount',
                             style: TextStyle(
@@ -163,7 +163,7 @@ class DeckHomePageState extends State<DeckHomePage> {
                       alignment: Alignment.topRight,
                       child: Container(
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(10.0),
                           child: Text(
                             '$reviewCount',
                             style: TextStyle(
@@ -302,10 +302,13 @@ class DeckHomePageState extends State<DeckHomePage> {
                     onPressed: () {
                       _createNewCard(snapshot.data);
                     },
-                    backgroundColor: Color(COLOR_DARK_MUSTARD),
+                    backgroundColor: Color(0xffcceeff),
                     tooltip:
                         LocalizationWidget.of(context).getLocalizeValue('lol'),
-                    child: Icon(Icons.swap_calls),
+                    child: Icon(
+                      Icons.history,
+                      color: Colors.black54,
+                    ),
                   ),
                   FloatingActionButton(
                     heroTag: null,
@@ -443,8 +446,6 @@ class DeckHomePageState extends State<DeckHomePage> {
                         ),
                       );
                     }
-                    return Container();
-                  case ConnectionState.none:
                     return Container();
                   default:
                     return Container();
