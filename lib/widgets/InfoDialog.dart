@@ -4,11 +4,12 @@ import 'package:flutter/material.dart';
 
 import 'Localization.dart';
 
-class InfoDialog extends StatelessWidget{
+class InfoDialog extends StatelessWidget {
   final String title;
   final Widget body;
 
-  const InfoDialog({Key key, @required this.body, this.title}) : super(key: key);
+  const InfoDialog({Key key, @required this.body, this.title})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -34,18 +35,22 @@ class InfoDialog extends StatelessWidget{
               children: <Widget>[
                 body,
                 Padding(
-                  padding: const EdgeInsets.only(top: 15.0, left: 5.0),
+                  padding: const EdgeInsets.only(top: 20.0, left: 5.0),
                   child: RaisedButton(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(32.0))),
                     color: Color(COLOR_ORANGE),
-                    child: Text(LocalizationWidget.of(context).getLocalizeValue('close').toUpperCase(),
-                      style: TextStyle(
-                          color: Colors.white
-                      ),
+                    child: Text(
+                      LocalizationWidget.of(context)
+                          .getLocalizeValue('close')
+                          .toUpperCase(),
+                      style: TextStyle(color: Colors.white),
                     ),
                     onPressed: () async {
 //                          widget.positiveCallback(_controller.text);
-                          Navigator.pop(context);
-                    },),
+                      Navigator.pop(context);
+                    },
+                  ),
                 )
               ],
             ),
@@ -54,5 +59,4 @@ class InfoDialog extends StatelessWidget{
       ),
     );
   }
-
 }

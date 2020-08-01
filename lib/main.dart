@@ -7,6 +7,7 @@ import 'package:benkyou/screens/CreateUserPage/CreateUserPage.dart';
 import 'package:benkyou/screens/DialogPage/DialogPage.dart';
 import 'package:benkyou/screens/DialogPage/InDialogPage.dart';
 import 'package:benkyou/screens/DialogPage/InDialogPageArguments.dart';
+import 'package:benkyou/screens/GrammarReviewPage/CreateGrammarPage.dart';
 import 'package:benkyou/screens/GrammarReviewPage/GrammarReviewPage.dart';
 import 'package:benkyou/screens/LessonHomePage/LessonHomePage.dart';
 import 'package:benkyou/screens/LessonHomePage/LessonPage.dart';
@@ -38,7 +39,6 @@ import 'package:get/get.dart';
 import 'package:sentry/io_client.dart';
 
 import 'dsn.dart';
-import 'screens/DeckHomePage/DeckHomePage.dart';
 import 'screens/DeckPage/DeckPage.dart';
 import 'screens/DeckPage/DeckPageArguments.dart';
 
@@ -70,6 +70,9 @@ class App extends StatelessWidget {
       navigatorKey: Get.key,
       theme: ThemeData(
         primaryColor: Color(COLOR_DARK_BLUE),
+        textTheme: TextTheme(
+          headline6: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+        ),
       ),
       home: home,
       onGenerateRoute: (settings) {
@@ -206,10 +209,9 @@ class App extends StatelessWidget {
       },
       routes: {
         GrammarReviewPage.routeName: (context) => GrammarReviewPage(),
+        CreateCardPage.routeName: (context) => CreateGrammarCardPage(),
         LoginPage.routeName: (context) => LoginPage(),
         LessonHomePage.routeName: (context) => LessonHomePage(),
-        //TODO delete ?
-//        HomePage.routeName: (context) => HomePage(),
         ThemeLearningHomePage.routeName: (context) => ThemeLearningHomePage(),
 //            InDialogPage.routeName: (context) => InDialogPage(),
         ListDialogPage.routeName: (context) => ListDialogPage(),
@@ -236,10 +238,9 @@ void main() {
 
   runZoned(
     () => runApp(App(
-//          home: ThemeListeningPartPage(chosenTheme: new DeckTheme.fromJson({"id":21,"name":"Work","backgroundImg": null,"deck":{"id":59}})),
-//          home: ThemeWritingPartPage(theme: new DeckTheme.fromJson({"id":21,"name":"Work","backgroundImg": null,"deck":{"id":59}})),
 //          home: ThemeTinderWordPage(theme: new DeckTheme.fromJson({"id":21,"name":"Work","backgroundImg": null,"deck":{"id":59}})),
-      home: DeckHomePage(),
+//      home: DeckHomePage(),
+      home: CreateGrammarCardPage(),
     )),
     onError: (Object error, StackTrace stackTrace) {
       try {
