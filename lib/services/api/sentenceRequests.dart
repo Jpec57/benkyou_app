@@ -34,7 +34,7 @@ Future<List<Sentence>> searchSentencesRequest(
     String searchText, int maxResult) async {
   Map map = new Map();
   map.putIfAbsent('searchText', () => searchText);
-  map.putIfAbsent('number', () => maxResult);
+  map.putIfAbsent('maxResult', () => maxResult);
   HttpClientResponse response =
       await getLocalePostRequestResponse("/sentences/search", map);
   var entities = await getJsonFromHttpResponse(response);
