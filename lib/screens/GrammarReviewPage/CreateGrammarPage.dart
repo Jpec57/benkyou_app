@@ -1,3 +1,4 @@
+import 'package:benkyou/services/translator/TextConversion.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/ColorizedTextForm.dart';
 import 'package:benkyou/widgets/InfoIcon.dart';
@@ -7,6 +8,10 @@ import 'package:flutter/material.dart';
 
 class CreateGrammarCardPage extends StatefulWidget {
   static const routeName = '/create/grammar';
+  final int deckId;
+
+  const CreateGrammarCardPage({Key key, @required this.deckId})
+      : super(key: key);
 
   @override
   _CreateGrammarCardPageState createState() => _CreateGrammarCardPageState();
@@ -84,11 +89,8 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
     Map map = new Map();
     map.putIfAbsent('question', () => grammarPoint);
     map.putIfAbsent('hint', () => grammarHint);
-    // TODO
-    map.putIfAbsent('sentences', () => gapSentences);
-    // TODO
-//    map.putIfAbsent('deck', () => widget.deckId);
-    map.putIfAbsent('isReversible', () => false);
+    map.putIfAbsent('gapSentences', () => gapSentences);
+    map.putIfAbsent('deck', () => widget.deckId);
     map.putIfAbsent('answers', () => answers);
     //await postGrammarCard(deckId, map);
 
@@ -278,7 +280,9 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
                                   "While reviewing, if you were to ask for help, this hint will show up."),
                           _renderSentenceBuilderWidget(),
                           SentenceSeekerWidget(
-                            searchTerm: _grammarPointName.text,
+                            searchTerm:
+                                getJapaneseTranslation(_grammarPointName.text),
+//                            searchTerm: _grammarPointName.text,
                             sentenceCallBack: sentenceCallback,
                           ),
                         ],

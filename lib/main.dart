@@ -7,7 +7,9 @@ import 'package:benkyou/screens/CreateUserPage/CreateUserPage.dart';
 import 'package:benkyou/screens/DialogPage/DialogPage.dart';
 import 'package:benkyou/screens/DialogPage/InDialogPage.dart';
 import 'package:benkyou/screens/DialogPage/InDialogPageArguments.dart';
+import 'package:benkyou/screens/GrammarReviewPage/CreateGrammarCardArguments.dart';
 import 'package:benkyou/screens/GrammarReviewPage/CreateGrammarPage.dart';
+import 'package:benkyou/screens/GrammarReviewPage/GrammarHomePage.dart';
 import 'package:benkyou/screens/GrammarReviewPage/GrammarReviewPage.dart';
 import 'package:benkyou/screens/LessonHomePage/LessonHomePage.dart';
 import 'package:benkyou/screens/LessonHomePage/LessonPage.dart';
@@ -71,6 +73,8 @@ class App extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Color(COLOR_DARK_BLUE),
         textTheme: TextTheme(
+          headline3: TextStyle(
+              fontSize: 22, color: Colors.white, fontWeight: FontWeight.w600),
           headline6: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
       ),
@@ -184,6 +188,16 @@ class App extends StatelessWidget {
             },
           );
         }
+        if (settings.name == CreateGrammarCardPage.routeName) {
+          final CreateGrammarCardArguments args = settings.arguments;
+          return MaterialPageRoute(
+            builder: (context) {
+              return CreateGrammarCardPage(
+                deckId: args.deckId,
+              );
+            },
+          );
+        }
         if (settings.name == ThemeListeningPartPage.routeName) {
           final ThemeListeningPartPageArguments args = settings.arguments;
           return MaterialPageRoute(
@@ -209,12 +223,12 @@ class App extends StatelessWidget {
       },
       routes: {
         GrammarReviewPage.routeName: (context) => GrammarReviewPage(),
-        CreateCardPage.routeName: (context) => CreateGrammarCardPage(),
         LoginPage.routeName: (context) => LoginPage(),
         LessonHomePage.routeName: (context) => LessonHomePage(),
         ThemeLearningHomePage.routeName: (context) => ThemeLearningHomePage(),
 //            InDialogPage.routeName: (context) => InDialogPage(),
         ListDialogPage.routeName: (context) => ListDialogPage(),
+        GrammarHomePage.routeName: (context) => GrammarHomePage(),
         DialogPage.routeName: (context) => DialogPage(),
         CreateUserPage.routeName: (context) => CreateUserPage(),
         BrowseDeckPage.routeName: (context) => BrowseDeckPage(),
@@ -239,8 +253,8 @@ void main() {
   runZoned(
     () => runApp(App(
 //          home: ThemeTinderWordPage(theme: new DeckTheme.fromJson({"id":21,"name":"Work","backgroundImg": null,"deck":{"id":59}})),
-//      home: DeckHomePage(),
-      home: CreateGrammarCardPage(),
+      home: GrammarHomePage(),
+//      home: CreateGrammarCardPage(),
     )),
     onError: (Object error, StackTrace stackTrace) {
       try {
