@@ -1,10 +1,16 @@
 import 'package:benkyou/models/Deck.dart';
-import 'package:benkyou/screens/GrammarReviewPage/GrammarHomeHeaderClipper.dart';
+import 'package:benkyou/screens/DeckHomePage/CreateDeckDialog.dart';
+import 'package:benkyou/screens/Grammar/GrammarDeckPage.dart';
+import 'package:benkyou/screens/Grammar/GrammarDeckPageArguments.dart';
+import 'package:benkyou/screens/Grammar/GrammarHomeHeaderClipper.dart';
 import 'package:benkyou/services/api/deckRequests.dart';
 import 'package:benkyou/utils/colors.dart';
+import 'package:benkyou/widgets/ConnectedActionDialog.dart';
 import 'package:benkyou/widgets/Localization.dart';
 import 'package:benkyou/widgets/MainDrawer.dart';
+import 'package:benkyou/widgets/RoundedTextField.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class GrammarHomePage extends StatefulWidget {
   static const String routeName = '/grammar/home';
@@ -27,6 +33,37 @@ class _GrammarHomePageState extends State<GrammarHomePage> {
     super.dispose();
   }
 
+  void reloadDecks() {
+    setState(() {
+      _grammarDecks = getGrammarDecks();
+    });
+  }
+
+  Widget _renderSearchBar() {
+    return Container(
+      child: RoundedTextField(),
+    );
+  }
+
+  void _createNewDeck() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    if (sharedPreferences.get('userId') == null) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) => ConnectedActionDialog(
+                action: LocalizationWidget.of(context)
+                    .getLocalizeValue('action_to_create_deck'),
+              ));
+      return;
+    }
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => CreateDeckDialog(
+              callback: this.reloadDecks,
+              isGrammar: true,
+            ));
+  }
+
   @override
   Widget build(BuildContext context) {
     Size phoneSize = MediaQuery.of(context).size;
@@ -40,7 +77,11 @@ class _GrammarHomePageState extends State<GrammarHomePage> {
       body: SafeArea(
           child: Column(
         children: [
-          Container(
+          GestureDetector(
+            onTap: () {
+              print("Cool");
+              //TODO IMPLEMENT
+            },
             child: ClipPath(
               clipper: GrammarHomeHeaderClipper(),
               child: Container(
@@ -56,6 +97,7 @@ class _GrammarHomePageState extends State<GrammarHomePage> {
               ),
             ),
           ),
+          _renderSearchBar(),
           Padding(
             padding: const EdgeInsets.only(top: 15, right: 10, left: 10),
             child: FutureBuilder(
@@ -72,9 +114,21 @@ class _GrammarHomePageState extends State<GrammarHomePage> {
                       return ListView.separated(
                           shrinkWrap: true,
                           itemBuilder: (context, index) {
+                            Deck deck = deckSnapshot.data[index];
                             return ListTile(
-                              onTap: () {},
-                              title: Text("Je suis une tile"),
+                              onTap: () {
+                                Navigator.of(context).pushNamed(
+                                    GrammarDeckPage.routeName,
+                                    arguments: GrammarDeckPageArguments(
+                                        deckId: deck.id));
+                              },
+                              title: Text(deck.title),
+                              subtitle: Text(
+                                deck.author != null
+                                    ? deck.author.username
+                                    : "Jpec",
+                                style: TextStyle(fontSize: 12),
+                              ),
                             );
                           },
                           separatorBuilder: (context, index) => Divider(
@@ -99,6 +153,12 @@ class _GrammarHomePageState extends State<GrammarHomePage> {
           ),
         ],
       )),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _createNewDeck,
+        backgroundColor: Color(COLOR_ORANGE),
+        tooltip: LocalizationWidget.of(context).getLocalizeValue('add_deck'),
+        child: Icon(Icons.add),
+      ),
     );
   }
 }

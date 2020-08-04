@@ -7,10 +7,12 @@ import 'package:benkyou/screens/CreateUserPage/CreateUserPage.dart';
 import 'package:benkyou/screens/DialogPage/DialogPage.dart';
 import 'package:benkyou/screens/DialogPage/InDialogPage.dart';
 import 'package:benkyou/screens/DialogPage/InDialogPageArguments.dart';
-import 'package:benkyou/screens/GrammarReviewPage/CreateGrammarCardArguments.dart';
-import 'package:benkyou/screens/GrammarReviewPage/CreateGrammarPage.dart';
-import 'package:benkyou/screens/GrammarReviewPage/GrammarHomePage.dart';
-import 'package:benkyou/screens/GrammarReviewPage/GrammarReviewPage.dart';
+import 'package:benkyou/screens/Grammar/CreateGrammarCardArguments.dart';
+import 'package:benkyou/screens/Grammar/CreateGrammarPage.dart';
+import 'package:benkyou/screens/Grammar/GrammarDeckPage.dart';
+import 'package:benkyou/screens/Grammar/GrammarDeckPageArguments.dart';
+import 'package:benkyou/screens/Grammar/GrammarHomePage.dart';
+import 'package:benkyou/screens/Grammar/GrammarReviewPage.dart';
 import 'package:benkyou/screens/LessonHomePage/LessonHomePage.dart';
 import 'package:benkyou/screens/LessonHomePage/LessonPage.dart';
 import 'package:benkyou/screens/LessonHomePage/LessonPageArguments.dart';
@@ -214,6 +216,16 @@ class App extends StatelessWidget {
             builder: (context) {
               return ThemeWritingPartPage(
                 theme: args.theme,
+              );
+            },
+          );
+        }
+        if (settings.name == GrammarDeckPage.routeName) {
+          final GrammarDeckPageArguments args = settings.arguments;
+          return MaterialPageRoute(
+            builder: (context) {
+              return GrammarDeckPage(
+                deckId: args.deckId,
               );
             },
           );

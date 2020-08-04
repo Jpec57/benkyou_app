@@ -1,5 +1,5 @@
 import 'package:benkyou/screens/BrowseDeckPage/BrowseDeckPage.dart';
-import 'package:benkyou/screens/GrammarReviewPage/GrammarReviewPage.dart';
+import 'package:benkyou/screens/Grammar/GrammarReviewPage.dart';
 import 'package:benkyou/screens/LessonHomePage/LessonHomePage.dart';
 import 'package:benkyou/screens/ListCardPage/ListCardPage.dart';
 import 'package:benkyou/screens/ListCardPage/ListCardPageArguments.dart';
@@ -13,14 +13,15 @@ import 'package:benkyou/widgets/LoginDialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../screens/DeckHomePage/DeckHomePage.dart';
 
-class MainDrawer extends StatefulWidget{
+class MainDrawer extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => MainDrawerState();
 }
 
-class MainDrawerState extends State<MainDrawer>{
+class MainDrawerState extends State<MainDrawer> {
   Future<bool> isUserConnected;
 
   @override
@@ -29,7 +30,7 @@ class MainDrawerState extends State<MainDrawer>{
     isUserConnected = _isUserConnected();
   }
 
-  Future<bool> _isUserConnected() async{
+  Future<bool> _isUserConnected() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     int userId = sharedPreferences.getInt('userId');
     return userId != null;
@@ -37,50 +38,55 @@ class MainDrawerState extends State<MainDrawer>{
 
   Widget _renderLoginTile() {
     return FutureBuilder(
-      future: isUserConnected,
-      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-        switch(snapshot.connectionState){
-          case ConnectionState.waiting:
-            return ListTile(
-              title: Text(LocalizationWidget.of(context).getLocalizeValue('loading')),
-            );
-          case ConnectionState.done:
-            if (snapshot.hasData && snapshot.data){
+        future: isUserConnected,
+        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
               return ListTile(
-                title: Text(LocalizationWidget.of(context).getLocalizeValue('log_out')),
-                onTap: () async {
-                  showLoadingDialog(context);
-                  await logoutRequest();
+                title: Text(
+                    LocalizationWidget.of(context).getLocalizeValue('loading')),
+              );
+            case ConnectionState.done:
+              if (snapshot.hasData && snapshot.data) {
+                return ListTile(
+                  title: Text(LocalizationWidget.of(context)
+                      .getLocalizeValue('log_out')),
+                  onTap: () async {
+                    showLoadingDialog(context);
+                    await logoutRequest();
+                    Navigator.pop(context);
+                    Navigator.pushNamed(
+                      context,
+                      DeckHomePage.routeName,
+                    );
+                  },
+                );
+              }
+              return ListTile(
+                title: Text(
+                    LocalizationWidget.of(context).getLocalizeValue('log_in')),
+                onTap: () {
                   Navigator.pop(context);
-                  Navigator.pushNamed(
-                    context,
-                    DeckHomePage.routeName,
-                  );
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) => LoginDialog());
                 },
               );
-            }
-            return ListTile(
-              title: Text(LocalizationWidget.of(context).getLocalizeValue('log_in')),
-              onTap: () {
-                Navigator.pop(context);
-                showDialog(
-                    context: context, builder: (BuildContext context) => LoginDialog());
-              },
-            );
-          default:
-            return ListTile(
-              title: Text(LocalizationWidget.of(context).getLocalizeValue('log_in')),
-              onTap: () {
-                Navigator.pop(context);
-                showDialog(
-                    context: context, builder: (BuildContext context) => LoginDialog());
-                // Update the state of the app.
-                // ...
-              },
-            );
-        }
-
-    });
+            default:
+              return ListTile(
+                title: Text(
+                    LocalizationWidget.of(context).getLocalizeValue('log_in')),
+                onTap: () {
+                  Navigator.pop(context);
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) => LoginDialog());
+                  // Update the state of the app.
+                  // ...
+                },
+              );
+          }
+        });
   }
 
   @override
@@ -91,13 +97,13 @@ class MainDrawerState extends State<MainDrawer>{
         children: <Widget>[
           DrawerHeader(
             child: Align(
-              alignment: Alignment.bottomLeft,
+                alignment: Alignment.bottomLeft,
                 child: FutureBuilder(
                   future: isUserConnected,
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    switch (snapshot.connectionState){
+                    switch (snapshot.connectionState) {
                       case ConnectionState.done:
-                        if (snapshot.hasData){
+                        if (snapshot.hasData) {
                           return Text(
                             snapshot.data ? '今日は！' : 'ようこそ!',
                             style: TextStyle(
@@ -145,11 +151,11 @@ class MainDrawerState extends State<MainDrawer>{
             decoration: BoxDecoration(
                 image: DecorationImage(
                     image: AssetImage("lib/imgs/japan.png"),
-                    fit: BoxFit.cover)
-            ),
+                    fit: BoxFit.cover)),
           ),
           ListTile(
-            title: Text(LocalizationWidget.of(context).getLocalizeValue('home')),
+            title:
+                Text(LocalizationWidget.of(context).getLocalizeValue('home')),
             onTap: () {
               Navigator.pushNamed(
                 context,
@@ -158,7 +164,8 @@ class MainDrawerState extends State<MainDrawer>{
             },
           ),
           ListTile(
-            title: Text(LocalizationWidget.of(context).getLocalizeValue('my_profile')),
+            title: Text(
+                LocalizationWidget.of(context).getLocalizeValue('my_profile')),
             onTap: () {
               Navigator.pushNamed(
                 context,
@@ -169,11 +176,16 @@ class MainDrawerState extends State<MainDrawer>{
           Container(
             child: Padding(
               padding: const EdgeInsets.only(left: 15.0, top: 8.0),
-              child: Text('Review', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),),
+              child: Text(
+                'Review',
+                style:
+                    TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
+              ),
             ),
           ),
           ListTile(
-            title: Text(LocalizationWidget.of(context).getLocalizeValue('my_word_decks')),
+            title: Text(LocalizationWidget.of(context)
+                .getLocalizeValue('my_word_decks')),
             onTap: () {
               Navigator.pushNamed(
                 context,
@@ -182,7 +194,8 @@ class MainDrawerState extends State<MainDrawer>{
             },
           ),
           ListTile(
-            title: Text(LocalizationWidget.of(context).getLocalizeValue('my_grammar_decks')),
+            title: Text(LocalizationWidget.of(context)
+                .getLocalizeValue('my_grammar_decks')),
             onTap: () {
               Navigator.pushNamed(
                 context,
@@ -193,11 +206,16 @@ class MainDrawerState extends State<MainDrawer>{
           Container(
             child: Padding(
               padding: const EdgeInsets.only(left: 15.0, top: 8.0),
-              child: Text('Learn', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),),
+              child: Text(
+                'Learn',
+                style:
+                    TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
+              ),
             ),
           ),
           ListTile(
-            title: Text(LocalizationWidget.of(context).getLocalizeValue('lessons')),
+            title: Text(
+                LocalizationWidget.of(context).getLocalizeValue('lessons')),
             onTap: () {
               Navigator.pushNamed(
                 context,
@@ -206,7 +224,8 @@ class MainDrawerState extends State<MainDrawer>{
             },
           ),
           ListTile(
-            title: Text(LocalizationWidget.of(context).getLocalizeValue('themes')),
+            title:
+                Text(LocalizationWidget.of(context).getLocalizeValue('themes')),
             onTap: () {
               Navigator.pushNamed(
                 context,
@@ -217,11 +236,16 @@ class MainDrawerState extends State<MainDrawer>{
           Container(
             child: Padding(
               padding: const EdgeInsets.only(left: 15.0, top: 8.0),
-              child: Text('Discover', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),),
+              child: Text(
+                'Discover',
+                style:
+                    TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
+              ),
             ),
           ),
           ListTile(
-            title: Text(LocalizationWidget.of(context).getLocalizeValue('browse_online_decks')),
+            title: Text(LocalizationWidget.of(context)
+                .getLocalizeValue('browse_online_decks')),
             onTap: () {
               Navigator.pushNamed(
                 context,
@@ -230,7 +254,8 @@ class MainDrawerState extends State<MainDrawer>{
             },
           ),
           ListTile(
-            title: Text(LocalizationWidget.of(context).getLocalizeValue('dialogs')),
+            title: Text(
+                LocalizationWidget.of(context).getLocalizeValue('dialogs')),
             onTap: () {
               Navigator.pushNamed(
                 context,
@@ -241,17 +266,19 @@ class MainDrawerState extends State<MainDrawer>{
           Container(
             child: Padding(
               padding: const EdgeInsets.only(left: 15.0, top: 8.0),
-              child: Text('Others', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),),
+              child: Text(
+                'Others',
+                style:
+                    TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
+              ),
             ),
           ),
           ListTile(
-            title: Text(LocalizationWidget.of(context).getLocalizeValue('my_cards')),
+            title: Text(
+                LocalizationWidget.of(context).getLocalizeValue('my_cards')),
             onTap: () {
-              Navigator.pushNamed(
-                  context,
-                  ListCardPage.routeName,
-                  arguments: ListCardPageArguments()
-              );
+              Navigator.pushNamed(context, ListCardPage.routeName,
+                  arguments: ListCardPageArguments());
             },
           ),
           _renderLoginTile(),
@@ -259,5 +286,4 @@ class MainDrawerState extends State<MainDrawer>{
       ),
     );
   }
-
 }

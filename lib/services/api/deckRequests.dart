@@ -90,13 +90,17 @@ Future<Deck> getDeck(int id) async {
   return Deck.fromJson(deck);
 }
 
-Future<Deck> postDeck(String title, String description, {int deckId}) async {
+Future<Deck> postDeck(String title, String description,
+    {int deckId, bool isGrammar = false}) async {
   Map map = new Map();
   if (deckId != null) {
     map.putIfAbsent('id', () => deckId);
   }
   map.putIfAbsent('title', () => title);
   map.putIfAbsent('description', () => description);
+  if (isGrammar) {
+    map.putIfAbsent('cardType', () => 1);
+  }
   HttpClientResponse response =
       await getLocalePostRequestResponse("/decks", map);
   if (!isRequestValid(response.statusCode)) {
