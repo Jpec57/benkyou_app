@@ -1,5 +1,7 @@
 import 'package:benkyou/models/Deck.dart';
+import 'package:benkyou/models/UserCard.dart';
 import 'package:benkyou/screens/Grammar/CreateGrammarPage.dart';
+import 'package:benkyou/services/api/cardRequests.dart';
 import 'package:benkyou/services/api/deckRequests.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/Localization.dart';
@@ -19,6 +21,7 @@ class GrammarDeckPage extends StatefulWidget {
 
 class _GrammarDeckPageState extends State<GrammarDeckPage> {
   Future<Deck> _deck;
+  Future<List<UserCard>> _reviewCards;
 
   @override
   void initState() {
@@ -28,6 +31,7 @@ class _GrammarDeckPageState extends State<GrammarDeckPage> {
 
   void loadDeck() {
     _deck = getDeck(widget.deckId);
+    _reviewCards = getReviewCardsForDeck(widget.deckId);
   }
 
   @override
@@ -59,11 +63,6 @@ class _GrammarDeckPageState extends State<GrammarDeckPage> {
                 ),
               ),
             ),
-//            Expanded(
-//              child: TopRoundedCard(
-//                child: Text("Test"),
-//              ),
-//            ),
             Expanded(
               flex: 3,
               child: TopRoundedCard(
@@ -72,28 +71,78 @@ class _GrammarDeckPageState extends State<GrammarDeckPage> {
                     Positioned.fill(
                       child: Padding(
                         padding: const EdgeInsets.all(20),
-                        child: Container(
-                          color: Colors.white,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text("Review".toUpperCase()),
-                          ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                "${deck.title}",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline3
+                                    .copyWith(color: Colors.black87),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                "${deck.description}",
+                                style: TextStyle(
+                                    fontStyle: FontStyle.italic,
+                                    color: Color(COLOR_DARK_GREY)),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: RaisedButton(
-                        shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(20.0))),
-                        color: Color(COLOR_ORANGE),
-                        onPressed: () {},
-                        child: Padding(
-                          padding: const EdgeInsets.all(15),
-                          child: Text(
-                            "Review".toUpperCase(),
-                            style: Theme.of(context).textTheme.headline3,
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 5),
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: RaisedButton(
+                          shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0))),
+                          color: Color(COLOR_ORANGE),
+                          onPressed: () {},
+                          child: Padding(
+                            padding: const EdgeInsets.all(15),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                //TODO
+                                FutureBuilder(
+                                  future: _reviewCards,
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<List<UserCard>>
+                                          reviewCardsSnap) {
+                                    switch (reviewCardsSnap.connectionState) {
+                                      case ConnectionState.done:
+                                        if (reviewCardsSnap.hasData) {
+                                          print(
+                                              "count ${reviewCardsSnap.data.length}");
+                                          return Text(
+                                            "${reviewCardsSnap.data.length}",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headline3,
+                                          );
+                                        }
+                                        return Container();
+                                      default:
+                                        return Container();
+                                    }
+                                  },
+                                ),
+
+                                Text(
+                                  " Review".toUpperCase(),
+                                  style: Theme.of(context).textTheme.headline3,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),

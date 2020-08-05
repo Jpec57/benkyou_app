@@ -138,6 +138,19 @@ Future<List<UserCard>> getReviewCards() async {
   return parsedCards;
 }
 
+//TODO
+Future<List<UserCard>> getGrammarReviewCards() async {
+  HttpClientResponse cardResponse =
+      await getLocaleGetRequestResponse("/users/grammar-decks/review");
+  var cards = await getJsonFromHttpResponse(cardResponse);
+  if (!isRequestValid(cardResponse.statusCode)) {
+    print(cards);
+    return null;
+  }
+  List<UserCard> parsedCards = decodeUserCardJsonArray(cards);
+  return parsedCards;
+}
+
 Future<bool> postReview(List<UserCardProcessedInfo> cards) async {
   Map body = new Map();
   body.putIfAbsent(
