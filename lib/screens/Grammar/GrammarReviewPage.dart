@@ -29,11 +29,8 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
   bool _isAnswerCorrect = false;
   List<TextEditingController> _answerControllers;
   List<UserCard> _remainingCards;
-  List<Widget> _gaps = [];
-  List<Widget> _texts = [];
   List<UserCardProcessedInfo> _processedCards;
   int _previousCardId;
-  List<Widget> _list;
   int _nbErrors = 0;
   int _nbSuccess = 0;
 
@@ -42,7 +39,7 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
     super.initState();
     _remainingCards = widget.cards;
     _processedCards = [];
-    _previousCardId = _remainingCards[0].id;
+    _previousCardId = 0;
   }
 
   @override
@@ -53,83 +50,79 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
     }
   }
 
-  void goToNextQuestion(bool isCorrect, List<String> correctAnswers) {
-    if (_isAnswerVisible) {
-      if (isCorrect) {
-        _nbSuccess++;
-      } else {
-        _nbErrors++;
-      }
-      //empty text controllers
-      _answerControllers.forEach((element) {
-        element.clear();
-      });
-      setState(() {
-        _isAnswerCorrect = isCorrect;
-        _isHintVisible = false;
-        _isAnswerVisible = false;
-      });
-      if (_remainingCards.length != 0) {
-        _remainingCards.removeAt(0);
-      } else {
-        Navigator.of(context).pushNamed(GrammarDeckPage.routeName,
-            arguments: GrammarDeckPageArguments(deckId: widget.deckId));
-      }
+  void _goToNextQuestion(bool isCorrect) {
+    //empty text controllers
+    _answerControllers.forEach((element) {
+      element.clear();
+    });
+    setState(() {
+      _isHintVisible = false;
+      _isAnswerVisible = false;
+    });
+    //TODO REMOVE ONLY WHEN SUCCESS
+    if (_remainingCards.length != 1) {
+      _remainingCards.removeAt(0);
     } else {
-      setState(() {
-        _isAnswerVisible = true;
-        //SET correction in controller
-        for (int i = 0; i < _answerControllers.length; i++) {
-          _answerControllers[i].text = correctAnswers[i];
-        }
-      });
-      //TODO show pop up
+      Navigator.of(context).pushNamed(GrammarDeckPage.routeName,
+          arguments: GrammarDeckPageArguments(deckId: widget.deckId));
     }
   }
 
-  Future<bool> validate(String gapSentence) async {
-    RegExp regExp = new RegExp(r"{[^}]+}");
-    Iterable<RegExpMatch> matches = regExp.allMatches(gapSentence);
-    int i = 0;
-    bool isCorrect = true;
-    List<String> correctAnswers = [];
-    for (var match in matches) {
-      String desiredString =
-          gapSentence.substring(match.start + 1, match.end - 1);
-      String givenAnswer = _answerControllers[i].text;
-      correctAnswers.add(desiredString);
-      if (desiredString != givenAnswer &&
-          getHiragana(givenAnswer) != desiredString &&
-          getKatakana(givenAnswer) != desiredString) {
-        isCorrect = false;
-      }
-      i++;
+  void _handleQuestion(bool isCorrect, List<String> correctAnswers) {
+    if (isCorrect) {
+      _nbSuccess++;
+    } else {
+      _nbErrors++;
     }
-    print("isCorrect $isCorrect");
-    goToNextQuestion(isCorrect, correctAnswers);
+    setState(() {
+      _isAnswerCorrect = isCorrect;
+      _isAnswerVisible = true;
+      //SET correction in controller
+      for (int i = 0; i < _answerControllers.length; i++) {
+        _answerControllers[i].text = correctAnswers[i];
+      }
+    });
+    //TODO show pop up
+  }
 
+  Future<bool> validate(String gapSentence) async {
+    if (_isAnswerVisible) {
+      _goToNextQuestion(_isAnswerCorrect);
+    } else {
+      RegExp regExp = new RegExp(r"{[^}]+}");
+      Iterable<RegExpMatch> matches = regExp.allMatches(gapSentence);
+      int i = 0;
+      bool isCorrect = true;
+      List<String> correctAnswers = [];
+      for (var match in matches) {
+        String desiredString =
+            gapSentence.substring(match.start + 1, match.end - 1);
+        String givenAnswer = _answerControllers[i].text;
+        correctAnswers.add(desiredString);
+        if (desiredString != givenAnswer &&
+            getHiragana(givenAnswer) != desiredString &&
+            getKatakana(givenAnswer) != desiredString) {
+          isCorrect = false;
+        }
+        i++;
+      }
+      _handleQuestion(isCorrect, correctAnswers);
+    }
     return true;
   }
 
   Widget _renderQuestionWithGap(
       int currentCardId, GrammarPointCard grammarCard) {
-    bool hasCardNotChanged =
-        currentCardId == _previousCardId && _list != null && _list.isNotEmpty;
-    if (hasCardNotChanged) {
-      print("Rendering old");
-      return Wrap(
-          runAlignment: WrapAlignment.center,
-          alignment: WrapAlignment.center,
-          direction: Axis.horizontal,
-          children: _list);
-    }
+    bool hasCardChanged = currentCardId != _previousCardId;
     _previousCardId = currentCardId;
     // TODO take random
     String gapSentence = grammarCard.gapSentences[0];
     List<Widget> widgets = [];
     int length = gapSentence.length;
     int controllerIndex = 0;
-    _answerControllers = [];
+    if (hasCardChanged) {
+      _answerControllers = [];
+    }
     for (int i = 0; i < length; i++) {
       var char = gapSentence[i];
       int subStrStartSize = 0;
@@ -138,13 +131,10 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
         subStrStartSize++;
       }
       if (subStrStartSize > 0) {
-        widgets.add(Container(
-          height: 40,
-          child: Text(
-            gapSentence.substring(i, i + subStrStartSize - 1),
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 20),
-          ),
+        widgets.add(Text(
+          gapSentence.substring(i, i + subStrStartSize - 1),
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 20),
         ));
       }
       i += subStrStartSize;
@@ -156,23 +146,26 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
         }
         //because we have here a letter different from '}'
         subStrStartSize--;
-        _answerControllers.add(new TextEditingController());
+        if (hasCardChanged) {
+          _answerControllers.add(new TextEditingController());
+        }
         widgets.add(Container(
-          width: 50,
           height: 40,
-          child: TextFormField(
-            decoration: InputDecoration(
-                contentPadding: EdgeInsets.only(top: -15.0),
-                hintText: "(${controllerIndex + 1})"),
-            textAlign: TextAlign.center,
-            enabled: !_isAnswerVisible,
-            textAlignVertical: TextAlignVertical.top,
-            controller: _answerControllers[controllerIndex],
-            style: TextStyle(
-                fontSize: 20,
-                color: _isAnswerVisible
-                    ? _isAnswerCorrect ? Colors.green : Colors.red
-                    : Colors.blue),
+          child: IntrinsicWidth(
+            child: TextFormField(
+              decoration: InputDecoration(
+                  contentPadding: EdgeInsets.only(top: -15.0),
+                  hintText: "(${controllerIndex + 1})"),
+              textAlign: TextAlign.center,
+              enabled: !_isAnswerVisible,
+              textAlignVertical: TextAlignVertical.top,
+              controller: _answerControllers[controllerIndex],
+              style: TextStyle(
+                  fontSize: 20,
+                  color: _isAnswerVisible
+                      ? _isAnswerCorrect ? Colors.green : Colors.red
+                      : Colors.blue),
+            ),
           ),
         ));
         controllerIndex++;
@@ -180,7 +173,6 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
       i += subStrStartSize;
     }
 
-    _list = widgets;
     return Wrap(
         runAlignment: WrapAlignment.center,
         alignment: WrapAlignment.center,
@@ -193,56 +185,58 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
     GrammarPointCard grammarCard = card.grammarCard;
 
     return IntrinsicHeight(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          ReviewPageInfo(
-            nbErrors: _nbErrors,
-            nbSuccess: _nbSuccess,
-            remainingNumber: _remainingCards.length,
-            isAnswerVisible: _isAnswerVisible,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(15),
-            child: _renderQuestionWithGap(card.id, grammarCard),
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Expanded(
-                  child: Visibility(
-                      visible: _isHintVisible,
-                      child: Center(
-                          child: Text(
-                        deckCard.hint,
-                        textAlign: TextAlign.justify,
-                      )))),
-              GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _isHintVisible = true;
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(Icons.wb_incandescent),
-                  )),
-            ],
-          ),
-          Container(
-            color: Colors.black,
-            width: double.infinity,
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Center(
-                child: Text(
-                  "Complete this sentence",
-                  style: TextStyle(color: Colors.white),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ReviewPageInfo(
+              nbErrors: _nbErrors,
+              nbSuccess: _nbSuccess,
+              remainingNumber: _remainingCards.length,
+              isAnswerVisible: _isAnswerVisible,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(15),
+              child: _renderQuestionWithGap(card.id, grammarCard),
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Expanded(
+                    child: Visibility(
+                        visible: _isHintVisible,
+                        child: Center(
+                            child: Text(
+                          deckCard.hint,
+                          textAlign: TextAlign.justify,
+                        )))),
+                GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _isHintVisible = true;
+                      });
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(Icons.wb_incandescent),
+                    )),
+              ],
+            ),
+            Container(
+              color: Colors.black,
+              width: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Center(
+                  child: Text(
+                    "Complete this sentence",
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }

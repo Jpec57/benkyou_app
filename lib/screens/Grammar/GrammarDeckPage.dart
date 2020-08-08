@@ -186,13 +186,17 @@ class _GrammarDeckPageState extends State<GrammarDeckPage> {
                                           Radius.circular(20.0))),
                                   color: Color(COLOR_ORANGE),
                                   onPressed: () {
-                                    if (reviewCardsSnap.data.length > 0) {
+                                    List<UserCard> reviewCards =
+                                        reviewCardsSnap.data;
+                                    if (reviewCards.length > 0) {
+                                      if (reviewCards.length >= 4) {
+                                        reviewCards = reviewCards.sublist(4);
+                                      }
                                       Navigator.of(context).pushNamed(
                                           GrammarReviewPage.routeName,
                                           arguments: GrammarReviewArguments(
                                               deckId: widget.deckId,
-                                              reviewCards:
-                                                  reviewCardsSnap.data));
+                                              reviewCards: reviewCards));
                                     }
                                   },
                                   child: Padding(

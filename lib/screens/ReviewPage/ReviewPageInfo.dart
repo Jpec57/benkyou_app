@@ -7,12 +7,16 @@ class ReviewPageInfo extends StatelessWidget {
   final int remainingNumber;
   final bool isAnswerVisible;
 
-  const ReviewPageInfo({Key key, @required this.nbSuccess, @required this.nbErrors,
-    @required this.remainingNumber, @required this.isAnswerVisible}) : super(key: key);
+  const ReviewPageInfo(
+      {Key key,
+      @required this.nbSuccess,
+      @required this.nbErrors,
+      @required this.remainingNumber,
+      @required this.isAnswerVisible})
+      : super(key: key);
 
-
-  String getSuccessPercent(){
-    if (nbSuccess == 0 && nbErrors == 0){
+  String getSuccessPercent() {
+    if (nbSuccess == 0 && nbErrors == 0) {
       return "100";
     }
     return (nbSuccess * 100 / (nbSuccess + nbErrors)).toStringAsFixed(0);
