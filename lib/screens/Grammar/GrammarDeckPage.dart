@@ -1,11 +1,16 @@
 import 'package:benkyou/models/Deck.dart';
 import 'package:benkyou/models/UserCard.dart';
+import 'package:benkyou/screens/Grammar/CreateGrammarCardArguments.dart';
 import 'package:benkyou/screens/Grammar/CreateGrammarPage.dart';
+import 'package:benkyou/screens/Grammar/GrammarHomePage.dart';
+import 'package:benkyou/screens/Grammar/GrammarReviewArguments.dart';
+import 'package:benkyou/screens/Grammar/GrammarReviewPage.dart';
 import 'package:benkyou/services/api/cardRequests.dart';
 import 'package:benkyou/services/api/deckRequests.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/Localization.dart';
 import 'package:benkyou/widgets/MainDrawer.dart';
+import 'package:benkyou/widgets/ReviewSchedule.dart';
 import 'package:benkyou/widgets/TopRoundedCard.dart';
 import 'package:flutter/material.dart';
 
@@ -22,6 +27,9 @@ class GrammarDeckPage extends StatefulWidget {
 class _GrammarDeckPageState extends State<GrammarDeckPage> {
   Future<Deck> _deck;
   Future<List<UserCard>> _reviewCards;
+  Future<List<UserCard>> _userCards;
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      new GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
@@ -32,6 +40,7 @@ class _GrammarDeckPageState extends State<GrammarDeckPage> {
   void loadDeck() {
     _deck = getDeck(widget.deckId);
     _reviewCards = getReviewCardsForDeck(widget.deckId);
+    _userCards = getUserCardsForDeck(widget.deckId);
   }
 
   @override
@@ -41,110 +50,167 @@ class _GrammarDeckPageState extends State<GrammarDeckPage> {
 
   void _createNewCard() {
     Navigator.pushNamed(context, CreateGrammarCardPage.routeName,
-        arguments: CreateGrammarCardPage(
+        arguments: CreateGrammarCardArguments(
           deckId: widget.deckId,
         ));
+  }
+
+  Widget _renderHeader(Deck deck) {
+    return Expanded(
+      flex: 1,
+      child: Padding(
+        padding: EdgeInsets.all(10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pushNamed(GrammarHomePage.routeName);
+                  },
+                  child: Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                ),
+                Column(
+                  children: [
+                    Text("Coucou toi"),
+                  ],
+                ),
+              ],
+            ),
+            Align(alignment: Alignment.topRight, child: Text("Coucou toi")),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _renderReviewSchedule() {
+    return FutureBuilder(
+        future: _userCards,
+        builder: (BuildContext context,
+            AsyncSnapshot<List<UserCard>> userCardSnapshot) {
+          switch (userCardSnapshot.connectionState) {
+            case ConnectionState.waiting:
+              return Container();
+            case ConnectionState.done:
+              if (userCardSnapshot.hasData) {
+                List<UserCard> cards = userCardSnapshot.data;
+                if (cards.isEmpty) {
+                  return Container();
+                }
+                return ReviewSchedule(
+                  cards: cards,
+                  colors: [Color(COLOR_ORANGE)],
+                );
+              }
+              return Container();
+            default:
+              return Container();
+          }
+        });
   }
 
   Widget _renderPage(Deck deck) {
     return Expanded(
       child: Container(
-        color: Colors.greenAccent,
+        color: Color(COLOR_DARK_BLUE),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.max,
           children: [
-            Expanded(
-              flex: 1,
-              child: Padding(
-                padding: EdgeInsets.all(10),
-                child: Container(
-                  child: Text("Coucou toi"),
-                ),
-              ),
-            ),
+            _renderHeader(deck),
             Expanded(
               flex: 3,
               child: TopRoundedCard(
-                child: Stack(
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Positioned.fill(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                "${deck.title}",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline3
-                                    .copyWith(color: Colors.black87),
-                              ),
+                    Expanded(
+                      child: RefreshIndicator(
+                        key: _refreshIndicatorKey,
+                        onRefresh: _refresh,
+                        child: SingleChildScrollView(
+                          child: Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    "${deck.title}",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline3
+                                        .copyWith(color: Colors.black87),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    "${deck.description ?? ''}",
+                                    textAlign: TextAlign.justify,
+                                    style: TextStyle(
+                                        fontStyle: FontStyle.italic,
+                                        color: Color(COLOR_DARK_GREY)),
+                                  ),
+                                ),
+                                _renderReviewSchedule()
+                              ],
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                "${deck.description}",
-                                style: TextStyle(
-                                    fontStyle: FontStyle.italic,
-                                    color: Color(COLOR_DARK_GREY)),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 5),
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: RaisedButton(
-                          shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20.0))),
-                          color: Color(COLOR_ORANGE),
-                          onPressed: () {},
-                          child: Padding(
-                            padding: const EdgeInsets.all(15),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                //TODO
-                                FutureBuilder(
-                                  future: _reviewCards,
-                                  builder: (BuildContext context,
-                                      AsyncSnapshot<List<UserCard>>
-                                          reviewCardsSnap) {
-                                    switch (reviewCardsSnap.connectionState) {
-                                      case ConnectionState.done:
-                                        if (reviewCardsSnap.hasData) {
-                                          print(
-                                              "count ${reviewCardsSnap.data.length}");
-                                          return Text(
-                                            "${reviewCardsSnap.data.length}",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .headline3,
-                                          );
-                                        }
-                                        return Container();
-                                      default:
-                                        return Container();
+                      child: FutureBuilder(
+                        future: _reviewCards,
+                        builder: (BuildContext context,
+                            AsyncSnapshot<List<UserCard>> reviewCardsSnap) {
+                          switch (reviewCardsSnap.connectionState) {
+                            case ConnectionState.done:
+                              if (reviewCardsSnap.hasData) {
+                                return RaisedButton(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(20.0))),
+                                  color: Color(COLOR_ORANGE),
+                                  onPressed: () {
+                                    if (reviewCardsSnap.data.length > 0) {
+                                      Navigator.of(context).pushNamed(
+                                          GrammarReviewPage.routeName,
+                                          arguments: GrammarReviewArguments(
+                                              deckId: widget.deckId,
+                                              reviewCards:
+                                                  reviewCardsSnap.data));
                                     }
                                   },
-                                ),
-
-                                Text(
-                                  " Review".toUpperCase(),
-                                  style: Theme.of(context).textTheme.headline3,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(15),
+                                    child: Text(
+                                      "${reviewCardsSnap.data.length} Review"
+                                          .toUpperCase(),
+                                      style:
+                                          Theme.of(context).textTheme.headline3,
+                                    ),
+                                  ),
+                                );
+                              }
+                              return Container();
+                            default:
+                              return Container();
+                          }
+                        },
                       ),
                     )
                   ],
@@ -155,6 +221,11 @@ class _GrammarDeckPageState extends State<GrammarDeckPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _refresh() async {
+    loadDeck();
+    setState(() {});
   }
 
   @override
@@ -174,7 +245,10 @@ class _GrammarDeckPageState extends State<GrammarDeckPage> {
                 switch (deckSnapshot.connectionState) {
                   case ConnectionState.waiting:
                     return Center(
-                      child: CircularProgressIndicator(),
+                      child: Padding(
+                        padding: const EdgeInsets.all(50),
+                        child: CircularProgressIndicator(),
+                      ),
                     );
                   case ConnectionState.done:
                     if (deckSnapshot.hasData) {
@@ -235,7 +309,7 @@ class _GrammarDeckPageState extends State<GrammarDeckPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _createNewCard,
-        backgroundColor: Color(COLOR_MID_DARK_GREY),
+        backgroundColor: Color(COLOR_ORANGE),
         tooltip: LocalizationWidget.of(context).getLocalizeValue('add_card'),
         child: Icon(Icons.add),
       ),

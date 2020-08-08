@@ -12,7 +12,6 @@ import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/AddAnswerCardWidget.dart';
 import 'package:benkyou/widgets/JishoList.dart';
 import 'package:benkyou/widgets/Localization.dart';
-import 'package:benkyou/widgets/MainDrawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -443,7 +442,6 @@ class CreateCardPageState extends State<CreateCardPage> {
         return false;
       },
       child: Scaffold(
-        drawer: MainDrawer(),
         appBar: AppBar(
           title: _renderHeader(),
         ),

@@ -23,8 +23,9 @@ class DeckCard {
         languageCode = json['languageCode'],
         answerLanguageCode = json['answerLanguageCode'],
         isReversible = json['isReversible'] == 'true',
-        isActivated = json['isActivated'] == 'true'
-  ;
+        isActivated = json['isActivated'] == 'true';
+
+  DeckCard();
 
   @override
   String toString() {
@@ -32,12 +33,12 @@ class DeckCard {
   }
 }
 
-List<DeckCard> decodeDeckCardJsonArray(array){
-  if (array == null){
+List<DeckCard> decodeDeckCardJsonArray(array) {
+  if (array == null) {
     return [];
   }
   List<DeckCard> cards = [];
-  for (var card in array){
+  for (var card in array) {
     cards.add(DeckCard.fromJson(card));
   }
   return cards;

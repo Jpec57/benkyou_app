@@ -18,18 +18,28 @@ class SentenceSeekerWidget extends StatefulWidget {
 
 class _SentenceSeekerWidgetState extends State<SentenceSeekerWidget> {
   Future<List<Sentence>> _sentences;
-  //TODO cache
-  String lastRequestSearchTerm;
 
   @override
   void initState() {
     super.initState();
-    _sentences = searchSentencesRequest("には", 3);
+    reloadSentences();
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  void reloadSentences() {
+    if (widget.searchTerm != null && widget.searchTerm.length > 0) {
+      _sentences = searchSentencesRequest(widget.searchTerm, 3);
+    }
+  }
+
+  @override
+  void didUpdateWidget(SentenceSeekerWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    reloadSentences();
   }
 
   @override
@@ -85,13 +95,27 @@ class _SentenceSeekerWidgetState extends State<SentenceSeekerWidget> {
             }
             return Container();
           case ConnectionState.none:
-            return Center(
+            if (widget.searchTerm != null && widget.searchTerm.length > 0) {
+              return Center(
+                  child: Padding(
+                padding: const EdgeInsets.all(8.0),
                 child: Text(LocalizationWidget.of(context)
-                    .getLocalizeValue('no_internet_connection')));
+                    .getLocalizeValue('no_internet_connection')),
+              ));
+            }
+            return Center(
+                child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(LocalizationWidget.of(context)
+                  .getLocalizeValue('search_term_grammar')),
+            ));
           default:
             return Center(
-                child: Text(
-                    LocalizationWidget.of(context).getLocalizeValue('empty')));
+                child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                  LocalizationWidget.of(context).getLocalizeValue('empty')),
+            ));
         }
       },
     );

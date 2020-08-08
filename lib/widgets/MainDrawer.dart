@@ -1,5 +1,5 @@
 import 'package:benkyou/screens/BrowseDeckPage/BrowseDeckPage.dart';
-import 'package:benkyou/screens/Grammar/GrammarReviewPage.dart';
+import 'package:benkyou/screens/Grammar/GrammarHomePage.dart';
 import 'package:benkyou/screens/LessonHomePage/LessonHomePage.dart';
 import 'package:benkyou/screens/ListCardPage/ListCardPage.dart';
 import 'package:benkyou/screens/ListCardPage/ListCardPageArguments.dart';
@@ -199,7 +199,7 @@ class MainDrawerState extends State<MainDrawer> {
             onTap: () {
               Navigator.pushNamed(
                 context,
-                GrammarReviewPage.routeName,
+                GrammarHomePage.routeName,
               );
             },
           ),

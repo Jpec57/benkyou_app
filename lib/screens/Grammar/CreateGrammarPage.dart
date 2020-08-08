@@ -1,10 +1,12 @@
+import 'package:benkyou/models/GrammarPointCard.dart';
+import 'package:benkyou/services/api/cardRequests.dart';
 import 'package:benkyou/services/translator/TextConversion.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/ColorizedTextForm.dart';
 import 'package:benkyou/widgets/InfoIcon.dart';
-import 'package:benkyou/widgets/MainDrawer.dart';
 import 'package:benkyou/widgets/SentenceSeekerWidget.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class CreateGrammarCardPage extends StatefulWidget {
   static const routeName = '/create/grammar';
@@ -22,13 +24,23 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
   TextEditingController _grammarPointName;
   TextEditingController _grammarPointMeaning;
   TextEditingController _grammarHint;
+  String _researchTerm;
   List<TextEditingController> _controllers = [];
+  FocusNode _grammarNameFocus;
   List<FocusNode> _focusNodes = [];
 
   @override
   void initState() {
     super.initState();
-    _grammarPointName = new TextEditingController(text: "には");
+    _grammarPointName = new TextEditingController();
+    _grammarNameFocus = new FocusNode();
+    _grammarNameFocus.addListener(() {
+      if (!_grammarNameFocus.hasFocus && _grammarPointName.text != null) {
+        setState(() {
+          _researchTerm = getJapaneseTranslation(_grammarPointName.text);
+        });
+      }
+    });
     _grammarPointMeaning = new TextEditingController();
     _grammarHint = new TextEditingController();
     _controllers.add(new TextEditingController());
@@ -51,33 +63,46 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
 
   void _addSentence() {
     _focusNodes.add(new FocusNode());
+    _grammarNameFocus.dispose();
     _controllers.add(new TextEditingController());
     setState(() {});
   }
 
   Future<bool> isFormValid() async {
-    String grammarPoint = _grammarPointName.text;
+    String grammarPoint = getJapaneseTranslation(_grammarPointName.text);
     String grammarMeaning = _grammarPointName.text;
     String grammarHint = _grammarPointName.text;
     List<String> gapSentences = [];
     if (grammarPoint.isEmpty) {
+      Get.snackbar("Error", "The name of your grammar point cannot be empty.",
+          snackPosition: SnackPosition.BOTTOM);
       return false;
     }
     if (grammarMeaning.isEmpty) {
+      Get.snackbar("Error",
+          "The meaning/translation of your grammar point cannot be empty.",
+          snackPosition: SnackPosition.BOTTOM);
       return false;
     }
     for (TextEditingController controller in _controllers) {
       String text = controller.text;
       if (text.isNotEmpty) {
         if (!text.contains("{$grammarPoint}")) {
+//          Get.snackbar("Error", "Your sentence must contain a gap",
+//              snackPosition: SnackPosition.BOTTOM);
+
           // A sentence does contain gap with grammar point
-          return false;
+//          return false;
         } else {
           gapSentences.add(text);
         }
       }
     }
     if (gapSentences.isEmpty) {
+      Get.snackbar(
+          "Error", "You must provide at least one correct gap sentence.",
+          snackPosition: SnackPosition.BOTTOM);
+
       return false;
     }
     print("All valid BG");
@@ -92,13 +117,28 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
     map.putIfAbsent('gapSentences', () => gapSentences);
     map.putIfAbsent('deck', () => widget.deckId);
     map.putIfAbsent('answers', () => answers);
-    //await postGrammarCard(deckId, map);
+    GrammarPointCard grammarPointCard =
+        await postGrammarCard(widget.deckId, map);
+    if (grammarPointCard != null) {
+      clearAllFields();
+      Get.snackbar("Success", "Your card has correctly been created.",
+          snackPosition: SnackPosition.BOTTOM);
+    }
 
     return true;
   }
 
+  void clearAllFields() {
+    _grammarPointMeaning.clear();
+    _grammarPointName.clear();
+    _grammarHint.clear();
+    for (var controller in _controllers) {
+      controller.clear();
+    }
+  }
+
   Widget _renderField(String label, TextEditingController controller,
-      {String info}) {
+      {String info, bool isMainField = false}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Column(
@@ -127,6 +167,7 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
           ),
           TextFormField(
             controller: controller,
+            focusNode: isMainField ? _grammarNameFocus : null,
             decoration: InputDecoration(
                 border: OutlineInputBorder(
               borderRadius: new BorderRadius.circular(15.0),
@@ -229,11 +270,9 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
 
   String sentenceCallback(String text) {
     int length = _controllers.length;
-    print("text $text");
-    print("length $length");
     TextEditingController lastController = _controllers[length - 1];
     // Use "{...}"
-    String searchWord = _grammarPointName.text;
+    String searchWord = getJapaneseTranslation(_grammarPointName.text);
     text = text.replaceAll(searchWord, "{$searchWord}");
     if (lastController.text.isEmpty) {
       lastController.text = text;
@@ -251,7 +290,6 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
       appBar: AppBar(
         title: Text('Create Grammar point'),
       ),
-      drawer: MainDrawer(),
       body: GestureDetector(
         onTap: () {
           FocusScopeNode currentFocus = FocusScope.of(context);
@@ -272,7 +310,8 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          _renderField("Grammar point name", _grammarPointName),
+                          _renderField("Grammar point name", _grammarPointName,
+                              isMainField: true),
                           _renderField(
                               "Meaning/Translation", _grammarPointMeaning),
                           _renderField("Hint", _grammarHint,
@@ -280,9 +319,7 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
                                   "While reviewing, if you were to ask for help, this hint will show up."),
                           _renderSentenceBuilderWidget(),
                           SentenceSeekerWidget(
-                            searchTerm:
-                                getJapaneseTranslation(_grammarPointName.text),
-//                            searchTerm: _grammarPointName.text,
+                            searchTerm: _researchTerm,
                             sentenceCallBack: sentenceCallback,
                           ),
                         ],
@@ -292,7 +329,9 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
                 ),
               ),
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  isFormValid();
+                },
                 child: Container(
                   width: double.infinity,
                   color: Color(COLOR_MUSTARD),

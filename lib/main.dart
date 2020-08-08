@@ -12,6 +12,7 @@ import 'package:benkyou/screens/Grammar/CreateGrammarPage.dart';
 import 'package:benkyou/screens/Grammar/GrammarDeckPage.dart';
 import 'package:benkyou/screens/Grammar/GrammarDeckPageArguments.dart';
 import 'package:benkyou/screens/Grammar/GrammarHomePage.dart';
+import 'package:benkyou/screens/Grammar/GrammarReviewArguments.dart';
 import 'package:benkyou/screens/Grammar/GrammarReviewPage.dart';
 import 'package:benkyou/screens/LessonHomePage/LessonHomePage.dart';
 import 'package:benkyou/screens/LessonHomePage/LessonPage.dart';
@@ -230,11 +231,22 @@ class App extends StatelessWidget {
             },
           );
         }
+
+        if (settings.name == GrammarReviewPage.routeName) {
+          final GrammarReviewArguments args = settings.arguments;
+          return MaterialPageRoute(
+            builder: (context) {
+              return GrammarReviewPage(
+                deckId: args.deckId,
+                cards: args.reviewCards,
+              );
+            },
+          );
+        }
         assert(false, 'Need to implement ${settings.name}');
         return null;
       },
       routes: {
-        GrammarReviewPage.routeName: (context) => GrammarReviewPage(),
         LoginPage.routeName: (context) => LoginPage(),
         LessonHomePage.routeName: (context) => LessonHomePage(),
         ThemeLearningHomePage.routeName: (context) => ThemeLearningHomePage(),

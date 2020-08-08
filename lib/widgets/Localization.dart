@@ -21,6 +21,8 @@ class LocalizationWidget {
       'home': 'Home',
       'loading': 'Loading...',
       'next': 'Next',
+      'search_term_grammar':
+          'Enter something as grammar point name to look for example sentences.',
       'remaining': 'Remaining',
       'translate': 'Translate',
       'review_all_decks': 'Review all decks',
