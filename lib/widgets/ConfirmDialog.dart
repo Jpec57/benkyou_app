@@ -4,13 +4,19 @@ import 'package:flutter/material.dart';
 
 import 'Localization.dart';
 
-class ConfirmDialog extends StatelessWidget{
+class ConfirmDialog extends StatelessWidget {
   final String action;
   final Function positiveCallback;
   final Function negativeCallback;
   final bool shouldAlwaysPop;
 
-  const ConfirmDialog({Key key, @required this.action, @required this.positiveCallback, this.negativeCallback, this.shouldAlwaysPop = true}) : super(key: key);
+  const ConfirmDialog(
+      {Key key,
+      @required this.action,
+      @required this.positiveCallback,
+      this.negativeCallback,
+      this.shouldAlwaysPop = true})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +24,8 @@ class ConfirmDialog extends StatelessWidget{
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(32.0))),
       contentPadding: EdgeInsets.all(10.0),
-      title: Text(LocalizationWidget.of(context).getLocalizeValue('confirm_action')),
+      title: Text(
+          LocalizationWidget.of(context).getLocalizeValue('confirm_action')),
       content: GestureDetector(
         onTap: () {
           FocusScopeNode currentFocus = FocusScope.of(context);
@@ -34,7 +41,10 @@ class ConfirmDialog extends StatelessWidget{
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Text(action, textAlign: TextAlign.center,),
+                Text(
+                  action,
+                  textAlign: TextAlign.center,
+                ),
                 Padding(
                   padding: const EdgeInsets.only(top: 15.0),
                   child: Row(
@@ -45,19 +55,21 @@ class ConfirmDialog extends StatelessWidget{
                           padding: const EdgeInsets.only(right: 5.0),
                           child: RaisedButton(
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20)
-                            ),
+                                borderRadius: BorderRadius.circular(20)),
                             color: Color(COLOR_DARK_BLUE),
-                            child: Text(LocalizationWidget.of(context).getLocalizeValue('no').toUpperCase(),
-                              style: TextStyle(
-                                  color: Colors.white
-                              ),),
-                            onPressed: () async{
-                              if (negativeCallback != null){
+                            child: Text(
+                              LocalizationWidget.of(context)
+                                  .getLocalizeValue('no')
+                                  .toUpperCase(),
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            onPressed: () async {
+                              if (negativeCallback != null) {
                                 negativeCallback();
                               }
-                              Navigator.pop(context);
-                            },),
+                              Navigator.pop(context, false);
+                            },
+                          ),
                         ),
                       ),
                       Expanded(
@@ -65,20 +77,21 @@ class ConfirmDialog extends StatelessWidget{
                           padding: const EdgeInsets.only(left: 5.0),
                           child: RaisedButton(
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)
-                            ),
+                                borderRadius: BorderRadius.circular(20)),
                             color: Color(COLOR_ORANGE),
-                            child: Text(LocalizationWidget.of(context).getLocalizeValue('yes').toUpperCase(),
-                              style: TextStyle(
-                                  color: Colors.white
-                              ),
+                            child: Text(
+                              LocalizationWidget.of(context)
+                                  .getLocalizeValue('yes')
+                                  .toUpperCase(),
+                              style: TextStyle(color: Colors.white),
                             ),
                             onPressed: () async {
                               positiveCallback();
-                              if (shouldAlwaysPop){
-                                Navigator.pop(context);
+                              if (shouldAlwaysPop) {
+                                Navigator.pop(context, true);
                               }
-                            },),
+                            },
+                          ),
                         ),
                       ),
                     ],
@@ -91,5 +104,4 @@ class ConfirmDialog extends StatelessWidget{
       ),
     );
   }
-
 }

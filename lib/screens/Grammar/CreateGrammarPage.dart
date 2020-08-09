@@ -71,7 +71,7 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
   Future<bool> isFormValid() async {
     String grammarPoint = getJapaneseTranslation(_grammarPointName.text);
     String grammarMeaning = _grammarPointName.text;
-    String grammarHint = _grammarPointName.text;
+    String grammarHint = _grammarHint.text;
     List<String> gapSentences = [];
     if (grammarPoint.isEmpty) {
       Get.snackbar("Error", "The name of your grammar point cannot be empty.",
@@ -318,9 +318,12 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
                               info:
                                   "While reviewing, if you were to ask for help, this hint will show up."),
                           _renderSentenceBuilderWidget(),
-                          SentenceSeekerWidget(
-                            searchTerm: _researchTerm,
-                            sentenceCallBack: sentenceCallback,
+                          Padding(
+                            padding: const EdgeInsets.only(top: 15),
+                            child: SentenceSeekerWidget(
+                              searchTerm: _researchTerm,
+                              sentenceCallBack: sentenceCallback,
+                            ),
                           ),
                         ],
                       ),

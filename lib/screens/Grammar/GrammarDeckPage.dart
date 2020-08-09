@@ -11,6 +11,7 @@ import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/Localization.dart';
 import 'package:benkyou/widgets/MainDrawer.dart';
 import 'package:benkyou/widgets/ReviewSchedule.dart';
+import 'package:benkyou/widgets/SRSPreview.dart';
 import 'package:benkyou/widgets/TopRoundedCard.dart';
 import 'package:flutter/material.dart';
 
@@ -27,6 +28,8 @@ class GrammarDeckPage extends StatefulWidget {
 class _GrammarDeckPageState extends State<GrammarDeckPage> {
   Future<Deck> _deck;
   Future<List<UserCard>> _reviewCards;
+  //TODO COUNT is better...
+  Future<List<UserCard>> _deckCards;
   Future<List<UserCard>> _userCards;
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       new GlobalKey<RefreshIndicatorState>();
@@ -40,6 +43,7 @@ class _GrammarDeckPageState extends State<GrammarDeckPage> {
   void loadDeck() {
     _deck = getDeck(widget.deckId);
     _reviewCards = getReviewCardsForDeck(widget.deckId);
+    _deckCards = getUserCardsForDeck(widget.deckId);
     _userCards = getUserCardsForDeck(widget.deckId);
   }
 
@@ -80,12 +84,41 @@ class _GrammarDeckPageState extends State<GrammarDeckPage> {
                 ),
                 Column(
                   children: [
-                    Text("Coucou toi"),
+                    Row(
+                      children: [
+                        FutureBuilder(
+                          future: _deckCards,
+                          builder: (BuildContext context,
+                              AsyncSnapshot<List<UserCard>> deckCardSnap) {
+                            switch (deckCardSnap.connectionState) {
+                              case ConnectionState.done:
+                                if (deckCardSnap.hasData) {
+                                  int count = deckCardSnap.data.length;
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      "${count ?? 0}",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 20),
+                                    ),
+                                  );
+                                }
+                                return Container();
+                              default:
+                                return Container();
+                            }
+                          },
+                        ),
+                        Icon(
+                          Icons.inbox,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ],
             ),
-            Align(alignment: Alignment.topRight, child: Text("Coucou toi")),
           ],
         ),
       ),
@@ -109,6 +142,34 @@ class _GrammarDeckPageState extends State<GrammarDeckPage> {
                 return ReviewSchedule(
                   cards: cards,
                   colors: [Color(COLOR_ORANGE)],
+                );
+              }
+              return Container();
+            default:
+              return Container();
+          }
+        });
+  }
+
+  Widget _renderSRSPreview() {
+    return FutureBuilder(
+        future: _deckCards,
+        builder: (BuildContext context,
+            AsyncSnapshot<List<UserCard>> userCardSnapshot) {
+          switch (userCardSnapshot.connectionState) {
+            case ConnectionState.waiting:
+              return Container();
+            case ConnectionState.done:
+              if (userCardSnapshot.hasData) {
+                List<UserCard> cards = userCardSnapshot.data;
+                if (cards.isEmpty) {
+                  return Container();
+                }
+                return Padding(
+                  padding: const EdgeInsets.only(top: 15, bottom: 15),
+                  child: SRSPreview(
+                    cards: cards,
+                  ),
                 );
               }
               return Container();
@@ -164,7 +225,11 @@ class _GrammarDeckPageState extends State<GrammarDeckPage> {
                                         color: Color(COLOR_DARK_GREY)),
                                   ),
                                 ),
-                                _renderReviewSchedule()
+                                _renderReviewSchedule(),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 15),
+                                  child: _renderSRSPreview(),
+                                ),
                               ],
                             ),
                           ),
@@ -189,9 +254,6 @@ class _GrammarDeckPageState extends State<GrammarDeckPage> {
                                     List<UserCard> reviewCards =
                                         reviewCardsSnap.data;
                                     if (reviewCards.length > 0) {
-                                      if (reviewCards.length >= 4) {
-                                        reviewCards = reviewCards.sublist(4);
-                                      }
                                       Navigator.of(context).pushNamed(
                                           GrammarReviewPage.routeName,
                                           arguments: GrammarReviewArguments(

@@ -10,11 +10,16 @@ class UserCardProcessedInfo {
         'cardId': cardId,
         'isSuccess': isSuccess,
       };
+
+  @override
+  String toString() {
+    return 'UserCardProcessedInfo{id: $id, cardId: $cardId, isSuccess: $isSuccess}';
+  }
 }
 
-convertUserCardProcessedInfoListToJson(List<UserCardProcessedInfo> cards){
+convertUserCardProcessedInfoListToJson(List<UserCardProcessedInfo> cards) {
   List<Map> mapArray = [];
-  for (UserCardProcessedInfo card in cards){
+  for (UserCardProcessedInfo card in cards) {
     mapArray.add(card.toJson());
   }
   return mapArray;

@@ -19,7 +19,6 @@ class SRSLevel {
 }
 
 class SRSPreviewState extends State<SRSPreview> {
-
   @override
   void initState() {
     super.initState();
@@ -68,43 +67,47 @@ class SRSPreviewState extends State<SRSPreview> {
     List<SRSLevel> srsLevels = _getSRSLevelArray();
     return FractionallySizedBox(
       widthFactor: 0.75,
-      child: Card(
-        child: ListView.separated(
-          shrinkWrap: true,
-          padding: EdgeInsets.only(left: 10.0, right: 10.0),
-          itemCount: srsLevels.length,
-          itemBuilder: (BuildContext context, int i) {
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Container(
-                    width: 25.0,
-                    height: 25.0,
-                    decoration: new BoxDecoration(
-                      shape: BoxShape.circle,
+      child: Container(
+        decoration: BoxDecoration(
+            color: Colors.grey, borderRadius: BorderRadius.circular(5)),
+        child: Card(
+          child: ListView.separated(
+            shrinkWrap: true,
+            padding: EdgeInsets.only(left: 10.0, right: 10.0),
+            itemCount: srsLevels.length,
+            itemBuilder: (BuildContext context, int i) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Container(
+                      width: 25.0,
+                      height: 25.0,
+                      decoration: new BoxDecoration(
+                        shape: BoxShape.circle,
+                      ),
+                      child: Image.asset("lib/imgs/app_icon.png"),
                     ),
-                    child: Image.asset("lib/imgs/app_icon.png"),
-                  ),
-                  Text(
-                    srsLevels[i].title,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 25),
-                  ),
-                  Text(
-                    "${srsLevels[i].num}",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 25),
-                  ),
-                ],
-              ),
-            );
-          },
-          separatorBuilder: (BuildContext context, int index) {
-            return Divider();
-          },
+                    Text(
+                      srsLevels[i].title,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 25),
+                    ),
+                    Text(
+                      "${srsLevels[i].num}",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 25),
+                    ),
+                  ],
+                ),
+              );
+            },
+            separatorBuilder: (BuildContext context, int index) {
+              return Divider();
+            },
+          ),
         ),
       ),
     );

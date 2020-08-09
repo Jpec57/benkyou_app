@@ -2,9 +2,6 @@ import 'dart:math';
 
 import 'package:benkyou/models/DeckCard.dart';
 import 'package:benkyou/models/DeckTheme.dart';
-import 'package:benkyou/models/UserCard.dart';
-import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
-import 'package:benkyou/screens/HomePage/HomePage.dart';
 import 'package:benkyou/screens/ThemePages/Listening/ThemeListeningPartPageArguments.dart';
 import 'package:benkyou/screens/ThemePages/ThemeLearningHomePage.dart';
 import 'package:benkyou/services/api/cardRequests.dart';
@@ -135,9 +132,8 @@ class ThemeTinderWordPageState extends State<ThemeTinderWordPage>
       child: Container(
         decoration: BoxDecoration(
           color: Color(COLOR_DARK_MUSTARD),
-            border: Border.all(color: Colors.black54),
-            borderRadius: BorderRadius.circular(10),
-
+          border: Border.all(color: Colors.black54),
+          borderRadius: BorderRadius.circular(10),
         ),
         child: Stack(
           children: [

@@ -4,6 +4,7 @@ import 'package:benkyou/screens/BrowseDeckPage/BrowseDeckPage.dart';
 import 'package:benkyou/screens/CreateCardPage/CreateCardPage.dart';
 import 'package:benkyou/screens/CreateCardPage/CreateCardPageArguments.dart';
 import 'package:benkyou/screens/CreateUserPage/CreateUserPage.dart';
+import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
 import 'package:benkyou/screens/DialogPage/DialogPage.dart';
 import 'package:benkyou/screens/DialogPage/InDialogPage.dart';
 import 'package:benkyou/screens/DialogPage/InDialogPageArguments.dart';
@@ -277,7 +278,7 @@ void main() {
   runZoned(
     () => runApp(App(
 //          home: ThemeTinderWordPage(theme: new DeckTheme.fromJson({"id":21,"name":"Work","backgroundImg": null,"deck":{"id":59}})),
-      home: GrammarHomePage(),
+      home: DeckHomePage(),
 //      home: CreateGrammarCardPage(),
     )),
     onError: (Object error, StackTrace stackTrace) {

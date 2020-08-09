@@ -44,36 +44,37 @@ class _SentenceSeekerWidgetState extends State<SentenceSeekerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _sentences,
-      builder: (BuildContext context, AsyncSnapshot<List<Sentence>> snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          case ConnectionState.done:
-            if (snapshot.hasData) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 15, bottom: 8),
-                    child: Text(
-                      "Sentences possibly including grammar point",
-                      style: Theme.of(context).textTheme.headline6,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Text(
-                      "Powered by Tatoeba",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontStyle: FontStyle.italic),
-                    ),
-                  ),
-                  ListView.separated(
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 15, bottom: 8),
+          child: Text(
+            "Sentences possibly including grammar point",
+            style: Theme.of(context).textTheme.headline6,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Text(
+            "Powered by Tatoeba",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontStyle: FontStyle.italic),
+          ),
+        ),
+        FutureBuilder(
+          future: _sentences,
+          builder:
+              (BuildContext context, AsyncSnapshot<List<Sentence>> snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.waiting:
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              case ConnectionState.done:
+                if (snapshot.hasData) {
+                  return ListView.separated(
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       separatorBuilder: (BuildContext context, int index) {
@@ -89,35 +90,38 @@ class _SentenceSeekerWidgetState extends State<SentenceSeekerWidget> {
                           },
                           title: Text(snapshot.data[index].text),
                         );
-                      }),
-                ],
-              );
+                      });
+                }
+                return Container();
+              case ConnectionState.none:
+                if (widget.searchTerm != null && widget.searchTerm.length > 0) {
+                  return Center(
+                      child: Padding(
+                    padding: const EdgeInsets.only(top: 15),
+                    child: Text(LocalizationWidget.of(context)
+                        .getLocalizeValue('no_internet_connection')),
+                  ));
+                }
+                return Center(
+                    child: Padding(
+                  padding: const EdgeInsets.only(top: 15),
+                  child: Text(
+                    LocalizationWidget.of(context)
+                        .getLocalizeValue('search_term_grammar'),
+                    textAlign: TextAlign.center,
+                  ),
+                ));
+              default:
+                return Center(
+                    child: Padding(
+                  padding: const EdgeInsets.only(top: 15),
+                  child: Text(
+                      LocalizationWidget.of(context).getLocalizeValue('empty')),
+                ));
             }
-            return Container();
-          case ConnectionState.none:
-            if (widget.searchTerm != null && widget.searchTerm.length > 0) {
-              return Center(
-                  child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(LocalizationWidget.of(context)
-                    .getLocalizeValue('no_internet_connection')),
-              ));
-            }
-            return Center(
-                child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(LocalizationWidget.of(context)
-                  .getLocalizeValue('search_term_grammar')),
-            ));
-          default:
-            return Center(
-                child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                  LocalizationWidget.of(context).getLocalizeValue('empty')),
-            ));
-        }
-      },
+          },
+        ),
+      ],
     );
   }
 }

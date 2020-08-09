@@ -77,7 +77,6 @@ Future<List<UserCard>> getUserCardsGroupByDeck() async {
 Future<List<UserCard>> getJapaneseUserCardsGroupByDeck() async {
   HttpClientResponse cardResponse = await getLocaleGetRequestResponse(
       "/users/cards/language/$LANGUAGE_CODE_JAPANESE");
-  print("/users/cards/language/$LANGUAGE_CODE_JAPANESE");
   var cards = await getJsonFromHttpResponse(cardResponse);
   if (!isRequestValid(cardResponse.statusCode)) {
     print(cards);
@@ -158,6 +157,7 @@ Future<bool> postReview(List<UserCardProcessedInfo> cards) async {
   HttpClientResponse response =
       await getLocalePostRequestResponse("/review", body);
   var json = await getJsonFromHttpResponse(response);
+  print(json);
   if (!isRequestValid(response.statusCode)) {
     print(json);
     return false;

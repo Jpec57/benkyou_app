@@ -5,6 +5,7 @@ import 'package:benkyou/screens/Grammar/GrammarDeckPageArguments.dart';
 import 'package:benkyou/screens/Grammar/GrammarHomeHeaderClipper.dart';
 import 'package:benkyou/services/api/deckRequests.dart';
 import 'package:benkyou/utils/colors.dart';
+import 'package:benkyou/widgets/ConfirmDialog.dart';
 import 'package:benkyou/widgets/ConnectedActionDialog.dart';
 import 'package:benkyou/widgets/Localization.dart';
 import 'package:benkyou/widgets/MainDrawer.dart';
@@ -115,19 +116,39 @@ class _GrammarHomePageState extends State<GrammarHomePage> {
                           shrinkWrap: true,
                           itemBuilder: (context, index) {
                             Deck deck = deckSnapshot.data[index];
-                            return ListTile(
-                              onTap: () {
-                                Navigator.of(context).pushNamed(
-                                    GrammarDeckPage.routeName,
-                                    arguments: GrammarDeckPageArguments(
-                                        deckId: deck.id));
+                            return Dismissible(
+                              key: Key("${deck.id}"),
+                              background: Container(color: Colors.red),
+                              confirmDismiss: (direction) async {
+                                bool shouldDelete = await showDialog<bool>(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        ConfirmDialog(
+                                          action: LocalizationWidget.of(context)
+                                              .getLocalizeValue(
+                                                  'confirm_delete_deck_mess'),
+                                          positiveCallback: () async {
+                                            await deleteDeck(deck.id);
+                                            Navigator.pushNamed(context,
+                                                GrammarHomePage.routeName);
+                                          },
+                                        ));
+                                return shouldDelete;
                               },
-                              title: Text(deck.title),
-                              subtitle: Text(
-                                deck.author != null
-                                    ? deck.author.username
-                                    : "Jpec",
-                                style: TextStyle(fontSize: 12),
+                              child: ListTile(
+                                onTap: () {
+                                  Navigator.of(context).pushNamed(
+                                      GrammarDeckPage.routeName,
+                                      arguments: GrammarDeckPageArguments(
+                                          deckId: deck.id));
+                                },
+                                title: Text(deck.title),
+                                subtitle: Text(
+                                  deck.author != null
+                                      ? deck.author.username
+                                      : "Jpec",
+                                  style: TextStyle(fontSize: 12),
+                                ),
                               ),
                             );
                           },

@@ -98,9 +98,7 @@ Future<Deck> postDeck(String title, String description,
   }
   map.putIfAbsent('title', () => title);
   map.putIfAbsent('description', () => description);
-  if (isGrammar) {
-    map.putIfAbsent('cardType', () => 1);
-  }
+  map.putIfAbsent('cardType', () => isGrammar ? 1 : 0);
   HttpClientResponse response =
       await getLocalePostRequestResponse("/decks", map);
   if (!isRequestValid(response.statusCode)) {
