@@ -218,7 +218,7 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
           child: _renderQuestionWithGap(card.id, grammarCard),
         ),
         Visibility(
-          visible: !isKeyboardVisible,
+          visible: !isKeyboardVisible && deckCard.hint != null,
           child: Row(
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -227,7 +227,7 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
                       visible: _isHintVisible,
                       child: Center(
                           child: Text(
-                        deckCard.hint,
+                        deckCard.hint ?? 'No hint was given.',
                         textAlign: TextAlign.justify,
                       )))),
               GestureDetector(
@@ -262,7 +262,8 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
 
   List<Widget> _renderTextFormFields(List<TextEditingController> controllers) {
     List<Widget> list = [];
-    for (int i = 0; i < controllers.length; i++) {
+    int controllerLength = controllers.length;
+    for (int i = 0; i < controllerLength - 1; i++) {
       list.add(Padding(
         padding: const EdgeInsets.only(bottom: 8.0),
         child: Card(
@@ -278,6 +279,49 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
         ),
       ));
     }
+    list.add(Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: IntrinsicHeight(
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Flexible(
+                  child: TextFormField(
+                    controller: controllers[controllerLength - 1],
+                    decoration: InputDecoration(
+                        hintText: "Answer for field ($controllerLength)"),
+                    enabled: !_isAnswerVisible,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    validate(_remainingCards[0].grammarCard.gapSentences[0]);
+                  },
+                  child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(3),
+                              bottomRight: Radius.circular(3))),
+                      height: double.infinity,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Icon(
+                          Icons.navigate_next,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                      )),
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    ));
     return list;
   }
 

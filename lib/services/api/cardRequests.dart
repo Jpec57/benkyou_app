@@ -8,7 +8,6 @@ import 'package:benkyou/models/UserCardReviewCount.dart';
 import 'package:benkyou/services/rest.dart';
 
 Future<bool> deleteUserCard(int userCardId) async {
-  print("/users/cards/$userCardId");
   HttpClientResponse cardResponse =
       await getLocaleDeleteRequestResponse("/users/cards/$userCardId");
   var cards = await getJsonFromHttpResponse(cardResponse);
@@ -82,7 +81,6 @@ Future<List<UserCard>> getJapaneseUserCardsGroupByDeck() async {
     print(cards);
     return null;
   }
-  print(cardResponse.statusCode);
   List<UserCard> parsedCards = decodeUserCardJsonArray(cards);
   return parsedCards;
 }
@@ -137,7 +135,6 @@ Future<List<UserCard>> getReviewCards() async {
   return parsedCards;
 }
 
-//TODO
 Future<List<UserCard>> getGrammarReviewCards() async {
   HttpClientResponse cardResponse =
       await getLocaleGetRequestResponse("/users/grammar-decks/review");
@@ -157,7 +154,6 @@ Future<bool> postReview(List<UserCardProcessedInfo> cards) async {
   HttpClientResponse response =
       await getLocalePostRequestResponse("/review", body);
   var json = await getJsonFromHttpResponse(response);
-  print(json);
   if (!isRequestValid(response.statusCode)) {
     print(json);
     return false;
@@ -225,7 +221,6 @@ Future<List<DeckCard>> getDeckCards(int deckId, {int offset = 0}) async {
     return null;
   }
   List<DeckCard> parsedCards = decodeDeckCardJsonArray(cards);
-  print(parsedCards);
   return parsedCards;
 }
 

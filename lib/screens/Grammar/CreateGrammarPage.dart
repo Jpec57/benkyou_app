@@ -1,4 +1,5 @@
 import 'package:benkyou/models/GrammarPointCard.dart';
+import 'package:benkyou/screens/Grammar/GrammarHomePage.dart';
 import 'package:benkyou/services/api/cardRequests.dart';
 import 'package:benkyou/services/translator/TextConversion.dart';
 import 'package:benkyou/utils/colors.dart';
@@ -28,10 +29,12 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
   List<TextEditingController> _controllers = [];
   FocusNode _grammarNameFocus;
   List<FocusNode> _focusNodes = [];
+  ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
     _grammarPointName = new TextEditingController();
     _grammarNameFocus = new FocusNode();
     _grammarNameFocus.addListener(() {
@@ -49,6 +52,7 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
 
   @override
   void dispose() {
+    _scrollController.dispose();
     _grammarPointName.dispose();
     _grammarHint.dispose();
     _grammarPointMeaning.dispose();
@@ -63,8 +67,8 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
 
   void _addSentence() {
     _focusNodes.add(new FocusNode());
-    _grammarNameFocus.dispose();
     _controllers.add(new TextEditingController());
+    _focusNodes[_focusNodes.length - 1].requestFocus();
     setState(() {});
   }
 
@@ -86,15 +90,17 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
     }
     for (TextEditingController controller in _controllers) {
       String text = controller.text;
+      print("IN $text");
       if (text.isNotEmpty) {
-        if (!text.contains("{$grammarPoint}")) {
-//          Get.snackbar("Error", "Your sentence must contain a gap",
+        RegExp regExp = new RegExp(r"{[^}]+}");
+        if (regExp.hasMatch(text)) {
+          gapSentences.add(text);
+        } else {
+          //          Get.snackbar("Error", "Your sentence must contain a gap",
 //              snackPosition: SnackPosition.BOTTOM);
 
           // A sentence does contain gap with grammar point
 //          return false;
-        } else {
-          gapSentences.add(text);
         }
       }
     }
@@ -105,7 +111,6 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
 
       return false;
     }
-    print("All valid BG");
     List<Map> answers = [];
     Map innerMap = new Map();
     innerMap.putIfAbsent('text', () => grammarMeaning);
@@ -121,6 +126,11 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
         await postGrammarCard(widget.deckId, map);
     if (grammarPointCard != null) {
       clearAllFields();
+      _scrollController.animateTo(
+        0.0,
+        curve: Curves.easeOut,
+        duration: const Duration(milliseconds: 300),
+      );
       Get.snackbar("Success", "Your card has correctly been created.",
           snackPosition: SnackPosition.BOTTOM);
     }
@@ -138,7 +148,7 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
   }
 
   Widget _renderField(String label, TextEditingController controller,
-      {String info, bool isMainField = false}) {
+      {String info, bool isMainField = false, bool isTextArea = false}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Column(
@@ -167,6 +177,7 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
           ),
           TextFormField(
             controller: controller,
+            maxLines: isTextArea ? null : 1,
             focusNode: isMainField ? _grammarNameFocus : null,
             decoration: InputDecoration(
                 border: OutlineInputBorder(
@@ -289,6 +300,12 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Create Grammar point'),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pushNamed(context, GrammarHomePage.routeName);
+          },
+          icon: Icon(Icons.arrow_back),
+        ),
       ),
       body: GestureDetector(
         onTap: () {
@@ -302,6 +319,7 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
             children: [
               Expanded(
                 child: SingleChildScrollView(
+                  controller: _scrollController,
                   child: Padding(
                     padding: const EdgeInsets.only(
                         top: 10, left: 15, right: 15, bottom: 50),
@@ -313,7 +331,8 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
                           _renderField("Grammar point name", _grammarPointName,
                               isMainField: true),
                           _renderField(
-                              "Meaning/Translation", _grammarPointMeaning),
+                              "Meaning/Translation", _grammarPointMeaning,
+                              isTextArea: true),
                           _renderField("Hint", _grammarHint,
                               info:
                                   "While reviewing, if you were to ask for help, this hint will show up."),

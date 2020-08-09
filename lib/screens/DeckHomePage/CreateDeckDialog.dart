@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:benkyou/models/Deck.dart';
 import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
 import 'package:benkyou/services/api/deckRequests.dart';
@@ -6,6 +8,8 @@ import 'package:benkyou/widgets/ConfirmDialog.dart';
 import 'package:benkyou/widgets/Localization.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 class CreateDeckDialog extends StatefulWidget {
   final Function callback;
@@ -73,6 +77,8 @@ class CreateDeckDialogState extends State<CreateDeckDialog> {
     return Padding(
       padding: const EdgeInsets.only(top: 15.0),
       child: RaisedButton(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20.0))),
         color: Color(COLOR_ORANGE),
         child: Text(
           LocalizationWidget.of(context)
@@ -94,6 +100,17 @@ class CreateDeckDialogState extends State<CreateDeckDialog> {
         },
       ),
     );
+  }
+
+  void uploadDeckBackground(int deckId) async {
+    ImagePicker imagePicker = ImagePicker();
+    PickedFile pickedFile =
+        await imagePicker.getImage(source: ImageSource.gallery);
+    File file = File(pickedFile.path);
+    // getting a directory path for saving
+    final String path = (await getApplicationDocumentsDirectory()).path;
+    // copy the file to a new path
+    await file.copy('$path/DeckCover-$deckId.png');
   }
 
   @override
@@ -154,10 +171,26 @@ class CreateDeckDialogState extends State<CreateDeckDialog> {
                               .getLocalizeValue('enter_description'),
                           labelStyle: TextStyle()),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 15.0),
+                      child: RaisedButton(
+                        color: Color(COLOR_DARK_GREY),
+                        child: Text(
+                          "Upload deck background".toUpperCase(),
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        onPressed: () async {
+                          uploadDeckBackground(widget.deck.id);
+                        },
+                      ),
+                    ),
                     _renderDeleteDeckButton(),
                     Padding(
                       padding: const EdgeInsets.only(top: 15.0),
                       child: RaisedButton(
+                        shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(20.0))),
                         color: Color(COLOR_DARK_BLUE),
                         child: Text(
                           (widget.isEditing

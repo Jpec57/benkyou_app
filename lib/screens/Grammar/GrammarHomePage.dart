@@ -1,8 +1,10 @@
 import 'package:benkyou/models/Deck.dart';
+import 'package:benkyou/models/UserCardReviewCount.dart';
 import 'package:benkyou/screens/DeckHomePage/CreateDeckDialog.dart';
 import 'package:benkyou/screens/Grammar/GrammarDeckPage.dart';
 import 'package:benkyou/screens/Grammar/GrammarDeckPageArguments.dart';
 import 'package:benkyou/screens/Grammar/GrammarHomeHeaderClipper.dart';
+import 'package:benkyou/services/api/cardRequests.dart';
 import 'package:benkyou/services/api/deckRequests.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/ConfirmDialog.dart';
@@ -22,11 +24,13 @@ class GrammarHomePage extends StatefulWidget {
 
 class _GrammarHomePageState extends State<GrammarHomePage> {
   Future<List<Deck>> _grammarDecks;
+  Future<List<UserCardReviewCount>> personalDeckCounts;
+  Future<List<UserCardReviewCount>> _awaitingCardCounts;
 
   @override
   void initState() {
     super.initState();
-    _grammarDecks = getGrammarDecks();
+    reloadDecks();
   }
 
   @override
@@ -37,6 +41,8 @@ class _GrammarHomePageState extends State<GrammarHomePage> {
   void reloadDecks() {
     setState(() {
       _grammarDecks = getGrammarDecks();
+      _awaitingCardCounts = getAwaitingCardCountsForAllDecks();
+      personalDeckCounts = getReviewCardCountsForAllDecks();
     });
   }
 
@@ -63,6 +69,20 @@ class _GrammarHomePageState extends State<GrammarHomePage> {
               callback: this.reloadDecks,
               isGrammar: true,
             ));
+  }
+
+  Widget returnDefaultTile(Deck deck) {
+    return ListTile(
+      onTap: () {
+        Navigator.of(context).pushNamed(GrammarDeckPage.routeName,
+            arguments: GrammarDeckPageArguments(deckId: deck.id));
+      },
+      title: Text(deck.title),
+      subtitle: Text(
+        deck.author != null ? deck.author.username : "Jpec",
+        style: TextStyle(fontSize: 12),
+      ),
+    );
   }
 
   @override
@@ -135,21 +155,65 @@ class _GrammarHomePageState extends State<GrammarHomePage> {
                                         ));
                                 return shouldDelete;
                               },
-                              child: ListTile(
-                                onTap: () {
-                                  Navigator.of(context).pushNamed(
-                                      GrammarDeckPage.routeName,
-                                      arguments: GrammarDeckPageArguments(
-                                          deckId: deck.id));
-                                },
-                                title: Text(deck.title),
-                                subtitle: Text(
-                                  deck.author != null
-                                      ? deck.author.username
-                                      : "Jpec",
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                              ),
+                              child: FutureBuilder(
+                                  future: personalDeckCounts,
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<List<UserCardReviewCount>>
+                                          reviewCountSnap) {
+                                    switch (reviewCountSnap.connectionState) {
+                                      case ConnectionState.done:
+                                        if (reviewCountSnap.hasData) {
+                                          var data = reviewCountSnap.data;
+                                          for (UserCardReviewCount userCardReviewCount
+                                              in data) {
+                                            if (deck.id ==
+                                                userCardReviewCount.deckId) {
+                                              int awaitingCount =
+                                                  userCardReviewCount.count;
+                                              if (awaitingCount > 0) {
+                                                print(
+                                                    "awaitingCount $awaitingCount");
+                                                return ListTile(
+                                                  onTap: () {
+                                                    Navigator.of(context).pushNamed(
+                                                        GrammarDeckPage
+                                                            .routeName,
+                                                        arguments:
+                                                            GrammarDeckPageArguments(
+                                                                deckId:
+                                                                    deck.id));
+                                                  },
+                                                  title: Text(deck.title),
+                                                  trailing: Container(
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              10.0),
+                                                      child: Text(
+                                                        '$awaitingCount',
+                                                        style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                    ),
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color:
+                                                          Color(COLOR_ORANGE),
+                                                    ),
+                                                  ),
+                                                );
+                                              }
+                                            }
+                                          }
+                                        }
+                                        return returnDefaultTile(deck);
+                                      default:
+                                        return returnDefaultTile(deck);
+                                    }
+                                  }),
                             );
                           },
                           separatorBuilder: (context, index) => Divider(

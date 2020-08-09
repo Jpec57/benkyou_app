@@ -30,7 +30,6 @@ Future<Deck> importDeck(int id) async {
     return null;
   }
   Map<String, dynamic> deck = await getJsonFromHttpResponse(response);
-  print(deck);
   return Deck.fromJson(deck);
 }
 
@@ -106,7 +105,6 @@ Future<Deck> postDeck(String title, String description,
     return null;
   }
   Map<String, dynamic> deck = await getJsonFromHttpResponse(response);
-  print(deck);
   return Deck.fromJson(deck);
 }
 
