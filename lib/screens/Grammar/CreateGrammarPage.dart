@@ -142,9 +142,9 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
     _grammarPointMeaning.clear();
     _grammarPointName.clear();
     _grammarHint.clear();
-    for (var controller in _controllers) {
-      controller.clear();
-    }
+    _controllers[0].clear();
+    _controllers.removeRange(1, _controllers.length);
+    setState(() {});
   }
 
   Widget _renderField(String label, TextEditingController controller,
@@ -280,12 +280,17 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
   }
 
   String sentenceCallback(String text) {
-    int length = _controllers.length;
-    TextEditingController lastController = _controllers[length - 1];
+    TextEditingController lastController;
+    for (var controller in _controllers) {
+      if (controller.text.isEmpty) {
+        lastController = controller;
+        break;
+      }
+    }
     // Use "{...}"
     String searchWord = getJapaneseTranslation(_grammarPointName.text);
     text = text.replaceAll(searchWord, "{$searchWord}");
-    if (lastController.text.isEmpty) {
+    if (lastController != null) {
       lastController.text = text;
     } else {
       _focusNodes.add(new FocusNode());
@@ -334,8 +339,9 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
                               "Meaning/Translation", _grammarPointMeaning,
                               isTextArea: true),
                           _renderField("Hint", _grammarHint,
+                              isTextArea: true,
                               info:
-                                  "While reviewing, if you were to ask for help, this hint will show up."),
+                                  "While reviewing, if you were to ask for help, this hint will show up. If it is empty, the meaning will be displayed as hint."),
                           _renderSentenceBuilderWidget(),
                           Padding(
                             padding: const EdgeInsets.only(top: 15),

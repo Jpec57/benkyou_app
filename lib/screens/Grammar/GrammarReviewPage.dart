@@ -10,6 +10,7 @@ import 'package:benkyou/screens/ReviewPage/ReviewPageInfo.dart';
 import 'package:benkyou/services/api/cardRequests.dart';
 import 'package:benkyou/services/translator/TextConversion.dart';
 import 'package:benkyou/utils/colors.dart';
+import 'package:benkyou/utils/random.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -38,6 +39,7 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
   UserCard currentCard;
   int _nbErrors = 0;
   int _nbSuccess = 0;
+  int _sentenceIndex = 0;
 
   @override
   void initState() {
@@ -131,8 +133,10 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
       int currentCardId, GrammarPointCard grammarCard) {
     bool hasCardChanged = currentCardId != _previousCardId;
     _previousCardId = currentCardId;
-    // TODO take random
-    String gapSentence = grammarCard.gapSentences[0];
+    if (hasCardChanged) {
+      _sentenceIndex = generateRandomIndex(grammarCard.gapSentences);
+    }
+    String gapSentence = grammarCard.gapSentences[_sentenceIndex];
     List<Widget> widgets = [];
     int length = gapSentence.length;
     int controllerIndex = 0;
@@ -200,6 +204,10 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
     DeckCard deckCard = card.card;
     GrammarPointCard grammarCard = card.grammarCard;
     currentCard = card;
+    String currentMeaning =
+        deckCard.answers != null && deckCard.answers.isNotEmpty
+            ? deckCard.answers[0].text
+            : null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -218,27 +226,61 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
           child: _renderQuestionWithGap(card.id, grammarCard),
         ),
         Visibility(
-          visible: !isKeyboardVisible && deckCard.hint != null,
+          visible: !isKeyboardVisible && currentMeaning != null,
           child: Row(
             mainAxisSize: MainAxisSize.max,
             children: [
               Expanded(
                   child: Visibility(
                       visible: _isHintVisible,
-                      child: Center(
-                          child: Text(
-                        deckCard.hint ?? 'No hint was given.',
-                        textAlign: TextAlign.justify,
-                      )))),
-              GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _isHintVisible = true;
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(Icons.wb_incandescent),
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 10, right: 10, bottom: 15),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black54,
+                                  blurRadius: 1.0,
+                                  spreadRadius: 0.0,
+                                  offset: Offset(1.0,
+                                      1.0), // shadow direction: bottom right
+                                )
+                              ],
+                              color: Colors.white,
+                              border: Border.all(color: Colors.black87),
+                              borderRadius: BorderRadius.circular(5)),
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 5, bottom: 5),
+                            child: Center(
+                                child: Text(
+                              deckCard.hint ?? currentMeaning,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontStyle: FontStyle.italic,
+                                  color: Colors.black45),
+                            )),
+                          ),
+                        ),
+                      ))),
+              Padding(
+                  padding:
+                      const EdgeInsets.only(left: 10, right: 10, bottom: 15),
+                  child: ClipOval(
+                    child: Material(
+                      child: InkWell(
+                        splashColor: Color(COLOR_DARK_BLUE), // inkwell color
+                        child: SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: Icon(Icons.wb_incandescent)),
+                        onTap: () {
+                          setState(() {
+                            _isHintVisible = true;
+                          });
+                        },
+                      ),
+                    ),
                   )),
             ],
           ),
@@ -250,13 +292,90 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
             padding: const EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                "Complete this sentence",
+                _isAnswerVisible
+                    ? deckCard.question
+                    : "Complete this sentence".toUpperCase(),
                 style: TextStyle(color: Colors.white),
               ),
             ),
           ),
         )
       ],
+    );
+  }
+
+  Widget _renderGrammarPoint(DeckCard card, GrammarPointCard grammarCard) {
+    String exampleSentence = "";
+    if (grammarCard.gapSentences != null &&
+        grammarCard.gapSentences.isNotEmpty) {
+      exampleSentence =
+          grammarCard.gapSentences[0].replaceAll(new RegExp(r'{|}'), '');
+    }
+    return Padding(
+      padding: const EdgeInsets.only(top: 15),
+      child: Center(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Container(
+            decoration: BoxDecoration(color: Colors.white, boxShadow: [
+              BoxShadow(
+                color: Colors.black54,
+                blurRadius: 5.0,
+                spreadRadius: 0.0,
+                offset: Offset(5.0, 5.0), // shadow direction: bottom right
+              )
+            ]),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Container(
+                    color: Color(COLOR_DARK_BLUE),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 8.0, top: 5, bottom: 5, right: 8),
+                      child: Text(
+                        "Grammar point: ${card.question}",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600),
+                      ),
+                    )),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0, right: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          "Use case:",
+                          style: TextStyle(
+                              decoration: TextDecoration.underline,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                      Text("${card.hint}"),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          "Example:",
+                          style: TextStyle(
+                              decoration: TextDecoration.underline,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                      Text(exampleSentence),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -271,6 +390,7 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
             padding: const EdgeInsets.only(left: 8.0, right: 8),
             child: TextFormField(
               controller: controllers[i],
+              autofocus: i == 0,
               decoration:
                   InputDecoration(hintText: "Answer for field (${i + 1})"),
               enabled: !_isAnswerVisible,
@@ -372,7 +492,7 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
             _renderHeader(_remainingCards[0], isKeyboardVisible),
             Expanded(
                 child: Container(
-              color: Color(COLOR_DARK_GREY),
+              color: Color(COLOR_LIGHT_GREY),
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -383,9 +503,13 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
                       child: Padding(
                         padding: const EdgeInsets.only(
                             top: 15, left: 15.0, right: 15, bottom: 50),
-                        child: Column(
-                          children: _renderTextFormFields(_answerControllers),
-                        ),
+                        child: _isAnswerVisible
+                            ? _renderGrammarPoint(_remainingCards[0].card,
+                                _remainingCards[0].grammarCard)
+                            : Column(
+                                children:
+                                    _renderTextFormFields(_answerControllers),
+                              ),
                       ),
                     ),
                   ),
