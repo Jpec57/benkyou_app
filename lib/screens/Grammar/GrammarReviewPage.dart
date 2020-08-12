@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:benkyou/models/DeckCard.dart';
 import 'package:benkyou/models/GrammarPointCard.dart';
 import 'package:benkyou/models/UserCard.dart';
@@ -63,21 +65,21 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
     _answerControllers.forEach((element) {
       element.clear();
     });
+    if (isCorrect) {
+      if (_remainingCards.length != 1) {
+        _remainingCards.removeAt(0);
+      } else {
+        await postReview(_processedCards);
+        Navigator.of(context).pushNamed(GrammarDeckPage.routeName,
+            arguments: GrammarDeckPageArguments(deckId: widget.deckId));
+      }
+    } else {
+      _remainingCards.shuffle(new Random());
+    }
     setState(() {
       _isHintVisible = false;
       _isAnswerVisible = false;
     });
-    //TODO REMOVE ONLY WHEN SUCCESS
-    if (_remainingCards.length != 1) {
-      _remainingCards.removeAt(0);
-    } else {
-      //TODO
-      print(_processedCardIds.toString());
-      print(_processedCards);
-      await postReview(_processedCards);
-      Navigator.of(context).pushNamed(GrammarDeckPage.routeName,
-          arguments: GrammarDeckPageArguments(deckId: widget.deckId));
-    }
   }
 
   void _handleQuestion(bool isCorrect, List<String> correctAnswers) {

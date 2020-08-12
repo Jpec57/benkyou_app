@@ -8,6 +8,7 @@ import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
 import 'package:benkyou/screens/DialogPage/DialogPage.dart';
 import 'package:benkyou/screens/DialogPage/InDialogPage.dart';
 import 'package:benkyou/screens/DialogPage/InDialogPageArguments.dart';
+import 'package:benkyou/screens/DrawPage/DrawPage.dart';
 import 'package:benkyou/screens/Grammar/CreateGrammarCardArguments.dart';
 import 'package:benkyou/screens/Grammar/CreateGrammarPage.dart';
 import 'package:benkyou/screens/Grammar/GrammarDeckPage.dart';
@@ -15,6 +16,7 @@ import 'package:benkyou/screens/Grammar/GrammarDeckPageArguments.dart';
 import 'package:benkyou/screens/Grammar/GrammarHomePage.dart';
 import 'package:benkyou/screens/Grammar/GrammarReviewArguments.dart';
 import 'package:benkyou/screens/Grammar/GrammarReviewPage.dart';
+import 'package:benkyou/screens/HomePage/HomePage.dart';
 import 'package:benkyou/screens/LessonHomePage/LessonHomePage.dart';
 import 'package:benkyou/screens/LessonHomePage/LessonPage.dart';
 import 'package:benkyou/screens/LessonHomePage/LessonPageArguments.dart';
@@ -79,6 +81,7 @@ class App extends StatelessWidget {
         textTheme: TextTheme(
           headline3: TextStyle(
               fontSize: 22, color: Colors.white, fontWeight: FontWeight.w600),
+          headline5: TextStyle(fontSize: 14, color: Colors.white),
           headline6: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
       ),
@@ -257,6 +260,9 @@ class App extends StatelessWidget {
         DialogPage.routeName: (context) => DialogPage(),
         CreateUserPage.routeName: (context) => CreateUserPage(),
         BrowseDeckPage.routeName: (context) => BrowseDeckPage(),
+        DeckHomePage.routeName: (context) => DeckHomePage(),
+        DrawPage.routeName: (context) => DrawPage(),
+        HomePage.routeName: (context) => HomePage(),
       },
     );
   }
@@ -278,7 +284,7 @@ void main() {
   runZoned(
     () => runApp(App(
 //          home: ThemeTinderWordPage(theme: new DeckTheme.fromJson({"id":21,"name":"Work","backgroundImg": null,"deck":{"id":59}})),
-      home: DeckHomePage(),
+      home: HomePage(),
 //      home: CreateGrammarCardPage(),
     )),
     onError: (Object error, StackTrace stackTrace) {

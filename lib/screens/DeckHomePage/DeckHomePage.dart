@@ -25,7 +25,7 @@ import '../../widgets/MainDrawer.dart';
 import 'DeckContainer.dart';
 
 class DeckHomePage extends StatefulWidget {
-  static const routeName = '/';
+  static const routeName = '/vocab/home';
 
   @override
   State<StatefulWidget> createState() => DeckHomePageState();
