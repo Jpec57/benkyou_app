@@ -7,12 +7,14 @@ import 'package:benkyou/models/UserCardProcessedInfo.dart';
 import 'package:benkyou/screens/Grammar/GrammarDeckPage.dart';
 import 'package:benkyou/screens/Grammar/GrammarDeckPageArguments.dart';
 import 'package:benkyou/screens/Grammar/GrammarHomePage.dart';
+import 'package:benkyou/screens/HomePage/HomePage.dart';
 import 'package:benkyou/screens/ReviewPage/LeaveReviewDialog.dart';
 import 'package:benkyou/screens/ReviewPage/ReviewPageInfo.dart';
 import 'package:benkyou/services/api/cardRequests.dart';
 import 'package:benkyou/services/translator/TextConversion.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/utils/random.dart';
+import 'package:benkyou/widgets/Localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -20,9 +22,10 @@ class GrammarReviewPage extends StatefulWidget {
   static const routeName = '/grammar/review';
   final List<UserCard> cards;
   final int deckId;
+  final bool isFromHomePage;
 
   const GrammarReviewPage(
-      {Key key, @required this.cards, @required this.deckId})
+      {Key key, @required this.cards, this.deckId, this.isFromHomePage = false})
       : super(key: key);
 
   @override
@@ -42,6 +45,7 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
   int _nbErrors = 0;
   int _nbSuccess = 0;
   int _sentenceIndex = 0;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -60,6 +64,22 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
     }
   }
 
+  void _handleNavigation() {
+    if (widget.deckId != null) {
+      Navigator.pushNamedAndRemoveUntil(context, GrammarDeckPage.routeName,
+          ModalRoute.withName(GrammarDeckPage.routeName),
+          arguments: GrammarDeckPageArguments(deckId: widget.deckId));
+    } else {
+      if (widget.isFromHomePage) {
+        Navigator.pushNamedAndRemoveUntil(context, HomePage.routeName,
+            ModalRoute.withName(HomePage.routeName));
+      } else {
+        Navigator.pushNamedAndRemoveUntil(context, GrammarHomePage.routeName,
+            ModalRoute.withName(GrammarHomePage.routeName));
+      }
+    }
+  }
+
   void _goToNextQuestion(bool isCorrect) async {
     //empty text controllers
     _answerControllers.forEach((element) {
@@ -70,8 +90,7 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
         _remainingCards.removeAt(0);
       } else {
         await postReview(_processedCards);
-        Navigator.of(context).pushNamed(GrammarDeckPage.routeName,
-            arguments: GrammarDeckPageArguments(deckId: widget.deckId));
+        _handleNavigation();
       }
     } else {
       _remainingCards.shuffle(new Random());
@@ -97,7 +116,7 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
     setState(() {
       _isAnswerCorrect = isCorrect;
       _isAnswerVisible = true;
-      //SET correction in controller
+      // SET correction in controller
       for (int i = 0; i < _answerControllers.length; i++) {
         _answerControllers[i].text = correctAnswers[i];
       }
@@ -109,6 +128,10 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
     if (_isAnswerVisible) {
       _goToNextQuestion(_isAnswerCorrect);
     } else {
+      bool isFormComplete = _formKey.currentState.validate();
+      if (!isFormComplete) {
+        return false;
+      }
       RegExp regExp = new RegExp(r"{[^}]+}");
       Iterable<RegExpMatch> matches = regExp.allMatches(gapSentence);
       int i = 0;
@@ -124,6 +147,7 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
             getKatakana(givenAnswer) != desiredString) {
           isCorrect = false;
         }
+        _answerControllers[i].text = desiredString;
         i++;
       }
       _handleQuestion(isCorrect, correctAnswers);
@@ -206,10 +230,10 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
     DeckCard deckCard = card.card;
     GrammarPointCard grammarCard = card.grammarCard;
     currentCard = card;
-    String currentMeaning =
-        deckCard.answers != null && deckCard.answers.isNotEmpty
+    String currentMeaning = deckCard.hint ??
+        (deckCard.answers != null && deckCard.answers.isNotEmpty
             ? deckCard.answers[0].text
-            : null;
+            : null);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -228,7 +252,8 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
           child: _renderQuestionWithGap(card.id, grammarCard),
         ),
         Visibility(
-          visible: !isKeyboardVisible && currentMeaning != null,
+          visible:
+              !isKeyboardVisible && currentMeaning != null && !_isAnswerVisible,
           child: Row(
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -256,7 +281,7 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
                             padding: const EdgeInsets.only(top: 5, bottom: 5),
                             child: Center(
                                 child: Text(
-                              deckCard.hint ?? currentMeaning,
+                              currentMeaning,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   fontStyle: FontStyle.italic,
@@ -313,6 +338,9 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
       exampleSentence =
           grammarCard.gapSentences[0].replaceAll(new RegExp(r'{|}'), '');
     }
+    String currentMeaning = (card.answers != null && card.answers.isNotEmpty
+        ? card.answers[0].text
+        : card.hint);
     return Padding(
       padding: const EdgeInsets.only(top: 15),
       child: Center(
@@ -344,7 +372,8 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
                       ),
                     )),
                 Padding(
-                  padding: const EdgeInsets.only(left: 8.0, right: 8),
+                  padding:
+                      const EdgeInsets.only(left: 8.0, right: 8, bottom: 8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -358,7 +387,7 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
                               fontWeight: FontWeight.w600),
                         ),
                       ),
-                      Text("${card.hint}"),
+                      Text("${currentMeaning ?? ""}"),
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0),
                         child: Text(
@@ -391,6 +420,13 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
           child: Padding(
             padding: const EdgeInsets.only(left: 8.0, right: 8),
             child: TextFormField(
+              validator: (value) {
+                if (value.isEmpty) {
+                  return LocalizationWidget.of(context)
+                      .getLocalizeValue("field_empty");
+                }
+                return null;
+              },
               controller: controllers[i],
               autofocus: i == 0,
               decoration:
@@ -412,6 +448,13 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
               children: [
                 Flexible(
                   child: TextFormField(
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return LocalizationWidget.of(context)
+                            .getLocalizeValue("field_empty");
+                      }
+                      return null;
+                    },
                     controller: controllers[controllerLength - 1],
                     decoration: InputDecoration(
                         hintText: "Answer for field ($controllerLength)"),
@@ -456,22 +499,12 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
         leading: IconButton(
           onPressed: () {
             if (_processedCards == null || _processedCards.length == 0) {
-              if (widget.deckId != null) {
-                Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    GrammarDeckPage.routeName,
-                    ModalRoute.withName(GrammarDeckPage.routeName),
-                    arguments: GrammarDeckPageArguments(deckId: widget.deckId));
-              } else {
-                Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    GrammarHomePage.routeName,
-                    ModalRoute.withName(GrammarHomePage.routeName));
-              }
+              _handleNavigation();
             } else {
               showDialog(
                   context: context,
                   builder: (BuildContext context) => LeaveReviewDialog(
+                        navigationFunctionHandler: _handleNavigation,
                         processedCards: _processedCards,
                         deckId: widget.deckId,
                         isVocab: false,
@@ -508,9 +541,12 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
                         child: _isAnswerVisible
                             ? _renderGrammarPoint(_remainingCards[0].card,
                                 _remainingCards[0].grammarCard)
-                            : Column(
-                                children:
-                                    _renderTextFormFields(_answerControllers),
+                            : Form(
+                                key: _formKey,
+                                child: Column(
+                                  children:
+                                      _renderTextFormFields(_answerControllers),
+                                ),
                               ),
                       ),
                     ),

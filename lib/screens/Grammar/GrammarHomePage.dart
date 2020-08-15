@@ -1,9 +1,12 @@
 import 'package:benkyou/models/Deck.dart';
+import 'package:benkyou/models/UserCard.dart';
 import 'package:benkyou/models/UserCardReviewCount.dart';
 import 'package:benkyou/screens/DeckHomePage/CreateDeckDialog.dart';
 import 'package:benkyou/screens/Grammar/GrammarDeckPage.dart';
 import 'package:benkyou/screens/Grammar/GrammarDeckPageArguments.dart';
 import 'package:benkyou/screens/Grammar/GrammarHomeHeaderClipper.dart';
+import 'package:benkyou/screens/Grammar/GrammarReviewArguments.dart';
+import 'package:benkyou/screens/Grammar/GrammarReviewPage.dart';
 import 'package:benkyou/services/api/cardRequests.dart';
 import 'package:benkyou/services/api/deckRequests.dart';
 import 'package:benkyou/utils/colors.dart';
@@ -23,6 +26,7 @@ class GrammarHomePage extends StatefulWidget {
 }
 
 class _GrammarHomePageState extends State<GrammarHomePage> {
+  Future<List<UserCard>> _grammarFuture;
   Future<List<Deck>> _grammarDecks;
   Future<List<UserCardReviewCount>> personalDeckCounts;
   Future<List<UserCardReviewCount>> _awaitingCardCounts;
@@ -43,6 +47,7 @@ class _GrammarHomePageState extends State<GrammarHomePage> {
       _grammarDecks = getGrammarDecks();
       _awaitingCardCounts = getAwaitingCardCountsForAllDecks();
       personalDeckCounts = getReviewCardCountsForAllDecks();
+      _grammarFuture = getGrammarReviewCards();
     });
   }
 
@@ -109,9 +114,37 @@ class _GrammarHomePageState extends State<GrammarHomePage> {
                 color: Color(COLOR_DARK_BLUE),
                 height: phoneSize.height * 0.1,
                 child: Align(
-                  child: Text(
-                    "All review",
-                    style: Theme.of(context).textTheme.headline3,
+                  child: FutureBuilder(
+                    future: _grammarFuture,
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<UserCard>> snapshot) {
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.done:
+                          if (snapshot.hasData && snapshot.data.length > 0) {
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).pushNamed(
+                                    GrammarReviewPage.routeName,
+                                    arguments: GrammarReviewArguments(
+                                        reviewCards: snapshot.data));
+                              },
+                              child: Text(
+                                "All review (${snapshot.data.length})",
+                                style: Theme.of(context).textTheme.headline3,
+                              ),
+                            );
+                          }
+                          return Text(
+                            "No review",
+                            style: Theme.of(context).textTheme.headline3,
+                          );
+                        default:
+                          return Text(
+                            "No review",
+                            style: Theme.of(context).textTheme.headline3,
+                          );
+                      }
+                    },
                   ),
                   alignment: FractionalOffset(0.5, 0.2),
                 ),

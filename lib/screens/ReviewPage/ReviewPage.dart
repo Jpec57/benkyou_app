@@ -7,6 +7,7 @@ import 'package:benkyou/models/UserCardProcessedInfo.dart';
 import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
 import 'package:benkyou/screens/DeckPage/DeckPage.dart';
 import 'package:benkyou/screens/DeckPage/DeckPageArguments.dart';
+import 'package:benkyou/screens/HomePage/HomePage.dart';
 import 'package:benkyou/screens/ReviewPage/LeaveReviewDialog.dart';
 import 'package:benkyou/screens/ReviewPage/ReviewPageInfo.dart';
 import 'package:benkyou/services/api/cardRequests.dart';
@@ -29,8 +30,10 @@ class ReviewPage extends StatefulWidget {
 
   final List<UserCard> cards;
   final int deckId;
+  final bool isFromHomePage;
 
-  const ReviewPage({Key key, @required this.cards, this.deckId})
+  const ReviewPage(
+      {Key key, @required this.cards, this.deckId, this.isFromHomePage = false})
       : super(key: key);
 
   @override
@@ -317,6 +320,7 @@ class ReviewPageState extends State<ReviewPage>
     List<String> parsedAnswers = getStringAnswers(currentCard.card.answers);
     for (String parsedAnswer in parsedAnswers) {
       if (isStringDistanceValid(parsedAnswer, userAnswer) ||
+          getKatakana(userAnswer) == parsedAnswer ||
           getJapaneseTranslation(userAnswer) == parsedAnswer) {
         return true;
       }
@@ -328,6 +332,22 @@ class ReviewPageState extends State<ReviewPage>
     showLoadingDialog(context);
     await postReview(reviewedCards);
     Navigator.pop(context);
+  }
+
+  _handleNavigation() {
+    if (widget.deckId == null) {
+      if (widget.isFromHomePage) {
+        Navigator.pushNamedAndRemoveUntil(context, HomePage.routeName,
+            ModalRoute.withName(HomePage.routeName));
+      } else {
+        Navigator.pushNamedAndRemoveUntil(context, DeckHomePage.routeName,
+            ModalRoute.withName(DeckHomePage.routeName));
+      }
+    } else {
+      Navigator.pushNamedAndRemoveUntil(
+          context, DeckPage.routeName, ModalRoute.withName(DeckPage.routeName),
+          arguments: DeckPageArguments(currentCard.deck.id));
+    }
   }
 
   _moveToNextQuestion(bool isAnswerCorrect) async {
@@ -346,14 +366,7 @@ class ReviewPageState extends State<ReviewPage>
       _speak(toSpeak, toEnglish ? "ja-JP" : "en-GB");
     } else {
       await _sendReview(_processedCards);
-      if (widget.deckId == null) {
-        Navigator.pushNamedAndRemoveUntil(context, DeckHomePage.routeName,
-            ModalRoute.withName(DeckHomePage.routeName));
-      } else {
-        Navigator.pushNamedAndRemoveUntil(context, DeckPage.routeName,
-            ModalRoute.withName(DeckPage.routeName),
-            arguments: DeckPageArguments(currentCard.deck.id));
-      }
+      _handleNavigation();
     }
     FocusScope.of(context).requestFocus(_focusNode);
     setState(() {
@@ -440,6 +453,13 @@ class ReviewPageState extends State<ReviewPage>
   Widget build(BuildContext context) {
     bool toEnglish =
         currentCard != null ? currentCard.card.answerLanguageCode == 0 : false;
+    String question = currentCard != null &&
+            currentCard.card.question != null &&
+            currentCard.card.question.isNotEmpty
+        ? currentCard.card.question
+        : currentCard.card.hint;
+    String hint = currentCard != null ? currentCard.card.hint ?? "" : "";
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -447,21 +467,14 @@ class ReviewPageState extends State<ReviewPage>
         leading: IconButton(
           onPressed: () {
             if (_processedCards == null || _processedCards.length == 0) {
-              if (widget.deckId != null) {
-                Navigator.pushNamedAndRemoveUntil(context, DeckPage.routeName,
-                    ModalRoute.withName(DeckPage.routeName),
-                    arguments: DeckPageArguments(widget.deckId));
-              } else {
-                Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    DeckHomePage.routeName,
-                    ModalRoute.withName(DeckHomePage.routeName));
-              }
+              _handleNavigation();
             } else {
               showDialog(
                   context: context,
                   builder: (BuildContext context) => LeaveReviewDialog(
-                      processedCards: _processedCards, deckId: widget.deckId));
+                      navigationFunctionHandler: _handleNavigation,
+                      processedCards: _processedCards,
+                      deckId: widget.deckId));
             }
           },
           icon: Icon(Icons.arrow_back),
@@ -488,9 +501,8 @@ class ReviewPageState extends State<ReviewPage>
                     Align(
                       child: GestureDetector(
                         onTap: () {
-                          String toSpeak = currentCard != null
-                              ? currentCard.card.question.split(',')[0]
-                              : '';
+                          String toSpeak =
+                              currentCard != null ? question.split(',')[0] : '';
                           isPlaying
                               ? _stop()
                               : _speak(toSpeak, toEnglish ? "ja-JP" : "en-GB");
@@ -521,15 +533,11 @@ class ReviewPageState extends State<ReviewPage>
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               Text(
-                                currentCard != null
-                                    ? (currentCard.card.hint ?? '')
-                                    : '',
+                                hint,
                                 textAlign: TextAlign.center,
                               ),
                               Text(
-                                currentCard != null
-                                    ? currentCard.card.question
-                                    : '',
+                                question,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontWeight: FontWeight.w600, fontSize: 24),

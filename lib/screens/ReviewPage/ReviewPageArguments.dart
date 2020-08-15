@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 class ReviewPageArguments {
   List<UserCard> cards;
   int deckId;
+  bool isFromHomePage;
 
-  ReviewPageArguments({@required this.cards, this.deckId});
+  ReviewPageArguments(
+      {@required this.cards, this.deckId, this.isFromHomePage = false});
 }

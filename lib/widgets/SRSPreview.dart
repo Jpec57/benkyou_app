@@ -93,12 +93,12 @@ class SRSPreviewState extends State<SRSPreview> {
                     Text(
                       srsLevels[i].title,
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 25),
+                      style: TextStyle(fontSize: 20),
                     ),
                     Text(
                       "${srsLevels[i].num}",
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 25),
+                      style: TextStyle(fontSize: 20),
                     ),
                   ],
                 ),

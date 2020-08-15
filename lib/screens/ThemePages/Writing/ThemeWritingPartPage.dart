@@ -1,12 +1,10 @@
 import 'package:benkyou/models/DeckTheme.dart';
 import 'package:benkyou/models/Sentence.dart';
-import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
 import 'package:benkyou/screens/ThemePages/ThemeLearningHomePage.dart';
 import 'package:benkyou/services/api/sentenceRequests.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/utils/string.dart';
 import 'package:benkyou/widgets/ConfirmDialog.dart';
-import 'package:benkyou/widgets/LoadingCircle.dart';
 import 'package:benkyou/widgets/Localization.dart';
 import 'package:benkyou/widgets/ThemeTransitionDialog.dart';
 import 'package:flutter/cupertino.dart';
@@ -25,7 +23,8 @@ class ThemeWritingPartPage extends StatefulWidget {
   State<StatefulWidget> createState() => ThemeWritingPartPageState();
 }
 
-class ThemeWritingPartPageState extends State<ThemeWritingPartPage> with TickerProviderStateMixin {
+class ThemeWritingPartPageState extends State<ThemeWritingPartPage>
+    with TickerProviderStateMixin {
   Future<List<Sentence>> _sentences;
   List<Sentence> sentences;
   TextEditingController _japaneseTranslationContoller;
@@ -47,15 +46,18 @@ class ThemeWritingPartPageState extends State<ThemeWritingPartPage> with TickerP
     );
     _japaneseTranslationContoller = new TextEditingController();
     setSentences();
-    WidgetsBinding.instance.addPostFrameCallback((_) async{
-      showDialog(context: context, builder: (BuildContext context) => ThemeTransitionDialog(name: 'Writing expression'));
-      Future.delayed(Duration(seconds: 1), (){
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) =>
+              ThemeTransitionDialog(name: 'Writing expression'));
+      Future.delayed(Duration(seconds: 1), () {
         Navigator.of(context).pop();
       });
     });
   }
 
-  void setSentences() async{
+  void setSentences() async {
     _sentences = getRandomThemeSentencesRequest(widget.theme.id, 2);
     sentences = await _sentences;
     _initSentCount = sentences.length;
@@ -68,7 +70,6 @@ class ThemeWritingPartPageState extends State<ThemeWritingPartPage> with TickerP
   }
 
   _validate(Sentence sentence) {
-    print(sentence.toString());
     String userAnswer = _japaneseTranslationContoller.text;
     String kanji = sentence.text;
     String kana = sentence.hint;
@@ -87,15 +88,15 @@ class ThemeWritingPartPageState extends State<ThemeWritingPartPage> with TickerP
       _nbFalse++;
     }
     setState(() {
-      _answerContainerHeight =  MediaQuery.of(context).size.height * 0.3;
+      _answerContainerHeight = MediaQuery.of(context).size.height * 0.3;
       _currentProgressValue = (_nbCorrect + _nbFalse) / _initSentCount;
     });
   }
 
   Widget _renderAnswer(Sentence sentence) {
     return GestureDetector(
-        onTap: (){
-          //TODO later eventually only when correct delete otherwise shuffle
+      onTap: () {
+        //TODO later eventually only when correct delete otherwise shuffle
 //          if (_isCorrect){
 //            if (sentences.length > 1){
 //              sentences.removeAt(0);
@@ -106,86 +107,92 @@ class ThemeWritingPartPageState extends State<ThemeWritingPartPage> with TickerP
 //            sentences.shuffle();
 //          }
 
-          if (sentences.length > 1){
-            sentences.removeAt(0);
-          } else {
-            Navigator.of(context).pushNamedAndRemoveUntil(
-                ThemeLearningHomePage.routeName, ModalRoute.withName(ThemeLearningHomePage.routeName)
-            );
-          }
-          _japaneseTranslationContoller.clear();
-          setState(() {
-            _answerContainerHeight =  0;
-          });
-        },
-        child: Align(
-          alignment: Alignment.bottomCenter,
-          child: ClipRRect(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-            child: AnimatedSize(
-              duration: Duration(seconds: 1),
-              curve: Curves.elasticOut,
-              vsync: this,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: _isCorrect ? Colors.green: Colors.red,
-                ),
-                  height: _answerContainerHeight,
-                width: double.infinity,
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Container(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Icon(_isCorrect ? Icons.check : Icons.close, color: Colors.white, size: 40,),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 30),
-                              child: Center(
-                                child: Text(
-                                  _isCorrect ? "正解" : "違う",
-                                  style: TextStyle(color: Colors.white, fontSize: 24),
-                                ),
+        if (sentences.length > 1) {
+          sentences.removeAt(0);
+        } else {
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              ThemeLearningHomePage.routeName,
+              ModalRoute.withName(ThemeLearningHomePage.routeName));
+        }
+        _japaneseTranslationContoller.clear();
+        setState(() {
+          _answerContainerHeight = 0;
+        });
+      },
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: ClipRRect(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+          child: AnimatedSize(
+            duration: Duration(seconds: 1),
+            curve: Curves.elasticOut,
+            vsync: this,
+            child: Container(
+              decoration: BoxDecoration(
+                color: _isCorrect ? Colors.green : Colors.red,
+              ),
+              height: _answerContainerHeight,
+              width: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Container(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Icon(
+                            _isCorrect ? Icons.check : Icons.close,
+                            color: Colors.white,
+                            size: 40,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 30),
+                            child: Center(
+                              child: Text(
+                                _isCorrect ? "正解" : "違う",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 24),
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Container(
-                          child: Center(
-                            child: Column(children: [
-                              Text(
-                                sentence.text,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(color: Colors.white70, fontSize: 20),
-                              ),
-                              Text(
-                                sentence.hint,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(color: Colors.white70, fontSize: 14),
-                              ),
-                            ]),
                           ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Container(
+                        child: Center(
+                          child: Column(children: [
+                            Text(
+                              sentence.text,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.white70, fontSize: 20),
+                            ),
+                            Text(
+                              sentence.hint,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.white70, fontSize: 14),
+                            ),
+                          ]),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
           ),
         ),
-      );
+      ),
+    );
   }
 
-
-  Widget _renderQuestionWidget(String englishTranslation){
+  Widget _renderQuestionWidget(String englishTranslation) {
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: ClipRRect(
@@ -198,24 +205,26 @@ class ThemeWritingPartPageState extends State<ThemeWritingPartPage> with TickerP
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _isKeyboardOut ? Container() :
-                Text(
-                  LocalizationWidget.of(context)
-                      .getLocalizeValue('translate'),
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontSize: 26),
-                ),
+                _isKeyboardOut
+                    ? Container()
+                    : Text(
+                        LocalizationWidget.of(context)
+                            .getLocalizeValue('translate'),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontSize: 26),
+                      ),
                 Padding(
-                  padding: _isKeyboardOut ? EdgeInsets.only(top: 5, bottom: 10) : EdgeInsets.only(top: 20, bottom: 30),
+                  padding: _isKeyboardOut
+                      ? EdgeInsets.only(top: 5, bottom: 10)
+                      : EdgeInsets.only(top: 20, bottom: 30),
                   child: Center(
                       child: Text(
-                        englishTranslation,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontSize: 18, color: Colors.white),
-                      )),
+                    englishTranslation,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  )),
                 )
               ],
             ),
@@ -269,7 +278,7 @@ class ThemeWritingPartPageState extends State<ThemeWritingPartPage> with TickerP
                               minLines: 4,
                               maxLines: 4,
                               decoration: InputDecoration(
-                                hintText: '訳す',
+                                  hintText: '訳す',
                                   contentPadding: EdgeInsets.all(10),
                                   border: InputBorder.none),
                               style: TextStyle(color: Colors.black),
@@ -323,11 +332,12 @@ class ThemeWritingPartPageState extends State<ThemeWritingPartPage> with TickerP
     return WillPopScope(
       onWillPop: () {
         Get.dialog(ConfirmDialog(
-          action: LocalizationWidget.of(context).getLocalizeValue('quit_session'),
+          action:
+              LocalizationWidget.of(context).getLocalizeValue('quit_session'),
           positiveCallback: () async {
             Navigator.of(context).pushNamedAndRemoveUntil(
-                ThemeLearningHomePage.routeName, ModalRoute.withName(ThemeLearningHomePage.routeName)
-            );
+                ThemeLearningHomePage.routeName,
+                ModalRoute.withName(ThemeLearningHomePage.routeName));
           },
           shouldAlwaysPop: false,
         ));
@@ -351,8 +361,8 @@ class ThemeWritingPartPageState extends State<ThemeWritingPartPage> with TickerP
                 return _renderWritingPart();
               case ConnectionState.waiting:
                 return Center(
-                  child: Text(
-                      LocalizationWidget.of(context).getLocalizeValue('loading')),
+                  child: Text(LocalizationWidget.of(context)
+                      .getLocalizeValue('loading')),
                 );
               default:
                 return Center(

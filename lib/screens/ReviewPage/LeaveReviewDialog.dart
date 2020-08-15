@@ -1,10 +1,4 @@
 import 'package:benkyou/models/UserCardProcessedInfo.dart';
-import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
-import 'package:benkyou/screens/DeckPage/DeckPage.dart';
-import 'package:benkyou/screens/DeckPage/DeckPageArguments.dart';
-import 'package:benkyou/screens/Grammar/GrammarDeckPage.dart';
-import 'package:benkyou/screens/Grammar/GrammarDeckPageArguments.dart';
-import 'package:benkyou/screens/Grammar/GrammarHomePage.dart';
 import 'package:benkyou/services/api/cardRequests.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/LoadingCircle.dart';
@@ -16,12 +10,14 @@ class LeaveReviewDialog extends StatefulWidget {
   final int deckId;
   final List<UserCardProcessedInfo> processedCards;
   final bool isVocab;
+  final Function navigationFunctionHandler;
 
   const LeaveReviewDialog(
       {Key key,
       this.deckId,
       @required this.processedCards,
-      this.isVocab = true})
+      this.isVocab = true,
+      @required this.navigationFunctionHandler})
       : super(key: key);
 
   @override
@@ -98,27 +94,7 @@ class LeaveReviewDialogState extends State<LeaveReviewDialog> {
                                 showLoadingDialog(context);
                                 await postReview(widget.processedCards);
                                 Navigator.pop(context);
-                                if (widget.isVocab) {
-                                  if (widget.deckId != null) {
-                                    Navigator.pushReplacementNamed(
-                                        context, DeckPage.routeName,
-                                        arguments:
-                                            DeckPageArguments(widget.deckId));
-                                  } else {
-                                    Navigator.pushReplacementNamed(
-                                        context, DeckHomePage.routeName);
-                                  }
-                                } else {
-                                  if (widget.deckId != null) {
-                                    Navigator.pushReplacementNamed(
-                                        context, GrammarDeckPage.routeName,
-                                        arguments: GrammarDeckPageArguments(
-                                            deckId: widget.deckId));
-                                  } else {
-                                    Navigator.pushReplacementNamed(
-                                        context, GrammarHomePage.routeName);
-                                  }
-                                }
+                                widget.navigationFunctionHandler();
                               },
                             ),
                           ),

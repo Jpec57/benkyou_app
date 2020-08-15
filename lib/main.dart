@@ -104,6 +104,7 @@ class App extends StatelessWidget {
             builder: (context) {
               return ReviewPage(
                 cards: args.cards,
+                isFromHomePage: args.isFromHomePage,
               );
             },
           );
@@ -243,6 +244,7 @@ class App extends StatelessWidget {
               return GrammarReviewPage(
                 deckId: args.deckId,
                 cards: args.reviewCards,
+                isFromHomePage: args.isFromHomePage,
               );
             },
           );

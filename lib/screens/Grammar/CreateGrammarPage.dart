@@ -74,30 +74,29 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
 
   Future<bool> isFormValid() async {
     String grammarPoint = getJapaneseTranslation(_grammarPointName.text);
-    String grammarMeaning = _grammarPointName.text;
+    String grammarMeaning = _grammarPointMeaning.text;
     String grammarHint = _grammarHint.text;
     List<String> gapSentences = [];
     if (grammarPoint.isEmpty) {
       Get.snackbar("Error", "The name of your grammar point cannot be empty.",
-          snackPosition: SnackPosition.BOTTOM);
+          snackPosition: SnackPosition.TOP);
       return false;
     }
     if (grammarMeaning.isEmpty) {
       Get.snackbar("Error",
           "The meaning/translation of your grammar point cannot be empty.",
-          snackPosition: SnackPosition.BOTTOM);
+          snackPosition: SnackPosition.TOP);
       return false;
     }
     for (TextEditingController controller in _controllers) {
       String text = controller.text;
-      print("IN $text");
       if (text.isNotEmpty) {
         RegExp regExp = new RegExp(r"{[^}]+}");
         if (regExp.hasMatch(text)) {
           gapSentences.add(text);
         } else {
           //          Get.snackbar("Error", "Your sentence must contain a gap",
-//              snackPosition: SnackPosition.BOTTOM);
+//              snackPosition: SnackPosition.TOP);
 
           // A sentence does contain gap with grammar point
 //          return false;
@@ -107,7 +106,7 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
     if (gapSentences.isEmpty) {
       Get.snackbar(
           "Error", "You must provide at least one correct gap sentence.",
-          snackPosition: SnackPosition.BOTTOM);
+          snackPosition: SnackPosition.TOP);
 
       return false;
     }
@@ -132,7 +131,7 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
         duration: const Duration(milliseconds: 300),
       );
       Get.snackbar("Success", "Your card has correctly been created.",
-          snackPosition: SnackPosition.BOTTOM);
+          snackPosition: SnackPosition.TOP);
     }
 
     return true;
@@ -176,14 +175,19 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
             ),
           ),
           TextFormField(
+            maxLength: 255,
+            textCapitalization: isMainField
+                ? TextCapitalization.none
+                : TextCapitalization.sentences,
             controller: controller,
             maxLines: isTextArea ? null : 1,
             focusNode: isMainField ? _grammarNameFocus : null,
             decoration: InputDecoration(
+                counterText: "",
                 border: OutlineInputBorder(
-              borderRadius: new BorderRadius.circular(15.0),
-              borderSide: new BorderSide(),
-            )),
+                  borderRadius: new BorderRadius.circular(15.0),
+                  borderSide: new BorderSide(),
+                )),
           ),
         ],
       ),

@@ -1,5 +1,5 @@
 import 'package:benkyou/screens/CreateUserPage/CreateUserPage.dart';
-import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
+import 'package:benkyou/screens/HomePage/HomePage.dart';
 import 'package:benkyou/services/api/userRequests.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/LoadingCircle.dart';
@@ -9,13 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class LoginWidget extends StatefulWidget{
+class LoginWidget extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => LoginWidgetState();
-
 }
 
-class LoginWidgetState extends State<LoginWidget>{
+class LoginWidgetState extends State<LoginWidget> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController _usernameController;
   TextEditingController _passwordController;
@@ -25,13 +24,13 @@ class LoginWidgetState extends State<LoginWidget>{
     super.initState();
     _usernameController = new TextEditingController();
     _passwordController = new TextEditingController();
-    WidgetsBinding.instance.addPostFrameCallback((_) async{
-      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
       String previousUsername = sharedPreferences.get('previousUsername');
-      _usernameController = new TextEditingController(text: previousUsername != null ? previousUsername : '');
-      setState(() {
-
-      });
+      _usernameController = new TextEditingController(
+          text: previousUsername != null ? previousUsername : '');
+      setState(() {});
     });
   }
 
@@ -55,17 +54,20 @@ class LoginWidgetState extends State<LoginWidget>{
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text(LocalizationWidget.of(context).getLocalizeValue('user_email')),
+                  Text(LocalizationWidget.of(context)
+                      .getLocalizeValue('user_email')),
                   TextFormField(
                     controller: _usernameController,
                     validator: (value) {
                       if (value.isEmpty) {
-                        return LocalizationWidget.of(context).getLocalizeValue('enter_username_email');
+                        return LocalizationWidget.of(context)
+                            .getLocalizeValue('enter_username_email');
                       }
                       return null;
                     },
                     decoration: InputDecoration(
-                        hintText: LocalizationWidget.of(context).getLocalizeValue('enter_username'),
+                        hintText: LocalizationWidget.of(context)
+                            .getLocalizeValue('enter_username'),
                         labelStyle: TextStyle()),
                   ),
                   Padding(
@@ -74,65 +76,74 @@ class LoginWidgetState extends State<LoginWidget>{
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        Text(LocalizationWidget.of(context).getLocalizeValue('password')),
+                        Text(LocalizationWidget.of(context)
+                            .getLocalizeValue('password')),
                         TextFormField(
                           obscureText: true,
                           controller: _passwordController,
                           validator: (value) {
                             if (value.isEmpty) {
-                              return LocalizationWidget.of(context).getLocalizeValue('enter_password');
+                              return LocalizationWidget.of(context)
+                                  .getLocalizeValue('enter_password');
                             }
                             return null;
                           },
                           decoration: InputDecoration(
-                              hintText: LocalizationWidget.of(context).getLocalizeValue('enter_password'),
+                              hintText: LocalizationWidget.of(context)
+                                  .getLocalizeValue('enter_password'),
                               labelStyle: TextStyle()),
                         ),
                       ],
                     ),
                   ),
-
-
-
                   Padding(
                     padding: const EdgeInsets.only(top: 15.0),
                     child: RaisedButton(
                       color: Color(COLOR_DARK_BLUE),
                       child: Text(
-                        LocalizationWidget.of(context).getLocalizeValue('login').toUpperCase(),
-                        style: TextStyle(
-                            color: Colors.white
-                        ),
+                        LocalizationWidget.of(context)
+                            .getLocalizeValue('login')
+                            .toUpperCase(),
+                        style: TextStyle(color: Colors.white),
                       ),
                       onPressed: () async {
                         if (_formKey.currentState.validate()) {
                           showLoadingDialog(context);
-                          bool res = await loginRequest(_usernameController.text, _passwordController.text);
-                          if (!res){
+                          bool res = await loginRequest(
+                              _usernameController.text,
+                              _passwordController.text);
+                          if (!res) {
                             Navigator.pop(context);
                           } else {
                             Navigator.pushReplacementNamed(
                               context,
-                              DeckHomePage.routeName,
+                              HomePage.routeName,
                             );
-                            SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-                            String username = sharedPreferences.getString('username');
-                            Get.snackbar(LocalizationWidget.of(context).getLocalizeValue('welcome_back') + ' $username!', '久しぶりだな麦わら', snackPosition: SnackPosition.BOTTOM);
+                            SharedPreferences sharedPreferences =
+                                await SharedPreferences.getInstance();
+                            String username =
+                                sharedPreferences.getString('username');
+                            Get.snackbar(
+                                LocalizationWidget.of(context)
+                                        .getLocalizeValue('welcome_back') +
+                                    ' $username!',
+                                '久しぶりだな麦わら',
+                                snackPosition: SnackPosition.BOTTOM);
                           }
                         }
                       },
                     ),
                   ),
-
                   Padding(
                     padding: const EdgeInsets.only(top: 5.0),
                     child: RaisedButton(
                       color: Color(COLOR_ORANGE),
                       child: Text(
-                        LocalizationWidget.of(context).getLocalizeValue('not_member_yet').toUpperCase(),textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: Colors.white
-                        ),
+                        LocalizationWidget.of(context)
+                            .getLocalizeValue('not_member_yet')
+                            .toUpperCase(),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.white),
                       ),
                       onPressed: () async {
                         Navigator.pushNamed(
@@ -150,5 +161,4 @@ class LoginWidgetState extends State<LoginWidget>{
       ),
     );
   }
-
 }
