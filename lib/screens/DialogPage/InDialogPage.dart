@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
+
 import 'package:benkyou/models/DialogText.dart';
 import 'package:benkyou/models/UserDialog.dart';
 import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
@@ -90,14 +91,12 @@ class InDialogPageState extends State<InDialogPage>
     setTtsLanguage('ja-JP');
 
     _flutterTts.setStartHandler(() {
-      print('started');
       setState(() {
         ttsState = TtsState.playing;
       });
     });
 
     _flutterTts.setCompletionHandler(() {
-      print('completion !');
       setState(() {
         ttsState = TtsState.stopped;
       });
@@ -112,7 +111,6 @@ class InDialogPageState extends State<InDialogPage>
   }
 
   Future _speak(String text) async {
-    print('here speak $text');
     await setTtsLanguage('ja-JP');
     if (text != null && text.isNotEmpty) {
       var result = await _flutterTts.speak(text);
@@ -254,9 +252,11 @@ class InDialogPageState extends State<InDialogPage>
               return LocalizationWidget.of(context)
                   .getLocalizeValue('field_empty');
             }
-            if (value.trim() != selectedAnswer.text.trim()){
+            if (value.trim() != selectedAnswer.text.trim()) {
               _answerInputController.text = selectedAnswer.text;
-              return LocalizationWidget.of(context).getLocalizeValue('wrong_translation') + selectedAnswer.text;
+              return LocalizationWidget.of(context)
+                      .getLocalizeValue('wrong_translation') +
+                  selectedAnswer.text;
             }
             return null;
           },
@@ -286,8 +286,7 @@ class InDialogPageState extends State<InDialogPage>
           child: ListTile(
             title: Center(
               child: Text("${answer.translation}",
-                  style:
-                      TextStyle(fontSize: 14, fontWeight: FontWeight.w400)),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400)),
             ),
           ),
         );
@@ -306,7 +305,6 @@ class InDialogPageState extends State<InDialogPage>
             child: Form(
               key: _formKey,
               child: Column(
-
                 children: [
                   Align(
                     alignment: Alignment.centerLeft,

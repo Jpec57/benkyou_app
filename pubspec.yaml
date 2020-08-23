@@ -39,7 +39,7 @@ dependencies:
   cupertino_icons: ^0.1.2
   sentry: ">=3.0.0 <4.0.0"
   flutter_tts: ^1.1.0
-  firebase_ml_vision: '^0.9.4'
+  firebase_ml_vision: ^0.9.6+2
   firebase_core: ^0.4.0+9
   cloud_firestore: ^0.12.9+5
   firebase_analytics: ^5.0.2

@@ -173,6 +173,8 @@ class ProfilePageState extends State<ProfilePage> {
   Widget _renderExperienceResumeWidget(User user) {
     ExperienceLevelProgress progress =
         getExperienceLevelProgress(VOCAB_EXPERIENCE_LEVELS, user.vocabXp);
+    ExperienceLevelProgress grammarProgress =
+        getExperienceLevelProgress(GRAMMAR_EXPERIENCE_LEVELS, user.grammarXp);
     return Padding(
       padding: const EdgeInsets.only(top: 15, bottom: 15),
       child: Column(
@@ -190,10 +192,10 @@ class ProfilePageState extends State<ProfilePage> {
                   skill: "Vocab",
                   progress: progress,
                 ),
-//                ExperienceBar(
-//                  skill: "Grammar",
-//                  percent: 0.50,
-//                )
+                ExperienceBar(
+                  skill: "Grammar",
+                  progress: grammarProgress,
+                )
               ],
             ),
           )
@@ -246,7 +248,7 @@ class ProfilePageState extends State<ProfilePage> {
                               ),
                               _renderKeyNumberRow(user),
                               _renderLessonsWidget(phoneSize),
-                              _renderExperienceResumeWidget(user)
+                              _renderExperienceResumeWidget(user),
                             ],
                           ),
                         ),

@@ -5,29 +5,26 @@ import 'package:benkyou/services/api/deckRequests.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import 'Localization.dart';
 
-class PublishDeckDialog extends StatefulWidget{
+class PublishDeckDialog extends StatefulWidget {
   final Deck deck;
 
   const PublishDeckDialog({Key key, @required this.deck}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => PublishDeckDialogState();
-
 }
 
-class PublishDeckDialogState extends State<PublishDeckDialog>{
-
-  String _renderContent(){
-    return widget.deck.isPublic ?
-    LocalizationWidget.of(context).getLocalizeValue('confirm_private_deck')
-        :
-    LocalizationWidget.of(context).getLocalizeValue('confirm_publish_deck');
+class PublishDeckDialogState extends State<PublishDeckDialog> {
+  String _renderContent() {
+    return widget.deck.isPublic
+        ? LocalizationWidget.of(context)
+            .getLocalizeValue('confirm_private_deck')
+        : LocalizationWidget.of(context)
+            .getLocalizeValue('confirm_publish_deck');
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +32,11 @@ class PublishDeckDialogState extends State<PublishDeckDialog>{
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(32.0))),
       contentPadding: EdgeInsets.all(15.0),
-      title: Text(widget.deck.isPublic ? LocalizationWidget.of(context).getLocalizeValue('unpublish_your_deck') : LocalizationWidget.of(context).getLocalizeValue('publish_your_deck')),
+      title: Text(widget.deck.isPublic
+          ? LocalizationWidget.of(context)
+              .getLocalizeValue('unpublish_your_deck')
+          : LocalizationWidget.of(context)
+              .getLocalizeValue('publish_your_deck')),
       content: Container(
         width: MediaQuery.of(context).size.height * 0.7,
         child: Padding(
@@ -46,7 +47,10 @@ class PublishDeckDialogState extends State<PublishDeckDialog>{
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(top: 10, bottom: 30),
-                child: Text(_renderContent(), textAlign: TextAlign.center,),
+                child: Text(
+                  _renderContent(),
+                  textAlign: TextAlign.center,
+                ),
               ),
               Row(
                 mainAxisSize: MainAxisSize.max,
@@ -55,38 +59,48 @@ class PublishDeckDialogState extends State<PublishDeckDialog>{
                     child: Padding(
                       padding: const EdgeInsets.only(right: 5.0),
                       child: RaisedButton(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
                         color: Color(COLOR_ORANGE),
-                        child: Text(LocalizationWidget.of(context).getLocalizeValue('cancel').toUpperCase(),
-                          style: TextStyle(
-                              color: Colors.white
-                          ),
+                        child: Text(
+                          LocalizationWidget.of(context)
+                              .getLocalizeValue('cancel')
+                              .toUpperCase(),
+                          style: TextStyle(color: Colors.white),
                         ),
                         onPressed: () {
                           Navigator.pop(context);
-                        },),
+                        },
+                      ),
                     ),
                   ),
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(left: 5.0),
                       child: RaisedButton(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
                         color: Color(COLOR_DARK_BLUE),
-                        child: Text((widget.deck.isPublic ? LocalizationWidget.of(context).getLocalizeValue('unpublish'): LocalizationWidget.of(context).getLocalizeValue('publish') ).toUpperCase(),
-                          style: TextStyle(
-                              color: Colors.white
-                          ),),
+                        child: Text(
+                          (widget.deck.isPublic
+                                  ? LocalizationWidget.of(context)
+                                      .getLocalizeValue('unpublish')
+                                  : LocalizationWidget.of(context)
+                                      .getLocalizeValue('publish'))
+                              .toUpperCase(),
+                          style: TextStyle(color: Colors.white),
+                        ),
                         onPressed: () async {
-                          await publishDeck(widget.deck.id, !widget.deck.isPublic);
+                          await publishDeck(
+                              widget.deck.id, !widget.deck.isPublic);
                           Navigator.pop(context);
                           Navigator.pushReplacementNamed(
                             context,
                             DeckPage.routeName,
-                            arguments: DeckPageArguments(
-                                widget.deck.id
-                            ),
+                            arguments: DeckPageArguments(widget.deck.id),
                           );
-
-                        },),
+                        },
+                      ),
                     ),
                   ),
                 ],
@@ -97,5 +111,4 @@ class PublishDeckDialogState extends State<PublishDeckDialog>{
       ),
     );
   }
-
 }

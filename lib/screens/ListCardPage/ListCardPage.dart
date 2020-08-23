@@ -29,9 +29,7 @@ class ListCardPageState extends State<ListCardPage> {
   bool _isSearching = false;
 
   Future<List<UserCard>> _fetchUserCards() {
-    print("ICI");
     if (widget.deckId != null) {
-      print("Deck ? ${widget.deckId}");
       return getUserJapaneseCardsForDeck(widget.deckId);
     }
     return getJapaneseUserCardsGroupByDeck();
@@ -43,11 +41,9 @@ class ListCardPageState extends State<ListCardPage> {
     cards = _fetchUserCards();
     _textEditingController = new TextEditingController();
     _textEditingController.addListener(() {
-      setState(() {
-      });
+      setState(() {});
     });
   }
-
 
   @override
   void dispose() {
@@ -59,13 +55,9 @@ class ListCardPageState extends State<ListCardPage> {
     List<Answer> answers = List.of(userCard.card.answers)
       ..addAll(userCard.userAnswers);
     return GestureDetector(
-      onTap: (){
-        print(userCard.toString());
-        Navigator.pushNamed(
-            context,
-            ModifyCardPage.routeName,
-          arguments: ModifyCardPageArguments(userCard)
-        );
+      onTap: () {
+        Navigator.pushNamed(context, ModifyCardPage.routeName,
+            arguments: ModifyCardPageArguments(userCard));
       },
       child: ListView.separated(
         shrinkWrap: true,
@@ -73,7 +65,12 @@ class ListCardPageState extends State<ListCardPage> {
         itemCount: answers.length,
         itemBuilder: (BuildContext context, int index) {
           Answer answer = answers[index];
-          return ListTile(title: Center(child: Text("${answer.text}", style: TextStyle(fontSize: 14),)));
+          return ListTile(
+              title: Center(
+                  child: Text(
+            "${answer.text}",
+            style: TextStyle(fontSize: 14),
+          )));
         },
         separatorBuilder: (BuildContext context, int index) {
           return Divider(
@@ -92,29 +89,29 @@ class ListCardPageState extends State<ListCardPage> {
         style: TextStyle(fontSize: 12, color: Colors.grey));
   }
 
-  bool _doesCardContainsString(UserCard card, String searchTerm){
+  bool _doesCardContainsString(UserCard card, String searchTerm) {
     DeckCard deckCard = card.card;
-    List<Answer> answers = List.of(deckCard.answers)
-      ..addAll(card.userAnswers);
+    List<Answer> answers = List.of(deckCard.answers)..addAll(card.userAnswers);
     List<String> cardStrings = [
       deckCard.question,
       deckCard.hint,
     ];
-    if (deckCard.languageCode == LANGUAGE_CODE_JAPANESE){
-      String possibleKanaString = deckCard.hint == null ? deckCard.question: deckCard.hint;
+    if (deckCard.languageCode == LANGUAGE_CODE_JAPANESE) {
+      String possibleKanaString =
+          deckCard.hint == null ? deckCard.question : deckCard.hint;
       cardStrings.add(getRomConversion(possibleKanaString));
     }
 
-    for (Answer answer in answers){
-      if (deckCard.answerLanguageCode == LANGUAGE_CODE_JAPANESE){
+    for (Answer answer in answers) {
+      if (deckCard.answerLanguageCode == LANGUAGE_CODE_JAPANESE) {
         cardStrings.add(getRomConversion(answer.text));
       }
       cardStrings.add(answer.text);
     }
 
-    for (String cardString in cardStrings){
-      if (cardString != null && cardString.isNotEmpty){
-        if (getTrimmedLowerString(cardString).contains(searchTerm)){
+    for (String cardString in cardStrings) {
+      if (cardString != null && cardString.isNotEmpty) {
+        if (getTrimmedLowerString(cardString).contains(searchTerm)) {
           return true;
         }
       }
@@ -122,22 +119,19 @@ class ListCardPageState extends State<ListCardPage> {
     return false;
   }
 
-  List<UserCard> _filterCards(List<UserCard> cards, String searchText){
+  List<UserCard> _filterCards(List<UserCard> cards, String searchText) {
     List<UserCard> filteredCards = [];
-    for (UserCard card in cards){
-      if (_doesCardContainsString(card, searchText)){
+    for (UserCard card in cards) {
+      if (_doesCardContainsString(card, searchText)) {
         filteredCards.add(card);
       }
     }
     return filteredCards;
   }
 
-
   Widget _renderCardList(List<UserCard> cards, String textFilter) {
-    if (cards == null){
-
-    }
-    if (textFilter != null && textFilter.isNotEmpty){
+    if (cards == null) {}
+    if (textFilter != null && textFilter.isNotEmpty) {
       filteredCards = _filterCards(cards, textFilter);
     } else {
       filteredCards = cards;
@@ -164,24 +158,19 @@ class ListCardPageState extends State<ListCardPage> {
     );
   }
 
-  Widget _renderResearchBar(){
-    if (_isSearching){
+  Widget _renderResearchBar() {
+    if (_isSearching) {
       return Padding(
         padding: const EdgeInsets.all(8.0),
         child: TextField(
           controller: _textEditingController,
           style: TextStyle(color: Colors.white),
           decoration: InputDecoration(
-            hintStyle: TextStyle(
-              color: Colors.white60
-            ),
-            hintText: LocalizationWidget.of(context).getLocalizeValue('enter_search_word'),
+              hintStyle: TextStyle(color: Colors.white60),
+              hintText: LocalizationWidget.of(context)
+                  .getLocalizeValue('enter_search_word'),
               border: new UnderlineInputBorder(
-                  borderSide: new BorderSide(
-                      color: Colors.white
-                  )
-              )
-          ),
+                  borderSide: new BorderSide(color: Colors.white))),
         ),
       );
     }
@@ -199,7 +188,7 @@ class ListCardPageState extends State<ListCardPage> {
           IconButton(
             icon: Icon(Icons.search),
             onPressed: () {
-              if (_isSearching){
+              if (_isSearching) {
                 _textEditingController.clear();
               }
               setState(() {
@@ -216,12 +205,14 @@ class ListCardPageState extends State<ListCardPage> {
               AsyncSnapshot<List<UserCard>> cardSnapshot) {
             switch (cardSnapshot.connectionState) {
               case ConnectionState.waiting:
-                return Center(child: Text(LocalizationWidget.of(context).getLocalizeValue('loading')));
+                return Center(
+                    child: Text(LocalizationWidget.of(context)
+                        .getLocalizeValue('loading')));
               case ConnectionState.done:
-                if (cardSnapshot.hasData && cardSnapshot.data.isNotEmpty){
+                if (cardSnapshot.hasData && cardSnapshot.data.isNotEmpty) {
                   return Column(
                     children: <Widget>[
-                                          //TODO add filters ?
+                      //TODO add filters ?
 
 //                      Container(
 //                        decoration: BoxDecoration(
@@ -247,16 +238,20 @@ class ListCardPageState extends State<ListCardPage> {
 //
 //                        ),
 //                      ),
-                      Expanded(child: _renderCardList(cardSnapshot.data, _textEditingController.text)),
+                      Expanded(
+                          child: _renderCardList(
+                              cardSnapshot.data, _textEditingController.text)),
                     ],
                   );
                 }
                 return Center(
-                  child: Text(LocalizationWidget.of(context).getLocalizeValue('no_card_create_one')),
+                  child: Text(LocalizationWidget.of(context)
+                      .getLocalizeValue('no_card_create_one')),
                 );
               default:
                 return Center(
-                  child: Text(LocalizationWidget.of(context).getLocalizeValue('no_card_create_one')),
+                  child: Text(LocalizationWidget.of(context)
+                      .getLocalizeValue('no_card_create_one')),
                 );
             }
           }),

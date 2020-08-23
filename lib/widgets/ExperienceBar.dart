@@ -33,6 +33,7 @@ class ExperienceBar extends StatelessWidget {
             child: Text(
               skill,
               textAlign: TextAlign.left,
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
           ),
           ClipRRect(
@@ -51,9 +52,12 @@ class ExperienceBar extends StatelessWidget {
                   ),
                 ),
               )),
+          Center(child: Text("${progress.currentXp} / ${progress.maxXp} xp")),
           Center(
-              child:
-                  Text("level ${progress.currentLevel} / ${progress.maxLevel}"))
+              child: Text(
+            "level ${progress.currentLevel} / ${progress.maxLevel}",
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ))
         ],
       ),
     );

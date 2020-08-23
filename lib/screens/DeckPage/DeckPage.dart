@@ -342,27 +342,46 @@ class DeckPageState extends State<DeckPage> {
                   ),
                   actions: <Widget>[
                     // action button
-                    IconButton(
-                      icon: Icon(Icons.public),
-                      color: deckData.isPublic
-                          ? Color(COLOR_ORANGE)
-                          : Color(COLOR_GREY),
-                      onPressed: () {
-                        if (deckData.cards.length == 0) {
-                          Get.snackbar(
-                              LocalizationWidget.of(context)
-                                  .getLocalizeValue('empty_deck'),
-                              LocalizationWidget.of(context)
-                                  .getLocalizeValue('empty_deck_publish_error'),
-                              snackPosition: SnackPosition.BOTTOM);
-                          return;
+                    FutureBuilder(
+                      future: userCards,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<List<UserCard>> userCardSnap) {
+                        switch (userCardSnap.connectionState) {
+                          case ConnectionState.waiting:
+                            return Container();
+                          case ConnectionState.done:
+                            if (!userCardSnap.hasData) {
+                              return Container();
+                            }
+                            return IconButton(
+                              icon: Icon(Icons.public),
+                              color: deckData.isPublic
+                                  ? Color(COLOR_ORANGE)
+                                  : Color(COLOR_GREY),
+                              onPressed: () {
+                                if (userCardSnap.data.length == 0) {
+                                  Get.snackbar(
+                                      LocalizationWidget.of(context)
+                                          .getLocalizeValue('empty_deck'),
+                                      LocalizationWidget.of(context)
+                                          .getLocalizeValue(
+                                              'empty_deck_publish_error'),
+                                      snackPosition: SnackPosition.BOTTOM);
+                                  return;
+                                }
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        PublishDeckDialog(
+                                          deck: deckData,
+                                        ));
+                              },
+                            );
+                          case ConnectionState.none:
+                            return Container();
+                          default:
+                            return Container();
                         }
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) =>
-                                PublishDeckDialog(
-                                  deck: deckData,
-                                ));
                       },
                     ),
                   ],

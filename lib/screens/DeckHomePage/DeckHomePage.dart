@@ -146,7 +146,8 @@ class DeckHomePageState extends State<DeckHomePage> {
   Widget _renderDeckReviewCount(Deck deck) {
     return FutureBuilder(
       future: personalDeckCounts,
-      builder: (BuildContext context, AsyncSnapshot<dynamic> reviewCountSnap) {
+      builder: (BuildContext context,
+          AsyncSnapshot<List<UserCardReviewCount>> reviewCountSnap) {
         switch (reviewCountSnap.connectionState) {
           case ConnectionState.waiting:
             return Center(
@@ -215,7 +216,6 @@ class DeckHomePageState extends State<DeckHomePage> {
           AsyncSnapshot<List<UserCard>> allCardsSnapshot) {
         switch (allCardsSnapshot.connectionState) {
           case ConnectionState.done:
-            print(allCardsSnapshot.data);
             if (allCardsSnapshot.data == null ||
                 allCardsSnapshot.data.length == 0) {
               return Container();

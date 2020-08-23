@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
+
 import 'package:benkyou/models/DeckTheme.dart';
 import 'package:benkyou/models/Sentence.dart';
-import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
 import 'package:benkyou/screens/ThemePages/ThemeLearningHomePage.dart';
 import 'package:benkyou/screens/ThemePages/Writing/ThemeWritingPartPage.dart';
 import 'package:benkyou/screens/ThemePages/Writing/ThemeWritingPartPageArguments.dart';
@@ -17,7 +17,6 @@ import 'package:benkyou/widgets/ThemeTransitionDialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 
 class ThemeListeningPartPage extends StatefulWidget {
   static const routeName = '/themes/listening';
@@ -43,14 +42,16 @@ class ThemeListeningPartPageState extends State<ThemeListeningPartPage>
   int _nbErrors = 0;
   int nbSentences;
 
-
   @override
   void initState() {
     super.initState();
     _initSentences();
-    WidgetsBinding.instance.addPostFrameCallback((_) async{
-      showDialog(context: context, builder: (BuildContext context) => ThemeTransitionDialog(name: 'Listening comprehension'));
-      Future.delayed(Duration(seconds: 1), (){
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) =>
+              ThemeTransitionDialog(name: 'Listening comprehension'));
+      Future.delayed(Duration(seconds: 1), () {
         Navigator.of(context).pop();
       });
     });
@@ -59,13 +60,13 @@ class ThemeListeningPartPageState extends State<ThemeListeningPartPage>
   void _initSentences() async {
     _sentences = getRandomThemeSentencesRequest(widget.chosenTheme.id, 2);
     sentences = await _sentences;
-    _possibleAnswersPerSentence = _generatePossibleAnswersForSentences(sentences);
+    _possibleAnswersPerSentence =
+        _generatePossibleAnswersForSentences(sentences);
     nbSentences = sentences.length;
   }
 
-
-  void _handleAnswer(isAnswer){
-    if (isAnswer){
+  void _handleAnswer(isAnswer) {
+    if (isAnswer) {
       _nbSuccess++;
       _isCorrect = true;
     } else {
@@ -74,12 +75,12 @@ class ThemeListeningPartPageState extends State<ThemeListeningPartPage>
     }
     setState(() {
       _badOpacity = 0;
-      _answerContainerHeight =  MediaQuery.of(context).size.height * 0.4;
+      _answerContainerHeight = MediaQuery.of(context).size.height * 0.4;
       _currentProgressValue = (_nbErrors + _nbSuccess) / nbSentences;
     });
   }
 
-  Widget _renderAnswerTile(String possibleAnswer, bool isAnswer){
+  Widget _renderAnswerTile(String possibleAnswer, bool isAnswer) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: ClipRRect(
@@ -107,7 +108,7 @@ class ThemeListeningPartPageState extends State<ThemeListeningPartPage>
   }
 
   __renderPossibleAnswerTile(String possibleAnswer, bool isAnswer) {
-    if (isAnswer){
+    if (isAnswer) {
       return _renderAnswerTile(possibleAnswer, true);
     }
     return AnimatedOpacity(
@@ -117,11 +118,11 @@ class ThemeListeningPartPageState extends State<ThemeListeningPartPage>
     );
   }
 
-  List<List<String>> _generatePossibleAnswersForSentences(List<Sentence> sentences){
+  List<List<String>> _generatePossibleAnswersForSentences(
+      List<Sentence> sentences) {
     Random random = new Random();
     List<List<String>> answersForSentences = [];
-    for (Sentence sent in sentences){
-      print(sent.hint);
+    for (Sentence sent in sentences) {
       String answer = sent.hint != null ? sent.hint : sent.text;
       List<String> possibleAnswers = [
         answer,
@@ -170,7 +171,8 @@ class ThemeListeningPartPageState extends State<ThemeListeningPartPage>
                             itemCount: possibleAnswers.length,
                             itemBuilder: (context, index) {
                               return __renderPossibleAnswerTile(
-                                  possibleAnswers[index], possibleAnswers[index] == answer);
+                                  possibleAnswers[index],
+                                  possibleAnswers[index] == answer);
                             }))
                   ],
                 ),
@@ -185,15 +187,16 @@ class ThemeListeningPartPageState extends State<ThemeListeningPartPage>
 
   Widget _renderAnswer(Sentence sentence) {
     return GestureDetector(
-      onTap: (){
-        if (sentences.length > 1){
+      onTap: () {
+        if (sentences.length > 1) {
           sentences.removeAt(0);
           _possibleAnswersPerSentence.removeAt(0);
         } else {
-          Navigator.of(context).pushNamed(ThemeWritingPartPage.routeName, arguments: ThemeWritingPartPageArguments(widget.chosenTheme));
+          Navigator.of(context).pushNamed(ThemeWritingPartPage.routeName,
+              arguments: ThemeWritingPartPageArguments(widget.chosenTheme));
         }
         setState(() {
-          _answerContainerHeight =  0;
+          _answerContainerHeight = 0;
           _badOpacity = 1;
         });
       },
@@ -208,7 +211,7 @@ class ThemeListeningPartPageState extends State<ThemeListeningPartPage>
             vsync: this,
             child: Container(
               decoration: BoxDecoration(
-                color: _isCorrect ? Colors.green: Colors.red,
+                color: _isCorrect ? Colors.green : Colors.red,
               ),
               height: _answerContainerHeight,
               width: double.infinity,
@@ -221,13 +224,18 @@ class ThemeListeningPartPageState extends State<ThemeListeningPartPage>
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Icon(_isCorrect ? Icons.check : Icons.close, color: Colors.white, size: 40,),
+                          Icon(
+                            _isCorrect ? Icons.check : Icons.close,
+                            color: Colors.white,
+                            size: 40,
+                          ),
                           Padding(
                             padding: const EdgeInsets.only(left: 30),
                             child: Center(
                               child: Text(
                                 _isCorrect ? "正解" : "違う",
-                                style: TextStyle(color: Colors.white, fontSize: 24),
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 24),
                               ),
                             ),
                           ),
@@ -242,12 +250,14 @@ class ThemeListeningPartPageState extends State<ThemeListeningPartPage>
                             Text(
                               sentence.text,
                               textAlign: TextAlign.center,
-                              style: TextStyle(color: Colors.white70, fontSize: 20),
+                              style: TextStyle(
+                                  color: Colors.white70, fontSize: 20),
                             ),
                             Text(
                               sentence.hint,
                               textAlign: TextAlign.center,
-                              style: TextStyle(color: Colors.white70, fontSize: 14),
+                              style: TextStyle(
+                                  color: Colors.white70, fontSize: 14),
                             ),
                           ]),
                         ),
@@ -268,11 +278,12 @@ class ThemeListeningPartPageState extends State<ThemeListeningPartPage>
     return WillPopScope(
       onWillPop: () {
         Get.dialog(ConfirmDialog(
-          action: LocalizationWidget.of(context).getLocalizeValue('quit_session'),
+          action:
+              LocalizationWidget.of(context).getLocalizeValue('quit_session'),
           positiveCallback: () async {
             Navigator.of(context).pushNamedAndRemoveUntil(
-                ThemeLearningHomePage.routeName, ModalRoute.withName(ThemeLearningHomePage.routeName)
-            );
+                ThemeLearningHomePage.routeName,
+                ModalRoute.withName(ThemeLearningHomePage.routeName));
           },
           shouldAlwaysPop: false,
         ));
@@ -280,7 +291,8 @@ class ThemeListeningPartPageState extends State<ThemeListeningPartPage>
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(LocalizationWidget.of(context).getLocalizeValue('dialog')),
+          title:
+              Text(LocalizationWidget.of(context).getLocalizeValue('dialog')),
         ),
         body: GestureDetector(
           onTap: () {
@@ -301,15 +313,16 @@ class ThemeListeningPartPageState extends State<ThemeListeningPartPage>
                   );
                 case ConnectionState.done:
                   if (sentences != null && sentences.length > 0) {
-                    return _renderListeningPage(sentences[0], _possibleAnswersPerSentence[0]);
+                    return _renderListeningPage(
+                        sentences[0], _possibleAnswersPerSentence[0]);
                   }
                   return Center(
-                    child: Text(
-                        LocalizationWidget.of(context).getLocalizeValue('generic_error')));
+                      child: Text(LocalizationWidget.of(context)
+                          .getLocalizeValue('generic_error')));
                 default:
                   return Center(
-                    child: Text(
-                        LocalizationWidget.of(context).getLocalizeValue('empty')),
+                    child: Text(LocalizationWidget.of(context)
+                        .getLocalizeValue('empty')),
                   );
               }
             },

@@ -55,7 +55,6 @@ class ReviewPageState extends State<ReviewPage>
   List<UserCard> _remainingCards;
   List<int> _processedCardIds;
   List<UserCardProcessedInfo> _processedCards;
-  int currentIndex;
   int nbErrors = 0;
   int nbSuccess = 0;
   UserCard currentCard;
@@ -69,8 +68,7 @@ class ReviewPageState extends State<ReviewPage>
     _remainingCards = widget.cards;
     _processedCards = [];
     _processedCardIds = [];
-    currentIndex = generateRandomIndex(_remainingCards);
-    currentCard = _remainingCards[currentIndex];
+    currentCard = _remainingCards[0];
     //first card
     initializeTts();
     _answerController = new TextEditingController();
@@ -96,7 +94,7 @@ class ReviewPageState extends State<ReviewPage>
   }
 
   void updateCurrentUserCard(UserCard updatedCard) {
-    _remainingCards[currentIndex] = updatedCard;
+    _remainingCards[0] = updatedCard;
     setState(() {
       currentCard = updatedCard;
     });
@@ -355,12 +353,11 @@ class ReviewPageState extends State<ReviewPage>
     _isPlayingAnimation = false;
     //Remove only if correct
     if (isAnswerCorrect) {
-      _remainingCards.removeAt(currentIndex);
+      _remainingCards.removeAt(0);
     }
     int length = _remainingCards.length;
     if (length > 0) {
-      currentIndex = (length == 1) ? 0 : generateRandomIndex(_remainingCards);
-      currentCard = _remainingCards[currentIndex];
+      currentCard = _remainingCards[0];
       bool toEnglish = currentCard.card.answerLanguageCode == 0;
       String toSpeak = currentCard.card.question.split(',')[0];
       _speak(toSpeak, toEnglish ? "ja-JP" : "en-GB");
@@ -654,12 +651,6 @@ class ReviewPageState extends State<ReviewPage>
                                     LANGUAGE_CODE_JAPANESE,
                                 _answerController,
                                 _hiddenAnswerController);
-                            print("text here :  ${res.text}");
-                            print(
-                                "base offset ${_answerController.selection.baseOffset}");
-                            print(
-                                "extent offset ${_answerController.selection.extentOffset}");
-                            print("extent offset ${res.offset}");
                             setState(() {
                               _answerController.value =
                                   _answerController.value.copyWith(
