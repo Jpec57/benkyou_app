@@ -1,3 +1,4 @@
+import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/MainDrawer.dart';
 import 'package:flutter/material.dart';
 
@@ -27,8 +28,32 @@ class _DrawPageState extends State<DrawPage> {
       ),
       drawer: MainDrawer(),
       body: Container(
-        child: Center(
-          child: Text("Not implemented yet."),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              "力",
+              style: TextStyle(fontSize: 30),
+            ),
+            Center(
+              child: Text("Not implemented yet."),
+            ),
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(color: Color(COLOR_ANTRACITA)),
+                child: Stack(
+                  children: [
+                    Center(
+                      child: Text(
+                        "Hello",
+                        style: Theme.of(context).textTheme.headline5,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            )
+          ],
         ),
       ),
     );

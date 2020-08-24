@@ -13,6 +13,11 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="benkyou"
         android:icon="@mipmap/launcher_icon">
+        <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version"/>
+        <meta-data android:name="com.google.android.gms.vision.DEPENDENCIES" android:value="barcode"/>
+        <meta-data
+            android:name="com.google.mlkit.vision.DEPENDENCIES"
+            android:value="ocr" />
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

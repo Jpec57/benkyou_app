@@ -407,38 +407,45 @@ String getJapaneseTranslation(String val,
     return '';
   }
   Map<int, Map<String, String>> alphabet =
-  (val[0].toUpperCase() == val[0]) ? KATAKANA_ALPHABET : HIRAGANA_ALPHABET;
+      (val[0].toUpperCase() == val[0]) ? KATAKANA_ALPHABET : HIRAGANA_ALPHABET;
   return getConversion(val, alphabet,
-      onlyJapanese: onlyJapanese, hasSpace: hasSpace) ??
+          onlyJapanese: onlyJapanese, hasSpace: hasSpace) ??
       '';
 }
 
 String getHiragana(String val,
-    {bool isStaticAnalysis = false, bool onlyJapanese = false, bool hasSpace = true}) {
+    {bool isStaticAnalysis = false,
+    bool onlyJapanese = false,
+    bool hasSpace = true}) {
   return getConversion(val, HIRAGANA_ALPHABET,
-      onlyJapanese: onlyJapanese, hasSpace: hasSpace,
+      onlyJapanese: onlyJapanese,
+      hasSpace: hasSpace,
       isStaticAnalysis: isStaticAnalysis);
 }
 
 String getKatakana(String val,
-    {bool isStaticAnalysis = false, bool onlyJapanese = false, bool hasSpace = true}) {
+    {bool isStaticAnalysis = false,
+    bool onlyJapanese = false,
+    bool hasSpace = true}) {
   return getConversion(val, KATAKANA_ALPHABET,
-      onlyJapanese: onlyJapanese, hasSpace: hasSpace,
-      isStaticAnalysis: isStaticAnalysis
-  );
+      onlyJapanese: onlyJapanese,
+      hasSpace: hasSpace,
+      isStaticAnalysis: isStaticAnalysis);
 }
 
 String getRomaji(int val) {
   return rom[val];
 }
 
-String getRomConversion(String val, {bool onlyRomaji = false, isStaticAnalysis = true}) {
+String getRomConversion(String val,
+    {bool onlyRomaji = false, isStaticAnalysis = true}) {
   var res = "";
   RegExp regExp = RegExp(' |　');
   List<String> listStrings = val.split(regExp);
   int nbStrings = listStrings.length;
   for (var i = 0; i < nbStrings; i++) {
-    String wordRes = getWordToRom(listStrings[i], onlyRomaji: onlyRomaji, isStaticAnalysis: isStaticAnalysis);
+    String wordRes = getWordToRom(listStrings[i],
+        onlyRomaji: onlyRomaji, isStaticAnalysis: isStaticAnalysis);
     if (wordRes != null) {
       res += wordRes;
     }
@@ -449,7 +456,8 @@ String getRomConversion(String val, {bool onlyRomaji = false, isStaticAnalysis =
   return res;
 }
 
-String getWordToRom(String word, {bool onlyRomaji = false, bool isStaticAnalysis = false}) {
+String getWordToRom(String word,
+    {bool onlyRomaji = false, bool isStaticAnalysis = false}) {
   String res = "";
 
   int wordLength = word.length;
@@ -461,7 +469,7 @@ String getWordToRom(String word, {bool onlyRomaji = false, bool isStaticAnalysis
     }
     if ((ch == TSUh || ch == TSUk)) {
       String nextch =
-      (j + 1 < wordLength) ? getRomaji(word.codeUnitAt(j + 1)) : null;
+          (j + 1 < wordLength) ? getRomaji(word.codeUnitAt(j + 1)) : null;
       if (nextch != null) {
         res += nextch.substring(0, 1);
         j++;
@@ -515,8 +523,9 @@ String getSafeSubstring(String str, int startIndex, int size, int strLength) {
 }
 
 String getConversion(String val, alphabet,
-    {bool isStaticAnalysis = false, bool onlyJapanese = false,
-      bool hasSpace = true}) {
+    {bool isStaticAnalysis = false,
+    bool onlyJapanese = false,
+    bool hasSpace = true}) {
   int i = 0;
   String res = "";
   String tmpChar;
@@ -594,6 +603,27 @@ String getConversion(String val, alphabet,
   return res;
 }
 
+int getJapaneseOffsetFromString(String text, alphabet, int offset) {
+  int japaneseLength = 0;
+  int textLength = text.length;
+  for (int i = 0; i < textLength; i++) {
+    print("char ${text[i]}");
+    bool isJapaneseCharacter = false;
+    for (int j = 1; j < 5; j++) {
+      if (getMatchingCharacterInAlphabet(j, text[i], alphabet) != null) {
+        japaneseLength += j;
+        isJapaneseCharacter = true;
+        break;
+      }
+    }
+    if (!isJapaneseCharacter) {
+      japaneseLength++;
+    }
+  }
+  print("japaneseLength $japaneseLength");
+  return japaneseLength;
+}
+
 //TODO improve cursor position to be able to modify in a japanese word
 // https://github.com/Jpec57/benkyou/issues/16
 int getCursorPosition(String before, String after) {
@@ -617,7 +647,7 @@ int getCursorPosition(String before, String after) {
   return i + 1 + bonus;
 }
 
-class InputTextOffset{
+class InputTextOffset {
   String text;
   int offset;
 
@@ -635,12 +665,12 @@ onConversionChanged(
     rawInputController.text = getRomConversion(text, onlyRomaji: false);
     print(getRomConversion(text, onlyRomaji: false));
     String japanese =
-    getJapaneseTranslation(rawInputController.text, hasSpace: true);
+        getJapaneseTranslation(rawInputController.text, hasSpace: true);
     int japaneseLength = japanese.length;
-    int length = japaneseLength > originalLength ? japaneseLength : originalLength;
+    int length =
+        japaneseLength > originalLength ? japaneseLength : originalLength;
 //    int cursor = getCursorPosition(previousValue, japanese);
     return InputTextOffset(japanese, length);
-
   }
   return InputTextOffset(text, text.length);
 }

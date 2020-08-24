@@ -83,4 +83,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics:17.2.2'
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+//    implementation 'com.google.firebase:firebase-core:17.2.0'
+//    implementation 'com.google.firebase:firebase-ml-common:22.0.0'
+//    implementation 'com.google.firebase:firebase-ml-vision:24.0.0'
+//    implementation 'com.google.firebase:firebase-ml-vision-barcode-model:16.0.1'
+
+//    implementation 'com.google.firebase:firebase-ml-vision:24.0.0'
+//    implementation 'com.google.android.gms:play-services-mlkit-text-recognition:20.0.0'
 }

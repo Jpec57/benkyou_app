@@ -32,6 +32,7 @@ import 'package:benkyou/screens/ProfilePage/ProfilePage.dart';
 import 'package:benkyou/screens/ProfilePage/ProfilePageArguments.dart';
 import 'package:benkyou/screens/ReviewPage/ReviewPage.dart';
 import 'package:benkyou/screens/ReviewPage/ReviewPageArguments.dart';
+import 'package:benkyou/screens/TestPage.dart';
 import 'package:benkyou/screens/ThemePages/Listening/ThemeListeningPartPage.dart';
 import 'package:benkyou/screens/ThemePages/Listening/ThemeListeningPartPageArguments.dart';
 import 'package:benkyou/screens/ThemePages/ThemeLearningHomePage.dart';
@@ -81,6 +82,7 @@ class App extends StatelessWidget {
         textTheme: TextTheme(
           headline3: TextStyle(
               fontSize: 22, color: Colors.white, fontWeight: FontWeight.w600),
+          headline4: TextStyle(fontSize: 22, color: Colors.white),
           headline5: TextStyle(fontSize: 14, color: Colors.white),
           headline6: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
@@ -265,6 +267,7 @@ class App extends StatelessWidget {
         DeckHomePage.routeName: (context) => DeckHomePage(),
         DrawPage.routeName: (context) => DrawPage(),
         HomePage.routeName: (context) => HomePage(),
+        TestPage.routeName: (context) => TestPage(),
       },
     );
   }
@@ -287,7 +290,9 @@ void main() {
     () => runApp(App(
 //          home: ThemeTinderWordPage(theme: new DeckTheme.fromJson({"id":21,"name":"Work","backgroundImg": null,"deck":{"id":59}})),
       home: HomePage(),
-//      home: CreateGrammarCardPage(),
+//      home: CreateCardPage(
+//        deckId: 127,
+//      ),
     )),
     onError: (Object error, StackTrace stackTrace) {
       try {

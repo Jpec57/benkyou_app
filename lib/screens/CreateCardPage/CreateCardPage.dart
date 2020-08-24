@@ -12,6 +12,7 @@ import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/AddAnswerCardWidget.dart';
 import 'package:benkyou/widgets/JishoList.dart';
 import 'package:benkyou/widgets/Localization.dart';
+import 'package:benkyou/widgets/TextRecognizerIcon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -230,39 +231,72 @@ class CreateCardPageState extends State<CreateCardPage> {
                       padding: EdgeInsets.only(left: 50.0, right: 50.0),
                       child: Column(
                         children: [
-                          Container(
-                            child: Padding(
-                              padding: EdgeInsets.only(top: 10.0),
-                              child: TextFormField(
-                                controller: _kanaEditingController,
-                                focusNode: _kanaFocusNode,
-                                validator: (value) {
-                                  if (_isQuestionErrorVisible) {
-                                    return _error;
-                                  }
-                                  return null;
-                                },
-                                onChanged: (value) {
-                                  _isQuestionErrorVisible = false;
-                                  bool needtoBeParsed = stringNeedToBeParsed(
-                                      _kanaEditingController.text);
-                                  setState(() {
-                                    japanese = needtoBeParsed
-                                        ? "${getJapaneseTranslation(_kanaEditingController.text) ?? ''}"
-                                        : '';
-                                  });
-                                  _formKey.currentState.validate();
-                                },
-                                textInputAction: TextInputAction.next,
-                                autofocus: true,
-                                decoration: InputDecoration(
-                                    labelText: LocalizationWidget.of(context)
-                                        .getLocalizeValue(
-                                            'kana_kanji_tranform'),
-                                    labelStyle: TextStyle(fontSize: 20),
-                                    hintText: LocalizationWidget.of(context)
-                                        .getLocalizeValue('enter_kana_kanji')),
-                              ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 10.0),
+                            child: Row(
+                              children: [
+                                Flexible(
+                                  child: TextFormField(
+                                    controller: _kanaEditingController,
+                                    focusNode: _kanaFocusNode,
+                                    validator: (value) {
+                                      if (_isQuestionErrorVisible) {
+                                        return _error;
+                                      }
+                                      return null;
+                                    },
+                                    onChanged: (value) {
+                                      _isQuestionErrorVisible = false;
+                                      bool needtoBeParsed =
+                                          stringNeedToBeParsed(
+                                              _kanaEditingController.text);
+                                      setState(() {
+                                        japanese = needtoBeParsed
+                                            ? "${getJapaneseTranslation(_kanaEditingController.text) ?? ''}"
+                                            : '';
+                                      });
+                                      _formKey.currentState.validate();
+                                    },
+                                    textInputAction: TextInputAction.next,
+                                    autofocus: true,
+                                    decoration: InputDecoration(
+                                        labelText:
+                                            LocalizationWidget.of(context)
+                                                .getLocalizeValue(
+                                                    'kana_kanji_tranform'),
+                                        labelStyle: TextStyle(fontSize: 20),
+                                        hintText: LocalizationWidget.of(context)
+                                            .getLocalizeValue(
+                                                'enter_kana_kanji')),
+                                  ),
+                                ),
+                                Container(
+                                  height: 50,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: Center(
+                                      child: ClipOval(
+                                        child: Container(
+                                          color: Color(COLOR_ORANGE),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: TextRecognizerIcon(
+                                              color: Colors.white,
+                                              size: 20,
+                                              callback: (kanji) {
+                                                setState(() {
+                                                  _kanaEditingController.text =
+                                                      kanji;
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
                           ),
                           Container(

@@ -19,8 +19,18 @@ class LocalizationWidget {
   static Map<String, Map<String, String>> _localizedValues = {
     EN_LOCALE: {
       'home': 'Home',
+      'result': 'Result',
+      'gap_sentences': 'Gap sentences',
+      'grammar_card_explanation':
+          'A grammar card consists of a grammar point and gap fill sentences including this grammar point. To help memorizing, the grammar you will be asked to fill the gap. ',
+      'extract_text': 'Extract text from picture',
       'loading': 'Loading...',
+      'no_photo': 'No photo. Please select one.',
       'next': 'Next',
+      'extract': 'Extract',
+      'extract_sentence': 'Extract sentence',
+      'extracted_text': 'Extracted text',
+      'no_extracted_text': 'No extracted text',
       'search_term_grammar':
           'Enter something as grammar point name to look for example sentences.',
       'remaining': 'Remaining',

@@ -5,7 +5,9 @@ import 'package:benkyou/services/translator/TextConversion.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/ColorizedTextForm.dart';
 import 'package:benkyou/widgets/InfoIcon.dart';
+import 'package:benkyou/widgets/Localization.dart';
 import 'package:benkyou/widgets/SentenceSeekerWidget.dart';
+import 'package:benkyou/widgets/TextRecognizerIcon.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -201,9 +203,11 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Row(
+            mainAxisSize: MainAxisSize.max,
             children: [
               Text(
-                "Gap Sentences",
+                LocalizationWidget.of(context)
+                    .getLocalizeValue('gap_sentences'),
                 style: Theme.of(context).textTheme.headline6,
               ),
               Padding(
@@ -211,6 +215,25 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
                 child: InfoIcon(
                   info:
                       "Surround with curly braces the part you want later to fill. Usually, it matches the grammar point name content.",
+                ),
+              ),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: ClipOval(
+                      child: Container(
+                        padding: EdgeInsets.all(5),
+                        color: Color(COLOR_MUSTARD),
+                        child: TextRecognizerIcon(
+                          size: 20,
+                          color: Colors.black,
+                          callback: sentenceCallback,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               )
             ],
@@ -221,40 +244,51 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
                 shrinkWrap: true,
                 itemCount: _controllers.length,
                 itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Container(
-                      child: Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                top: 8.0, bottom: 8.0, left: 8, right: 20),
-                            child: Text(
-                              "${index + 1}",
-                              style: Theme.of(context).textTheme.headline6,
-                            ),
-                          ),
-                          Flexible(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey),
-                                  borderRadius: BorderRadius.circular(12)),
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 8.0, right: 8.0, top: 12, bottom: 12),
-                                child: ColorizedTextForm(
-                                    cursorColor: Colors.black,
-                                    style: TextStyle(color: Colors.black),
-                                    focusNode: _focusNodes[index],
-                                    controller: _controllers[index],
-                                    regexAnnotation: RegexAnnotation(
-                                        style: TextStyle(color: Colors.red),
-                                        regex: new RegExp(r"{[^}]+}")),
-                                    maxLines: null),
+                  return Dismissible(
+                    key: UniqueKey(),
+                    onDismissed: (direction) {
+                      _controllers.removeAt(index);
+                      _focusNodes.removeAt(index);
+                      setState(() {});
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Container(
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 8.0, bottom: 8.0, left: 8, right: 20),
+                              child: Text(
+                                "${index + 1}",
+                                style: Theme.of(context).textTheme.headline6,
                               ),
                             ),
-                          ),
-                        ],
+                            Flexible(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey),
+                                    borderRadius: BorderRadius.circular(12)),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 8.0,
+                                      right: 8.0,
+                                      top: 12,
+                                      bottom: 12),
+                                  child: ColorizedTextForm(
+                                      cursorColor: Colors.black,
+                                      style: TextStyle(color: Colors.black),
+                                      focusNode: _focusNodes[index],
+                                      controller: _controllers[index],
+                                      regexAnnotation: RegexAnnotation(
+                                          style: TextStyle(color: Colors.red),
+                                          regex: new RegExp(r"{[^}]+}")),
+                                      maxLines: null),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   );
@@ -293,7 +327,9 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
     }
     // Use "{...}"
     String searchWord = getJapaneseTranslation(_grammarPointName.text);
-    text = text.replaceAll(searchWord, "{$searchWord}");
+    if (searchWord.isNotEmpty) {
+      text = text.replaceAll(searchWord, "{$searchWord}");
+    }
     if (lastController != null) {
       lastController.text = text;
     } else {

@@ -233,7 +233,57 @@ class _GrammarDeckPageState extends State<GrammarDeckPage> {
         });
   }
 
+  Widget _renderNoCardOrCardsWidget(bool hasCard) {
+    if (hasCard) {
+      return Column(
+        children: [
+          _renderReviewSchedule(),
+          Padding(
+            padding: const EdgeInsets.only(top: 15),
+            child: _renderSRSPreview(),
+          ),
+        ],
+        mainAxisSize: MainAxisSize.min,
+      );
+    }
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Center(
+            child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                LocalizationWidget.of(context)
+                    .getLocalizeValue('empty_deck_create_card'),
+                textAlign: TextAlign.center,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 20.0),
+                child: Text(
+                    LocalizationWidget.of(context)
+                        .getLocalizeValue('grammar_card_explanation'),
+                    textAlign: TextAlign.center),
+              ),
+            ],
+          ),
+        )),
+      ],
+    );
+  }
+
   Widget _renderPage(Deck deck) {
+    Widget defaultBackground = Container(
+      height: MediaQuery.of(context).size.height * 0.25 + 50,
+      width: double.infinity,
+      decoration: BoxDecoration(
+          image: DecorationImage(
+        fit: BoxFit.fitWidth,
+        image: AssetImage("lib/imgs/blackboard.png"),
+      )),
+    );
     return Expanded(
       child: Container(
         color: Color(COLOR_DARK_BLUE),
@@ -255,9 +305,9 @@ class _GrammarDeckPageState extends State<GrammarDeckPage> {
                         )),
                       );
                     }
-                    return Container();
+                    return defaultBackground;
                   default:
-                    return Container();
+                    return defaultBackground;
                 }
               },
             ),
@@ -304,10 +354,25 @@ class _GrammarDeckPageState extends State<GrammarDeckPage> {
                                             color: Color(COLOR_DARK_GREY)),
                                       ),
                                     ),
-                                    _renderReviewSchedule(),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 15),
-                                      child: _renderSRSPreview(),
+                                    FutureBuilder(
+                                      future: _deckCards,
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot<List<UserCard>>
+                                              deckCardSnap) {
+                                        switch (deckCardSnap.connectionState) {
+                                          case ConnectionState.done:
+                                            if (deckCardSnap.hasData &&
+                                                deckCardSnap.data.length > 0) {
+                                              return _renderNoCardOrCardsWidget(
+                                                  true);
+                                            }
+                                            return _renderNoCardOrCardsWidget(
+                                                false);
+                                          default:
+                                            return _renderNoCardOrCardsWidget(
+                                                false);
+                                        }
+                                      },
                                     ),
                                   ],
                                 ),
@@ -402,53 +467,13 @@ class _GrammarDeckPageState extends State<GrammarDeckPage> {
                     if (deckSnapshot.hasData) {
                       return _renderPage(deckSnapshot.data);
                     }
-                    return Center(
-                        child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            LocalizationWidget.of(context)
-                                .getLocalizeValue('empty_deck_create_card'),
-                            textAlign: TextAlign.center,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
-                            child: Text(
-                                LocalizationWidget.of(context)
-                                    .getLocalizeValue('card_explanation'),
-                                textAlign: TextAlign.center),
-                          ),
-                        ],
-                      ),
-                    ));
+                    return Container();
                   case ConnectionState.none:
                     return Center(
                         child: Text(LocalizationWidget.of(context)
                             .getLocalizeValue('no_internet_connection')));
                   default:
-                    return Center(
-                        child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            LocalizationWidget.of(context)
-                                .getLocalizeValue('empty_deck_create_card'),
-                            textAlign: TextAlign.center,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
-                            child: Text(
-                                LocalizationWidget.of(context)
-                                    .getLocalizeValue('card_explanation'),
-                                textAlign: TextAlign.center),
-                          ),
-                        ],
-                      ),
-                    ));
+                    return Container();
                 }
               },
             )
