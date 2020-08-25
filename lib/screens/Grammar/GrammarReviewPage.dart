@@ -132,6 +132,7 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
       if (!isFormComplete) {
         return false;
       }
+      print("gap sentence $gapSentence");
       RegExp regExp = new RegExp(r"{[^}]+}");
       Iterable<RegExpMatch> matches = regExp.allMatches(gapSentence);
       int i = 0;
@@ -141,6 +142,8 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
         String desiredString =
             gapSentence.substring(match.start + 1, match.end - 1).trim();
         String givenAnswer = _answerControllers[i].text.trim();
+        print("desired string $desiredString");
+
         correctAnswers.add(desiredString);
         if (desiredString != givenAnswer &&
             getHiragana(givenAnswer) != desiredString &&
@@ -463,7 +466,9 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    validate(_remainingCards[0].grammarCard.gapSentences[0]);
+                    validate(_remainingCards[0]
+                        .grammarCard
+                        .gapSentences[_sentenceIndex]);
                   },
                   child: Container(
                       decoration: BoxDecoration(

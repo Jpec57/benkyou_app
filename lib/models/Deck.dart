@@ -14,6 +14,7 @@ class Deck {
   bool isOfficial;
   bool isMuted;
   int cardType;
+  String cover;
 
   Deck.fromJson(Map<String, dynamic> json)
       : id = json['id'],
@@ -27,6 +28,7 @@ class Deck {
         isPublic = json['isPublic'] ?? false,
         isOfficial = json['isOfficial'] ?? false,
         isMuted = json.containsKey('isMuted') ? json['isMuted'] : false,
+        cover = json.containsKey('cover') ? json['cover'] : null,
         cardType = json.containsKey('cardType') ? json['cardType'] : 0;
 
   Deck.fromId(Map<String, dynamic> json) : id = json['id'];

@@ -47,6 +47,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      new GlobalKey<RefreshIndicatorState>();
   Future<List<UserCard>> _vocabFuture;
   Future<List<UserCard>> _grammarFuture;
   Future<Kanji> _kanjiFuture;
@@ -71,10 +73,11 @@ class _HomePageState extends State<HomePage> {
   Widget _renderBigIcon(IconData icon) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
+        double iconSize =
+            constraints.biggest.height > 40 ? 40 : constraints.biggest.height;
         return Padding(
           padding: const EdgeInsets.all(8.0),
-          child:
-              Icon(icon, color: Colors.white, size: constraints.biggest.height),
+          child: Icon(icon, color: Colors.white, size: iconSize),
         );
       },
     );
@@ -87,7 +90,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Expanded(child: _renderBigIcon(icon)),
+            _renderBigIcon(icon),
             Padding(
               padding: const EdgeInsets.only(bottom: 5.0, top: 8),
               child: Text(
@@ -331,6 +334,11 @@ class _HomePageState extends State<HomePage> {
     return list[0];
   }
 
+  Future<void> _refresh() async {
+    reload();
+    setState(() {});
+  }
+
   Widget _renderRandomKanjiWidget() {
     Widget defaultWidget = Expanded(
       child: Column(
@@ -405,8 +413,10 @@ class _HomePageState extends State<HomePage> {
                         (BuildContext context, AsyncSnapshot<Kanji> kanjiSnap) {
                       switch (kanjiSnap.connectionState) {
                         case ConnectionState.waiting:
-                          return Center(
-                            child: CircularProgressIndicator(),
+                          return Expanded(
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
                           );
                         case ConnectionState.done:
                           if (!kanjiSnap.hasData) {

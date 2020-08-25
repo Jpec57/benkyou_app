@@ -139,6 +139,49 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  Widget _renderLastActivityWidget(User user) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          RichText(
+            textAlign: TextAlign.center,
+            text: new TextSpan(
+              style: new TextStyle(
+                fontSize: 12.0,
+                color: Colors.black,
+              ),
+              children: <TextSpan>[
+                new TextSpan(
+                    text: 'Last review: ',
+                    style: new TextStyle(fontWeight: FontWeight.bold)),
+                new TextSpan(
+                    text:
+                        "${user.lastActivity != null ? user.lastActivity.toLocal() : 'no activity registered.'}"),
+              ],
+            ),
+          ),
+          RichText(
+            textAlign: TextAlign.center,
+            text: new TextSpan(
+              style: new TextStyle(
+                fontSize: 12.0,
+                color: Colors.black,
+              ),
+              children: <TextSpan>[
+                new TextSpan(
+                    text: "Consecutive days: ",
+                    style: new TextStyle(fontWeight: FontWeight.bold)),
+                new TextSpan(text: "${user.consecutiveActivityDays ?? 0}"),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _renderLessonsWidget(Size phoneSize) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -224,6 +267,11 @@ class ProfilePageState extends State<ProfilePage> {
                       .getLocalizeValue('loading')));
             case ConnectionState.done:
               User user = snapshot.data;
+              if (user == null) {
+                return Center(
+                    child: Text(LocalizationWidget.of(context)
+                        .getLocalizeValue('error')));
+              }
               return Container(
                 color: Colors.white,
                 child: SingleChildScrollView(
@@ -247,6 +295,7 @@ class ProfilePageState extends State<ProfilePage> {
                                 ),
                               ),
                               _renderKeyNumberRow(user),
+                              _renderLastActivityWidget(user),
                               _renderLessonsWidget(phoneSize),
                               _renderExperienceResumeWidget(user),
                             ],

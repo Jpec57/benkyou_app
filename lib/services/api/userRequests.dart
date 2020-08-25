@@ -78,7 +78,6 @@ Future<User> getMyProfileRequest() async {
     return null;
   }
   var json = await getJsonFromHttpResponse(response);
-  print(json);
   return User.fromJson(json);
 }
 

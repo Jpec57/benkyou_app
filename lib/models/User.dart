@@ -7,6 +7,8 @@ class User {
   int oralComprehensionXp;
   int writingComprehensionXp;
   int writingExpressionXp;
+  DateTime lastActivity;
+  int consecutiveActivityDays;
   List<User> likes;
   List<User> likedUsers;
 
@@ -18,7 +20,19 @@ class User {
         vocabXp = json['vocabularyXp'],
         oralComprehensionXp = json['oralComprehensionXp'],
         writingComprehensionXp = json['writingComprehensionXp'],
+        lastActivity =
+            json.containsKey('lastActivity') && json['lastActivity'] != null
+                ? DateTime.parse(json['lastActivity'])
+                : null,
+        consecutiveActivityDays = json.containsKey('consecutiveActivityDays')
+            ? json['consecutiveActivityDays']
+            : 0,
         writingExpressionXp = json['writingExpressionXp'];
+
+  @override
+  String toString() {
+    return 'User{id: $id, username: $username, email: $email, grammarXp: $grammarXp, vocabXp: $vocabXp, oralComprehensionXp: $oralComprehensionXp, writingComprehensionXp: $writingComprehensionXp, writingExpressionXp: $writingExpressionXp, lastActivity: $lastActivity, consecutiveActivityDays: $consecutiveActivityDays, likes: $likes, likedUsers: $likedUsers}';
+  }
 }
 
 List<User> decodeUserJsonArray(array) {

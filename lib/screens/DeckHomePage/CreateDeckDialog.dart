@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:benkyou/models/Deck.dart';
 import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
+import 'package:benkyou/screens/DeckPage/DeckPage.dart';
+import 'package:benkyou/screens/DeckPage/DeckPageArguments.dart';
 import 'package:benkyou/services/api/deckRequests.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/ConfirmDialog.dart';
@@ -56,14 +58,16 @@ class CreateDeckDialogState extends State<CreateDeckDialog> {
     if (!_isSubmitting) {
       _isSubmitting = true;
       if (_formKey.currentState.validate()) {
-        await postDeck(_titleController.text, _descriptionController.text,
+        Deck deck = await postDeck(
+            _titleController.text, _descriptionController.text,
             deckId: widget.isEditing ? widget.deck.id : null,
             isGrammar: widget.isGrammar);
         Navigator.pop(context);
         if (widget.callback != null) {
           widget.callback();
         } else {
-          Navigator.pushReplacementNamed(context, DeckHomePage.routeName);
+          Navigator.pushReplacementNamed(context, DeckPage.routeName,
+              arguments: DeckPageArguments(deck.id));
         }
       }
       _isSubmitting = false;
@@ -171,17 +175,20 @@ class CreateDeckDialogState extends State<CreateDeckDialog> {
                               .getLocalizeValue('enter_description'),
                           labelStyle: TextStyle()),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 15.0),
-                      child: RaisedButton(
-                        color: Color(COLOR_DARK_GREY),
-                        child: Text(
-                          "Upload deck background".toUpperCase(),
-                          style: TextStyle(color: Colors.white),
+                    Visibility(
+                      visible: widget.deck != null,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 15.0),
+                        child: RaisedButton(
+                          color: Color(COLOR_DARK_GREY),
+                          child: Text(
+                            "Upload deck background".toUpperCase(),
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          onPressed: () async {
+                            uploadDeckBackground(widget.deck.id);
+                          },
                         ),
-                        onPressed: () async {
-                          uploadDeckBackground(widget.deck.id);
-                        },
                       ),
                     ),
                     _renderDeleteDeckButton(),

@@ -79,8 +79,7 @@ class DeckHomePageState extends State<DeckHomePage> {
     }
     showDialog(
         context: context,
-        builder: (BuildContext context) =>
-            CreateDeckDialog(callback: this.reloadDecks));
+        builder: (BuildContext context) => CreateDeckDialog());
   }
 
   void reloadDecks() {

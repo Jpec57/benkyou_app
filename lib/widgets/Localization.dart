@@ -20,6 +20,9 @@ class LocalizationWidget {
     EN_LOCALE: {
       'home': 'Home',
       'result': 'Result',
+      'choose_picture': 'Choose a picture and select a text area',
+      'take_photo': 'Take a photo',
+      'take_gallery': 'Take from gallery',
       'gap_sentences': 'Gap sentences',
       'grammar_card_explanation':
           'A grammar card consists of a grammar point and gap fill sentences including this grammar point. To help memorizing, the grammar you will be asked to fill the gap. ',
@@ -27,9 +30,9 @@ class LocalizationWidget {
       'loading': 'Loading...',
       'no_photo': 'No photo. Please select one.',
       'next': 'Next',
-      'extract': 'Extract',
+      'extract': 'Extract text',
       'extract_sentence': 'Extract sentence',
-      'extracted_text': 'Extracted text',
+      'organize_extracted_text': 'Organize extracted text',
       'no_extracted_text': 'No extracted text',
       'search_term_grammar':
           'Enter something as grammar point name to look for example sentences.',
