@@ -401,6 +401,18 @@ const rom = {
   12509: "po"
 };
 
+String getDynamicHiraganaConversion(String val,
+    {bool onlyJapanese = false, bool hasSpace = true}) {
+  if (val.isEmpty) {
+    return '';
+  }
+  String romaji = getRomConversion(val);
+  Map<int, Map<String, String>> alphabet = HIRAGANA_ALPHABET;
+  return getConversion(romaji, alphabet,
+          onlyJapanese: onlyJapanese, hasSpace: hasSpace) ??
+      '';
+}
+
 String getJapaneseTranslation(String val,
     {bool onlyJapanese = false, bool hasSpace = true}) {
   if (val.isEmpty) {
@@ -607,7 +619,6 @@ int getJapaneseOffsetFromString(String text, alphabet, int offset) {
   int japaneseLength = 0;
   int textLength = text.length;
   for (int i = 0; i < textLength; i++) {
-    print("char ${text[i]}");
     bool isJapaneseCharacter = false;
     for (int j = 1; j < 5; j++) {
       if (getMatchingCharacterInAlphabet(j, text[i], alphabet) != null) {
@@ -620,7 +631,6 @@ int getJapaneseOffsetFromString(String text, alphabet, int offset) {
       japaneseLength++;
     }
   }
-  print("japaneseLength $japaneseLength");
   return japaneseLength;
 }
 

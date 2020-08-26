@@ -90,7 +90,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _renderBigIcon(icon),
+            Expanded(child: _renderBigIcon(icon)),
             Padding(
               padding: const EdgeInsets.only(bottom: 5.0, top: 8),
               child: Text(

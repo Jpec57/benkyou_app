@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:benkyou/models/Answer.dart';
-import 'package:benkyou/models/DeckCard.dart';
 import 'package:benkyou/models/UserCard.dart';
 import 'package:benkyou/models/UserCardProcessedInfo.dart';
 import 'package:benkyou/screens/DeckHomePage/DeckHomePage.dart';
@@ -15,6 +14,7 @@ import 'package:benkyou/services/translator/TextConversion.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/utils/string.dart';
 import 'package:benkyou/widgets/CompleteTextDialog.dart';
+import 'package:benkyou/widgets/KanaTextForm.dart';
 import 'package:benkyou/widgets/LoadingCircle.dart';
 import 'package:benkyou/widgets/Localization.dart';
 import 'package:flare_flutter/flare_actor.dart';
@@ -626,54 +626,30 @@ class ReviewPageState extends State<ReviewPage>
                 children: <Widget>[
                   Expanded(
                     child: Container(
-                      color: _setFieldColor(),
-                      child: TextFormField(
-                        focusNode: _focusNode,
-                        textInputAction: TextInputAction.go,
-                        autocorrect: false,
-                        onFieldSubmitted: (value) {
-                          if (_answerController.text.isNotEmpty) {
-                            _processAnswer();
-                          } else {
-                            _shakeAnimationController
-                                .forward()
-                                .whenComplete(() {
-                              _shakeAnimationController.reset();
-                            });
-                          }
-                        },
-                        onChanged: (text) {
-                          //TODO Add converter
-                          if (false && text.isNotEmpty) {
-                            InputTextOffset res = onConversionChanged(
-                                text,
-                                currentCard.card.answerLanguageCode ==
-                                    LANGUAGE_CODE_JAPANESE,
-                                _answerController,
-                                _hiddenAnswerController);
-                            setState(() {
-                              _answerController.value =
-                                  _answerController.value.copyWith(
-                                text: res.text,
-                                selection: TextSelection(
-                                    baseOffset: res.offset,
-                                    extentOffset: res.offset),
-                              );
-                            });
-                          }
-                        },
-                        controller: _answerController,
-                        decoration: InputDecoration(
-                          hintText: toEnglish
-                              ? LocalizationWidget.of(context)
-                                  .getLocalizeValue('answer')
-                              : '答え',
-                          labelStyle: TextStyle(),
-                        ),
-                        textAlign: TextAlign.center,
-                        autofocus: true,
-                      ),
-                    ),
+                        color: _setFieldColor(),
+                        child: KanaTextForm(
+                          boxDecoration: BoxDecoration(
+                            color: _setFieldColor(),
+                            border: Border.all(color: Colors.grey),
+                          ),
+                          isKana: !toEnglish,
+                          controller: _answerController,
+                          focusNode: _focusNode,
+                          textInputAction: TextInputAction.go,
+                          textAlign: TextAlign.center,
+                          onFieldSubmitted: (value) {
+                            if (_answerController.text.isNotEmpty) {
+                              _processAnswer();
+                            } else {
+                              _shakeAnimationController
+                                  .forward()
+                                  .whenComplete(() {
+                                _shakeAnimationController.reset();
+                              });
+                            }
+                          },
+                          autofocus: true,
+                        )),
                   ),
                   GestureDetector(
                     onTap: () {

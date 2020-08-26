@@ -90,7 +90,7 @@ class ThemeListeningPartPageState extends State<ThemeListeningPartPage>
             _handleAnswer(isAnswer);
           },
           child: Container(
-            color: Color(COLOR_MID_DARK_GREY),
+            color: Color(COLOR_ANTRACITA),
             child: ListTile(
               title: Center(
                 child: Text("$possibleAnswer",

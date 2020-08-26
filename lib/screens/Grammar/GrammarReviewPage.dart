@@ -14,6 +14,7 @@ import 'package:benkyou/services/api/cardRequests.dart';
 import 'package:benkyou/services/translator/TextConversion.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/utils/random.dart';
+import 'package:benkyou/widgets/KanaTextForm.dart';
 import 'package:benkyou/widgets/Localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +37,9 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
   bool _isHintVisible = false;
   bool _isAnswerVisible = false;
   bool _isAnswerCorrect = false;
+  String _error;
   List<TextEditingController> _answerControllers;
+  List<FocusNode> _focusNodes;
   List<UserCard> _remainingCards;
   List<UserCardProcessedInfo> _processedCards;
   List<int> _processedCardIds;
@@ -61,6 +64,9 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
     super.dispose();
     for (var controller in _answerControllers) {
       controller.dispose();
+    }
+    for (var node in _focusNodes) {
+      node.dispose();
     }
   }
 
@@ -98,6 +104,7 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
     setState(() {
       _isHintVisible = false;
       _isAnswerVisible = false;
+      _error = null;
     });
   }
 
@@ -171,6 +178,7 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
     int controllerIndex = 0;
     if (hasCardChanged) {
       _answerControllers = [];
+      _focusNodes = [];
     }
     for (int i = 0; i < length; i++) {
       var char = gapSentence[i];
@@ -197,17 +205,19 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
         subStrStartSize--;
         if (hasCardChanged) {
           _answerControllers.add(new TextEditingController());
+          _focusNodes.add(new FocusNode());
         }
         widgets.add(Container(
-          height: 40,
+          height: 30,
           child: IntrinsicWidth(
             child: TextFormField(
               decoration: InputDecoration(
                   contentPadding: EdgeInsets.only(top: -15.0),
                   hintText: "(${controllerIndex + 1})"),
               textAlign: TextAlign.center,
-              enabled: !_isAnswerVisible,
+              enabled: false,
               textAlignVertical: TextAlignVertical.top,
+              autofocus: false,
               controller: _answerControllers[controllerIndex],
               style: TextStyle(
                   fontSize: 20,
@@ -334,6 +344,23 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
     );
   }
 
+  void checkAnswers() {
+    bool isEmpty = false;
+    for (var controller in _answerControllers) {
+      if (controller.text.isEmpty) {
+        setState(() {
+          _error =
+              LocalizationWidget.of(context).getLocalizeValue('fields_empty');
+        });
+        isEmpty = true;
+        return;
+      }
+    }
+    if (!isEmpty) {
+      validate(_remainingCards[0].grammarCard.gapSentences[0]);
+    }
+  }
+
   Widget _renderGrammarPoint(DeckCard card, GrammarPointCard grammarCard) {
     String exampleSentence = "";
     if (grammarCard.gapSentences != null &&
@@ -416,25 +443,39 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
   List<Widget> _renderTextFormFields(List<TextEditingController> controllers) {
     List<Widget> list = [];
     int controllerLength = controllers.length;
+    if (_error != null) {
+      list.add(Padding(
+        padding: const EdgeInsets.only(bottom: 12),
+        child: Container(
+          child: Text(
+            _error,
+            style: TextStyle(color: Colors.red),
+          ),
+        ),
+      ));
+    }
     for (int i = 0; i < controllerLength - 1; i++) {
       list.add(Padding(
         padding: const EdgeInsets.only(bottom: 8.0),
         child: Card(
           child: Padding(
             padding: const EdgeInsets.only(left: 8.0, right: 8),
-            child: TextFormField(
-              validator: (value) {
-                if (value.isEmpty) {
-                  return LocalizationWidget.of(context)
-                      .getLocalizeValue("field_empty");
-                }
-                return null;
-              },
-              controller: controllers[i],
-              autofocus: i == 0,
-              decoration:
-                  InputDecoration(hintText: "Answer for field (${i + 1})"),
-              enabled: !_isAnswerVisible,
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: Text("(${i + 1})"),
+                ),
+                Flexible(
+                  child: KanaTextForm(
+                    controller: controllers[i],
+                    boxDecoration: BoxDecoration(),
+                    isReadOnly: _isAnswerVisible,
+                    autofocus: i == 0,
+                    focusNode: _focusNodes[i],
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -449,30 +490,26 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: Text("($controllerLength)"),
+                ),
                 Flexible(
-                  child: TextFormField(
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return LocalizationWidget.of(context)
-                            .getLocalizeValue("field_empty");
-                      }
-                      return null;
-                    },
+                  child: KanaTextForm(
                     controller: controllers[controllerLength - 1],
-                    decoration: InputDecoration(
-                        hintText: "Answer for field ($controllerLength)"),
-                    enabled: !_isAnswerVisible,
+                    boxDecoration: BoxDecoration(),
+                    isReadOnly: _isAnswerVisible,
+                    autofocus: false,
+                    focusNode: _focusNodes[controllerLength - 1],
                   ),
                 ),
                 GestureDetector(
                   onTap: () {
-                    validate(_remainingCards[0]
-                        .grammarCard
-                        .gapSentences[_sentenceIndex]);
+                    checkAnswers();
                   },
                   child: Container(
                       decoration: BoxDecoration(
-                          color: Colors.green,
+                          color: Color(COLOR_ANTRACITA),
                           borderRadius: BorderRadius.only(
                               topRight: Radius.circular(3),
                               bottomRight: Radius.circular(3))),
@@ -560,8 +597,7 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
                     visible: !isKeyboardVisible,
                     child: GestureDetector(
                       onTap: () {
-                        validate(
-                            _remainingCards[0].grammarCard.gapSentences[0]);
+                        checkAnswers();
                       },
                       child: Container(
                         color: Color(COLOR_ORANGE),

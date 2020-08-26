@@ -22,6 +22,7 @@ class _DrawPageState extends State<DrawPage> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: Text("Draw kanji"),
@@ -31,25 +32,27 @@ class _DrawPageState extends State<DrawPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              "力",
-              style: TextStyle(fontSize: 30),
-            ),
             Center(
               child: Text("Not implemented yet."),
             ),
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(color: Color(COLOR_ANTRACITA)),
-                child: Stack(
-                  children: [
-                    Center(
-                      child: Text(
-                        "Hello",
-                        style: Theme.of(context).textTheme.headline5,
-                      ),
-                    )
-                  ],
+            Padding(
+              padding: const EdgeInsets.all(30),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Container(
+                  width: size.width * 0.8,
+                  height: size.width * 0.8,
+                  decoration: BoxDecoration(color: Color(COLOR_ANTRACITA)),
+                  child: Stack(
+                    children: [
+                      Center(
+                        child: Text(
+                          "力",
+                          style: TextStyle(fontSize: 70, color: Colors.white),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
             )

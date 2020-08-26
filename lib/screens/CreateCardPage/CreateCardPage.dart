@@ -7,10 +7,10 @@ import 'package:benkyou/screens/DeckPage/DeckPageArguments.dart';
 import 'package:benkyou/services/api/cardRequests.dart';
 import 'package:benkyou/services/api/deckRequests.dart';
 import 'package:benkyou/services/localStorage/localStorageService.dart';
-import 'package:benkyou/services/translator/TextConversion.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/AddAnswerCardWidget.dart';
 import 'package:benkyou/widgets/JishoList.dart';
+import 'package:benkyou/widgets/KanaTextForm.dart';
 import 'package:benkyou/widgets/Localization.dart';
 import 'package:benkyou/widgets/TextRecognizerIcon.dart';
 import 'package:flutter/cupertino.dart';
@@ -36,7 +36,6 @@ class CreateCardPageState extends State<CreateCardPage> {
   Future<Deck> _deck;
   final _formKey = GlobalKey<FormState>();
   String _bottomButtonLabel = '';
-  String japanese = '';
   String _error = '';
   String _researchWord = '';
   PageController _pageController =
@@ -98,15 +97,13 @@ class CreateCardPageState extends State<CreateCardPage> {
       String hint;
       String question;
       if (_kanaEditingController.text.trim().isNotEmpty) {
-        hint = stringNeedToBeParsed(_kanaEditingController.text)
-            ? getJapaneseTranslation(_kanaEditingController.text)
-            : _kanaEditingController.text;
+        hint = _kanaEditingController.text.trim();
       }
       if (_kanjiEditingController.text.trim().isEmpty) {
         question = hint;
         hint = '';
       } else {
-        question = _kanjiEditingController.text;
+        question = _kanjiEditingController.text.trim();
       }
       List<Map> answers = [];
       List<String> answerStrings =
@@ -125,7 +122,6 @@ class CreateCardPageState extends State<CreateCardPage> {
       map.putIfAbsent('isReversible', () => true);
       map.putIfAbsent('answers', () => answers);
       postCard(widget.deckId, map);
-      //TODO
       setLastUsedDeckIdFromLocalStorage(widget.deckId);
 
       setState(() {
@@ -144,19 +140,13 @@ class CreateCardPageState extends State<CreateCardPage> {
 
   Future<String> _validateCreateCard() async {
     String hint = _kanaEditingController.text.trim();
-    String question = stringNeedToBeParsed(_kanaEditingController.text)
-        ? getJapaneseTranslation(_kanjiEditingController.text)
-        : _kanjiEditingController.text;
+    String question = _kanjiEditingController.text.trim().isEmpty
+        ? _kanaEditingController.text.trim()
+        : _kanjiEditingController.text.trim();
     if (question == null || question.trim().isEmpty) {
       //If no kanji is given, kana can be considered as question
       if (hint == null || hint.isEmpty) {
         return ERR_KANA_KANJI;
-      }
-      if (stringNeedToBeParsed(hint)) {
-        hint = japanese;
-      } else {}
-      if (hint.isEmpty) {
-        return ERR_KANA;
       }
       question = hint;
     }
@@ -182,8 +172,6 @@ class CreateCardPageState extends State<CreateCardPage> {
     return null;
   }
 
-  //TODO WORK ABOVE
-
   void insertTranslationsCallback(JishoTranslation translation) {
     setState(() {
       _kanjiEditingController.text = translation.kanji;
@@ -192,21 +180,6 @@ class CreateCardPageState extends State<CreateCardPage> {
       _error = null;
     });
     answerWidgetKey.currentState.setNewAnswers(translation.english);
-  }
-
-  bool stringNeedToBeParsed(String text) {
-    int startLower = "a".codeUnitAt(0);
-    int endLower = "z".codeUnitAt(0);
-    int startUpper = "A".codeUnitAt(0);
-    int endUpper = "Z".codeUnitAt(0);
-    for (var i = 0; i < text.length; i++) {
-      int char = text.codeUnitAt(i);
-      if ((startLower <= char && char <= endLower) ||
-          (startUpper <= char && char <= endUpper)) {
-        return true;
-      }
-    }
-    return false;
   }
 
   Widget _renderForm() {
@@ -231,79 +204,61 @@ class CreateCardPageState extends State<CreateCardPage> {
                       padding: EdgeInsets.only(left: 50.0, right: 50.0),
                       child: Column(
                         children: [
-                          Padding(
-                            padding: EdgeInsets.only(top: 10.0),
-                            child: Row(
-                              children: [
-                                Flexible(
-                                  child: TextFormField(
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.only(bottom: 8.0, top: 10),
+                              child: Text(
+                                LocalizationWidget.of(context)
+                                    .getLocalizeValue('word_to_translate'),
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Flexible(
+                                  flex: 4,
+                                  child: KanaTextForm(
                                     controller: _kanaEditingController,
-                                    focusNode: _kanaFocusNode,
-                                    validator: (value) {
-                                      if (_isQuestionErrorVisible) {
-                                        return _error;
-                                      }
-                                      return null;
-                                    },
-                                    onChanged: (value) {
-                                      _isQuestionErrorVisible = false;
-                                      bool needtoBeParsed =
-                                          stringNeedToBeParsed(
-                                              _kanaEditingController.text);
-                                      setState(() {
-                                        japanese = needtoBeParsed
-                                            ? "${getJapaneseTranslation(_kanaEditingController.text) ?? ''}"
-                                            : '';
-                                      });
-                                      _formKey.currentState.validate();
-                                    },
-                                    textInputAction: TextInputAction.next,
                                     autofocus: true,
-                                    decoration: InputDecoration(
-                                        labelText:
-                                            LocalizationWidget.of(context)
-                                                .getLocalizeValue(
-                                                    'kana_kanji_tranform'),
-                                        labelStyle: TextStyle(fontSize: 20),
-                                        hintText: LocalizationWidget.of(context)
-                                            .getLocalizeValue(
-                                                'enter_kana_kanji')),
-                                  ),
-                                ),
-                                Container(
-                                  height: 50,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: Center(
-                                      child: ClipOval(
-                                        child: Container(
-                                          color: Color(COLOR_ORANGE),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: TextRecognizerIcon(
-                                              color: Colors.white,
-                                              size: 20,
-                                              callback: (kanji) {
-                                                setState(() {
-                                                  _kanaEditingController.text =
-                                                      kanji;
-                                                });
-                                              },
-                                            ),
+                                    textInputAction: TextInputAction.next,
+                                    focusNode: _kanaFocusNode,
+                                  )),
+                              Container(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  child: Center(
+                                    child: ClipOval(
+                                      child: Container(
+                                        color: Color(COLOR_ORANGE),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: TextRecognizerIcon(
+                                            color: Colors.white,
+                                            size: 20,
+                                            callback: (kanji) {
+                                              setState(() {
+                                                _kanaEditingController.text =
+                                                    kanji;
+                                              });
+                                            },
                                           ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                )
-                              ],
-                            ),
+                                ),
+                              )
+                            ],
                           ),
                           Container(
                             child: Padding(
                               padding: EdgeInsets.only(bottom: 10.0),
                               child: Column(children: <Widget>[
-                                Text(japanese),
                                 TextFormField(
                                   focusNode: _kanjiFocusNode,
                                   controller: _kanjiEditingController,
@@ -395,7 +350,6 @@ class CreateCardPageState extends State<CreateCardPage> {
     _kanjiEditingController.clear();
     _kanaEditingController.clear();
     setState(() {
-      japanese = '';
       _researchWord = '';
       _bottomButtonLabel =
           LocalizationWidget.of(context).getLocalizeValue('next').toUpperCase();

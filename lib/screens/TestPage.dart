@@ -1,7 +1,5 @@
-import 'package:benkyou/services/translator/TextConversion.dart';
 import 'package:benkyou/widgets/KanaTextForm.dart';
 import 'package:benkyou/widgets/MainDrawer.dart';
-import 'package:benkyou/widgets/TextRecognizerIcon.dart';
 import 'package:flutter/material.dart';
 
 class TestPage extends StatefulWidget {
@@ -14,22 +12,25 @@ class TestPage extends StatefulWidget {
 class _TestPageState extends State<TestPage> {
   TextEditingController _kanaController;
   FocusNode _focusNode;
+  bool isKana = true;
 
   @override
   void initState() {
     super.initState();
-    _kanaController = new TextEditingController(text: 'saikou');
+    _kanaController = new TextEditingController();
     _kanaController.addListener(() {
-      print('----------------');
-
-      int japaneseOffset = getJapaneseOffsetFromString(_kanaController.text,
-          HIRAGANA_ALPHABET, _kanaController.selection.extentOffset);
-      print("res $japaneseOffset");
-//      _kanaController.selection = TextSelection.fromPosition(
-//        TextPosition(offset: japaneseOffset),
-//      );
-      print(
-          "change ${_kanaController.text} offset ${_kanaController.selection.extentOffset}");
+//      final text = _kanaController.text;
+//      print(text);
+//      String japanese = getDynamicHiraganaConversion(text);
+//      final origPosition = _kanaController.selection.start;
+//      final origLength = text.length;
+//      final newLength = japanese.length;
+//      final newPosition = newLength - (origLength - origPosition);
+//
+//      _kanaController.value = _kanaController.value.copyWith(
+//          text: japanese,
+//          selection: TextSelection(
+//              baseOffset: newPosition, extentOffset: newPosition));
     });
     _focusNode = new FocusNode();
   }
@@ -41,11 +42,18 @@ class _TestPageState extends State<TestPage> {
     _focusNode.dispose();
   }
 
+  void changeKana() {
+    setState(() {
+      isKana = !isKana;
+    });
+    print(isKana);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Draw kanji"),
+        title: Text("TEST"),
       ),
       drawer: MainDrawer(),
       body: Container(
@@ -53,35 +61,19 @@ class _TestPageState extends State<TestPage> {
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.green,
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(12)),
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 8.0, right: 8.0, top: 12, bottom: 12),
-                  child: KanaTextForm(
-                      cursorColor: Colors.black,
-                      focusNode: _focusNode,
-                      onChanged: (text) async {
-                        print(text);
-                        return;
-                      },
-                      style: TextStyle(),
-                      controller: _kanaController,
-                      maxLines: null),
-                ),
-              ),
+              child: KanaTextForm(
+                  cursorColor: Colors.black,
+                  isKana: isKana,
+                  focusNode: _focusNode,
+                  controller: _kanaController,
+                  maxLines: null),
             ),
-            Center(
-              child: Text("Not implemented yet."),
-            ),
-            TextRecognizerIcon(
-              callback: (str) {
-                print("Callback $str");
+            RaisedButton(
+              onPressed: () {
+                changeKana();
               },
-            ),
+              child: Text("Hello"),
+            )
           ],
         ),
       ),

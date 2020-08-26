@@ -113,7 +113,7 @@ class ThemeTinderWordPageState extends State<ThemeTinderWordPage>
         ? Text(
             card.hint,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 20),
+            style: TextStyle(fontSize: 20, color: Colors.white),
           )
         : Container();
     return [
@@ -121,7 +121,7 @@ class ThemeTinderWordPageState extends State<ThemeTinderWordPage>
       Text(
         card.answers[0].text,
         textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 18),
+        style: TextStyle(fontSize: 18, color: Colors.white),
       ),
     ];
   }
@@ -131,7 +131,7 @@ class ThemeTinderWordPageState extends State<ThemeTinderWordPage>
       borderRadius: BorderRadius.circular(10),
       child: Container(
         decoration: BoxDecoration(
-          color: Color(COLOR_DARK_MUSTARD),
+          color: Color(COLOR_ANTRACITA),
           border: Border.all(color: Colors.black54),
           borderRadius: BorderRadius.circular(10),
         ),
@@ -144,7 +144,7 @@ class ThemeTinderWordPageState extends State<ThemeTinderWordPage>
                 Text(
                   card.question,
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 30),
+                  style: TextStyle(fontSize: 30, color: Colors.white),
                 ),
                 ..._renderTinderCardSolutionPart(card, isCurrentCard)
               ],
