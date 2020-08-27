@@ -406,7 +406,12 @@ String getDynamicHiraganaConversion(String val,
   if (val.isEmpty) {
     return '';
   }
+  //if character is a kanji, skip
+  if (doesStringContainsKanji(val)) {
+    return val;
+  }
   String romaji = getRomConversion(val);
+  print(romaji);
   Map<int, Map<String, String>> alphabet = HIRAGANA_ALPHABET;
   return getConversion(romaji, alphabet,
           onlyJapanese: onlyJapanese, hasSpace: hasSpace) ??
@@ -534,6 +539,18 @@ String getSafeSubstring(String str, int startIndex, int size, int strLength) {
       : str.substring(startIndex, startIndex + size);
 }
 
+//https://stackoverflow.com/questions/43418812/check-whether-a-string-contains-japanese-chinese-characters
+bool doesStringContainsJapaneseCharacters(String input) {
+  RegExp regExp = new RegExp("/[\u3040-\u30ff]|[\uff66-\uff9f]/");
+  return regExp.hasMatch(input) || doesStringContainsKanji(input);
+}
+
+bool doesStringContainsKanji(String input) {
+  RegExp regExp =
+      new RegExp("/[\u3400-\u4dbf]|[\u4e00-\u9fff]|[\uf900-\ufaff]/");
+  return regExp.hasMatch(input);
+}
+
 String getConversion(String val, alphabet,
     {bool isStaticAnalysis = false,
     bool onlyJapanese = false,
@@ -552,6 +569,7 @@ String getConversion(String val, alphabet,
     if (wordLength == 0) {
       continue;
     }
+
     while (i < wordLength) {
       //3 letter syllable
       tmpChar = getMatchingCharacterInAlphabet(

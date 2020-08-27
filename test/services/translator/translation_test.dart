@@ -537,9 +537,9 @@ void main() {
       });
 
       group("Kanji", () {
-        test("Word with kanji", () {
-          String test = "";
-          expect(test, "");
+        test("Word with kanji に対して", () {
+          String test = getDynamicHiraganaConversion("に対して");
+          expect(test, "に対して");
         });
       });
     });

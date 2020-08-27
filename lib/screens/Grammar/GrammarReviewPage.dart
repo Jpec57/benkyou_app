@@ -139,7 +139,6 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
       if (!isFormComplete) {
         return false;
       }
-      print("gap sentence $gapSentence");
       RegExp regExp = new RegExp(r"{[^}]+}");
       Iterable<RegExpMatch> matches = regExp.allMatches(gapSentence);
       int i = 0;
@@ -149,12 +148,23 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
         String desiredString =
             gapSentence.substring(match.start + 1, match.end - 1).trim();
         String givenAnswer = _answerControllers[i].text.trim();
-        print("desired string $desiredString");
+
+        String replacement = "ありません";
+        RegExp exp = new RegExp(r"ない$");
+        RegExpMatch res = exp.firstMatch(desiredString);
+        String politeDesiredString;
+        if (res != null) {
+          politeDesiredString =
+              (desiredString.substring(0, res.start) + replacement);
+        }
 
         correctAnswers.add(desiredString);
-        if (desiredString != givenAnswer &&
-            getHiragana(givenAnswer) != desiredString &&
-            getKatakana(givenAnswer) != desiredString) {
+        if (
+            //Politeness
+            givenAnswer != politeDesiredString &&
+                desiredString != givenAnswer &&
+                getHiragana(givenAnswer) != desiredString &&
+                getKatakana(givenAnswer) != desiredString) {
           isCorrect = false;
         }
         _answerControllers[i].text = desiredString;
