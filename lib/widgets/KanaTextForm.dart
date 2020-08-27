@@ -51,6 +51,7 @@ class KanaEditableText extends EditableText {
 
                 controller.value = controller.value.copyWith(
                     text: japanese,
+                    composing: TextRange(start: 0, end: newPosition),
                     selection: TextSelection(
                         baseOffset: newPosition, extentOffset: newPosition));
               }

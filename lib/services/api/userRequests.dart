@@ -61,7 +61,7 @@ Future<bool> logoutRequest({bool shouldRedirect = false}) async {
       canHandleGenericErrors: false);
   await _resetSharedPreferences();
   if (shouldRedirect) {
-    Get.to(LoginPage());
+    Get.offAll(LoginPage());
   }
   if (!isRequestValid(response.statusCode)) {
     print(await getJsonFromHttpResponse(response));

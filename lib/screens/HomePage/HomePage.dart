@@ -71,15 +71,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _renderBigIcon(IconData icon) {
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        double iconSize =
-            constraints.biggest.height > 40 ? 40 : constraints.biggest.height;
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Icon(icon, color: Colors.white, size: iconSize),
-        );
-      },
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Icon(icon, color: Colors.white, size: 40),
     );
   }
 
@@ -90,7 +84,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Expanded(child: _renderBigIcon(icon)),
+            _renderBigIcon(icon),
             Padding(
               padding: const EdgeInsets.only(bottom: 5.0, top: 8),
               child: Text(
@@ -145,19 +139,22 @@ class _HomePageState extends State<HomePage> {
                       },
                       child: SectionContainer(
                           color: Color(COLOR_ORANGE),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Flexible(child: _renderBigIcon(icon)),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(bottom: 5.0, top: 8),
-                                child: Text(
-                                  text,
-                                  style: Theme.of(context).textTheme.headline5,
-                                ),
-                              )
-                            ],
+                          child: Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Flexible(child: _renderBigIcon(icon)),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      bottom: 5.0, top: 8),
+                                  child: Text(
+                                    text,
+                                    style:
+                                        Theme.of(context).textTheme.headline5,
+                                  ),
+                                )
+                              ],
+                            ),
                           ))),
                 ),
                 Align(
@@ -218,19 +215,22 @@ class _HomePageState extends State<HomePage> {
                       },
                       child: SectionContainer(
                           color: Color(COLOR_ORANGE),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Flexible(child: _renderBigIcon(icon)),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(bottom: 5.0, top: 8),
-                                child: Text(
-                                  text,
-                                  style: Theme.of(context).textTheme.headline5,
-                                ),
-                              )
-                            ],
+                          child: Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Flexible(child: _renderBigIcon(icon)),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      bottom: 5.0, top: 8),
+                                  child: Text(
+                                    text,
+                                    style:
+                                        Theme.of(context).textTheme.headline5,
+                                  ),
+                                )
+                              ],
+                            ),
                           ))),
                 ),
                 Align(
@@ -292,7 +292,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Expanded(child: sectionWidget),
+            sectionWidget,
             Padding(
               padding: const EdgeInsets.only(bottom: 5.0, top: 8),
               child: Text(
@@ -518,6 +518,7 @@ class _HomePageState extends State<HomePage> {
                     Expanded(
                       child: Row(
                         children: [
+                          //TODO
                           _renderVocabSectionWithNotif(
                               LocalizationWidget.of(context)
                                   .getLocalizeValue("vocabulary")),

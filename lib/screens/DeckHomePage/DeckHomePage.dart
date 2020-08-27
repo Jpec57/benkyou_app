@@ -1,16 +1,12 @@
-import 'dart:io';
-
 import 'package:benkyou/models/UserCard.dart';
 import 'package:benkyou/models/UserCardReviewCount.dart';
 import 'package:benkyou/screens/CreateCardPage/CreateCardPage.dart';
 import 'package:benkyou/screens/CreateCardPage/CreateCardPageArguments.dart';
 import 'package:benkyou/screens/DeckHomePage/CreateDeckDialog.dart';
-import 'package:benkyou/screens/LoginPage/LoginPage.dart';
 import 'package:benkyou/screens/ReviewPage/ReviewPage.dart';
 import 'package:benkyou/screens/ReviewPage/ReviewPageArguments.dart';
 import 'package:benkyou/services/api/cardRequests.dart';
 import 'package:benkyou/services/localStorage/localStorageService.dart';
-import 'package:benkyou/services/rest.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/ConnectedActionDialog.dart';
 import 'package:benkyou/widgets/InfoDialog.dart';
@@ -39,26 +35,6 @@ class DeckHomePageState extends State<DeckHomePage> {
   Future<List<UserCardReviewCount>> _awaitingCardCounts;
   Future<List<UserCard>> _allReviewCards;
   Future<int> _totalCount;
-
-  Future<List<Deck>> _fetchPersonalDecks() async {
-    List<Deck> parsedDecks = [];
-    HttpClientResponse response =
-        await getLocaleGetRequestResponse("/users/decks");
-    if (!isRequestValid(response.statusCode)) {
-      var jsonResponse = await getJsonFromHttpResponse(response);
-      if (response.statusCode == 401) {
-        Navigator.of(context).pushNamed(LoginPage.routeName);
-        return null;
-      }
-      return null;
-    }
-
-    List<dynamic> decks = await getJsonFromHttpResponse(response);
-    for (Map<String, dynamic> deck in decks) {
-      parsedDecks.add(Deck.fromJson(deck));
-    }
-    return parsedDecks;
-  }
 
   @override
   void initState() {

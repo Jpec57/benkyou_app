@@ -3,15 +3,14 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('Hiragana', () {
-
-    group('Particular case: ha', (){
+    group('Particular case: ha', () {
       test('wa dynamic', () {
-        String test = getHiragana('wa', isStaticAnalysis : false);
+        String test = getHiragana('wa', isStaticAnalysis: false);
         expect(test, "わ");
       });
 
       test('wa static', () {
-        String test = getHiragana('wa', isStaticAnalysis : true);
+        String test = getHiragana('wa', isStaticAnalysis: true);
         expect(test, "は");
       });
     });
@@ -28,7 +27,6 @@ void main() {
     });
     //END
 
-
     test('hedoro', () {
       String test = getHiragana('hedoro');
       expect(test, "へどろ");
@@ -39,61 +37,64 @@ void main() {
       expect(test, "ありがとう");
     });
 
-    group("Double consonants", (){
-      test("asatte", (){
+    group("Double consonants", () {
+      test("asatte", () {
         String test = getHiragana('asatte');
         expect(test, "あさって");
       });
 
-      test("zasshi", (){
+      test("zasshi", () {
         String test = getHiragana('zasshi');
         expect(test, "ざっし");
       });
 
-      test("zacchi", (){
+      test("zacchi", () {
         String test = getHiragana('zacchi');
         expect(test, "ざっち");
       });
 
-      test("zattsu", (){
+      test("zattsu", () {
         String test = getHiragana('zattsu');
         expect(test, "ざっつ");
       });
 
-      test("seppuku", (){
+      test("seppuku", () {
         String test = getHiragana('seppuku');
         expect(test, "せっぷく");
       });
 
-      test("haragaetta", (){
+      test("haragaetta", () {
         String test = getHiragana('haragaetta');
         expect(test, "はらがえった");
       });
     });
 
-    group("Bad examples", (){
-      test("nar", (){
+    group("Bad examples", () {
+      test("nar", () {
         String test = getHiragana('nar');
         expect(test, "なr");
       });
-      test("nvm", (){
+      test("nvm", () {
         String test = getHiragana('nvm');
         expect(test, "んvm");
       });
     });
 
-    group("Full sentences", (){
-      test("kore ha kamisama ga sazukete kudasatte ni chigainai", (){
-        String test = getHiragana('kore ha kamisama ga sazukete kudasatte ni chigainai');
+    group("Full sentences", () {
+      test("kore ha kamisama ga sazukete kudasatte ni chigainai", () {
+        String test =
+            getHiragana('kore ha kamisama ga sazukete kudasatte ni chigainai');
         expect(test, "これ は かみさま が さずけて くださって に ちがいない");
       });
-      test("kore ha kamisama ga sazukete kudasatte ni chigainai", (){
-        String test = getHiragana('kore ha kamisama ga sazukete kudasatte ni chigainai', hasSpace: false);
+      test("kore ha kamisama ga sazukete kudasatte ni chigainai", () {
+        String test = getHiragana(
+            'kore ha kamisama ga sazukete kudasatte ni chigainai',
+            hasSpace: false);
         expect(test, "これはかみさまがさずけてくださってにちがいない");
       });
     });
 
-    group('syllables', (){
+    group('syllables', () {
       test('aiueo', () {
         String test = getHiragana('aiueo');
         expect(test, "あいうえお");
@@ -150,42 +151,99 @@ void main() {
       });
     });
 
-    group('compound syllables', (){
-      List<String> originalStrings = ["kya", "kyu", "kyo", "sha", "shu", "sho",
-        "shi","tsu", "cha", "chu", "chi", "nya", "nyu", "nyo", "hya","hyu", "hyo",
-        "mya", "myu", "myo", "rya", "ryu", "ryo", "gya", "gyu", "gyo", "bya", "byu",
-        "byo", "pya", "pyu", "pyo"
+    group('compound syllables', () {
+      List<String> originalStrings = [
+        "kya",
+        "kyu",
+        "kyo",
+        "sha",
+        "shu",
+        "sho",
+        "shi",
+        "tsu",
+        "cha",
+        "chu",
+        "chi",
+        "nya",
+        "nyu",
+        "nyo",
+        "hya",
+        "hyu",
+        "hyo",
+        "mya",
+        "myu",
+        "myo",
+        "rya",
+        "ryu",
+        "ryo",
+        "gya",
+        "gyu",
+        "gyo",
+        "bya",
+        "byu",
+        "byo",
+        "pya",
+        "pyu",
+        "pyo"
       ];
       List<String> expectedTranslations = [
-        "きゃ", "きゅ", "きょ", "しゃ", "しゅ", "しょ",
-        "し","つ", "ちゃ", "ちゅ", "ち", "にゃ", "にゅ", "にょ", "ひゃ","ひゅ", "ひょ",
-        "みゃ", "みゅ", "みょ", "りゃ", "りゅ", "りょ", "ぎゃ", "ぎゅ", "ぎょ", "びゃ", "びゅ",
-        "びょ", "ぴゃ", "ぴゅ", "ぴょ"
+        "きゃ",
+        "きゅ",
+        "きょ",
+        "しゃ",
+        "しゅ",
+        "しょ",
+        "し",
+        "つ",
+        "ちゃ",
+        "ちゅ",
+        "ち",
+        "にゃ",
+        "にゅ",
+        "にょ",
+        "ひゃ",
+        "ひゅ",
+        "ひょ",
+        "みゃ",
+        "みゅ",
+        "みょ",
+        "りゃ",
+        "りゅ",
+        "りょ",
+        "ぎゃ",
+        "ぎゅ",
+        "ぎょ",
+        "びゃ",
+        "びゅ",
+        "びょ",
+        "ぴゃ",
+        "ぴゅ",
+        "ぴょ"
       ];
       int length = originalStrings.length;
-      for (int i = 0; i < length; i++){
+      for (int i = 0; i < length; i++) {
         test('${originalStrings[i]}', () {
           String givenString = getHiragana(originalStrings[i]);
           expect(givenString, expectedTranslations[i]);
         });
       }
     });
-
   });
 
   /// Katakana section
   ///
   ///
-  group('Katakana', (){
-
-    group('alphabet', (){
-      test("alphabet test", (){
+  group('Katakana', () {
+    group('alphabet', () {
+      test("alphabet test", () {
         String test = getKatakana(
             "a i u e o n ka ki ku ke ko ga gi gu ge go sa si su se so "
-                "za zi zu ze zo ta ti tu te to da di du de do na ni nu ne no"
-                " ha hi fi fa fu he ho ba bi bu be bo pa pi pu pe po "
-                "ma mi mu me mo ya yu yo ra ri ru re ro wa wo ja ju jo ji vi");
-        expect(test, "ア イ ウ エ オ ン カ キ ク ケ コ ガ ギ グ ゲ ゴ サ シ ス セ "
+            "za zi zu ze zo ta ti tu te to da di du de do na ni nu ne no"
+            " ha hi fi fa fu he ho ba bi bu be bo pa pi pu pe po "
+            "ma mi mu me mo ya yu yo ra ri ru re ro wa wo ja ju jo ji vi");
+        expect(
+            test,
+            "ア イ ウ エ オ ン カ キ ク ケ コ ガ ギ グ ゲ ゴ サ シ ス セ "
             "ソ ザ ジ ズ ゼ ゾ タ チ ツ テ ト ダ ヂ ヅ デ ド ナ ニ ヌ ネ ノ ハ ヒ フィ"
             " ファ フ ヘ ホ バ ビ ブ ベ ボ パ ピ プ ペ ポ マ ミ ム メ モ ヤ ユ ヨ ラ リ"
             " ル レ ロ ワ ヲ ジャ ジュ ジョ ジ ヴィ");
@@ -197,14 +255,14 @@ void main() {
       expect(test, "アリガトウ");
     });
 
-    group('Particular case: ha', (){
+    group('Particular case: ha', () {
       test('wa dynamic', () {
-        String test = getKatakana('wa', isStaticAnalysis : false);
+        String test = getKatakana('wa', isStaticAnalysis: false);
         expect(test, "ワ");
       });
 
       test('wa static', () {
-        String test = getKatakana('wa', isStaticAnalysis : true);
+        String test = getKatakana('wa', isStaticAnalysis: true);
         expect(test, "ハ");
       });
     });
@@ -219,7 +277,7 @@ void main() {
       expect(test, "ヘドロ");
     });
 
-    group("syllables", (){
+    group("syllables", () {
       test('aiueo', () {
         String test = getKatakana('aiueo');
         expect(test, "アイウエオ");
@@ -276,77 +334,134 @@ void main() {
       });
     });
 
-    group("Double consonants", (){
-      test("asatte", (){
+    group("Double consonants", () {
+      test("asatte", () {
         String test = getKatakana('asatte');
         expect(test, "アサッテ");
       });
 
-      test("seppuku", (){
+      test("seppuku", () {
         String test = getKatakana('seppuku');
         expect(test, "セップク");
       });
 
-      test("haragaetta", (){
+      test("haragaetta", () {
         String test = getKatakana('haragaetta');
         expect(test, "ハラガエッタ");
       });
 
-      test("zasshi", (){
+      test("zasshi", () {
         String test = getKatakana('zasshi');
         expect(test, "ザッシ");
       });
 
-      test("zacchi", (){
+      test("zacchi", () {
         String test = getKatakana('zacchi');
         expect(test, "ザッチ");
       });
 
-      test("zattsu", (){
+      test("zattsu", () {
         String test = getKatakana('zattsu');
         expect(test, "ザッツ");
       });
     });
 
-    group("Bad examples", (){
-      test("nar", (){
+    group("Bad examples", () {
+      test("nar", () {
         String test = getKatakana('nar');
         expect(test, "ナr");
       });
-      test("nvm", (){
+      test("nvm", () {
         String test = getKatakana('nvm');
         expect(test, "ンvm");
       });
     });
 
-    group("Full sentences", (){
-      test("kore ha kamisama ga sazukete kudasatte ni chigainai", (){
-        String test = getKatakana('kore ha kamisama ga sazukete kudasatte ni chigainai');
+    group("Full sentences", () {
+      test("kore ha kamisama ga sazukete kudasatte ni chigainai", () {
+        String test =
+            getKatakana('kore ha kamisama ga sazukete kudasatte ni chigainai');
         expect(test, "コレ ハ カミサマ ガ サズケテ クダサッテ ニ チガイナイ");
       });
-      test("kore ha kamisama ga sazukete kudasatte ni chigainai", (){
-        String test = getKatakana('kore ha kamisama ga sazukete kudasatte ni chigainai', hasSpace: false);
+      test("kore ha kamisama ga sazukete kudasatte ni chigainai", () {
+        String test = getKatakana(
+            'kore ha kamisama ga sazukete kudasatte ni chigainai',
+            hasSpace: false);
         expect(test, "コレハカミサマガサズケテクダサッテニチガイナイ");
       });
     });
 
-
-
-
-    group('compound syllables', (){
-      List<String> originalStrings = ["kya", "kyu", "kyo", "sha", "shu", "sho",
-        "shi","tsu", "cha", "chu", "chi", "nya", "nyu", "nyo", "hya","hyu", "hyo",
-        "mya", "myu", "myo", "rya", "ryu", "ryo", "gya", "gyu", "gyo", "bya", "byu",
-        "byo", "pya", "pyu", "pyo"
+    group('compound syllables', () {
+      List<String> originalStrings = [
+        "kya",
+        "kyu",
+        "kyo",
+        "sha",
+        "shu",
+        "sho",
+        "shi",
+        "tsu",
+        "cha",
+        "chu",
+        "chi",
+        "nya",
+        "nyu",
+        "nyo",
+        "hya",
+        "hyu",
+        "hyo",
+        "mya",
+        "myu",
+        "myo",
+        "rya",
+        "ryu",
+        "ryo",
+        "gya",
+        "gyu",
+        "gyo",
+        "bya",
+        "byu",
+        "byo",
+        "pya",
+        "pyu",
+        "pyo"
       ];
       List<String> expectedTranslations = [
-        "キャ", "キュ", "キョ", "シャ", "シュ", "ショ",
-        "シ","ツ", "チャ", "チュ", "チ", "ニャ", "ニュ", "ニョ", "ヒャ","ヒュ", "ヒョ",
-        "ミャ", "ミュ", "ミョ", "リャ", "リュ", "リョ", "ギャ", "ギュ", "ギョ", "ビャ", "ビュ",
-        "ビョ", "ピャ", "ピュ", "ピョ"
+        "キャ",
+        "キュ",
+        "キョ",
+        "シャ",
+        "シュ",
+        "ショ",
+        "シ",
+        "ツ",
+        "チャ",
+        "チュ",
+        "チ",
+        "ニャ",
+        "ニュ",
+        "ニョ",
+        "ヒャ",
+        "ヒュ",
+        "ヒョ",
+        "ミャ",
+        "ミュ",
+        "ミョ",
+        "リャ",
+        "リュ",
+        "リョ",
+        "ギャ",
+        "ギュ",
+        "ギョ",
+        "ビャ",
+        "ビュ",
+        "ビョ",
+        "ピャ",
+        "ピュ",
+        "ピョ"
       ];
       int length = originalStrings.length;
-      for (int i = 0; i < length; i++){
+      for (int i = 0; i < length; i++) {
         test('${originalStrings[i]}', () {
           String givenString = getKatakana(originalStrings[i]);
           expect(givenString, expectedTranslations[i]);
@@ -355,17 +470,16 @@ void main() {
     });
   });
 
-
   /// Romaji section
   ///
   ///
-  group('Romaji', (){
+  group('Romaji', () {
     test('arigatou', () {
       String test = getRomConversion('アリガトウ');
       expect(test, "arigatou");
     });
 
-    group("syllables", (){
+    group("syllables", () {
       test('aiueo', () {
         String test = getRomConversion('アイウエオ');
         expect(test, "aiueo");
@@ -421,77 +535,139 @@ void main() {
         String test = getRomConversion('ン');
         expect(test, "n");
       });
+
+      group("Kanji", () {
+        test("Word with kanji", () {
+          String test = "";
+          expect(test, "");
+        });
+      });
     });
 
-    group("Double consonants", (){
-      test("asatte", (){
+    group("Double consonants", () {
+      test("asatte", () {
         String test = getRomConversion('アサッテ');
         expect(test, "asatte");
       });
 
-      test("seppuku", (){
+      test("seppuku", () {
         String test = getRomConversion('セップク');
         expect(test, "seppuku");
       });
 
-      test("haragaetta", (){
+      test("haragaetta", () {
         String test = getRomConversion('ハラガエッタ');
         expect(test, "haragaetta");
       });
 
-      test("zasshi", (){
+      test("zasshi", () {
         String test = getRomConversion('ザッシ');
         expect(test, "zasshi");
       });
 
-      test("zacchi", (){
+      test("zacchi", () {
         String test = getRomConversion('ザッチ');
         expect(test, "zacchi");
       });
 
-      test("zattsu", (){
+      test("zattsu", () {
         String test = getRomConversion('ザッツ');
         expect(test, "zattsu");
       });
     });
 
-    group("Bad examples", (){
-      test("nar", (){
+    group("Bad examples", () {
+      test("nar", () {
         String test = getRomConversion('ナr');
         expect(test, "nar");
       });
-      test("nvm", (){
+      test("nvm", () {
         //Loss of information accurate because n=m in japanese
         String test = getRomConversion('ンvン');
         expect(test, "nvn");
       });
     });
 
-    group("Full sentence", (){
-      test("kore ha kamisama ga sazukete kudasatte ni chigainai", (){
+    group("Full sentence", () {
+      test("kore ha kamisama ga sazukete kudasatte ni chigainai", () {
         String test = getRomConversion('コレ ハ カミサマ ガ サズケテ クダサッテ ニ チガイナイ');
         expect(test, "kore ha kamisama ga sazukete kudasatte ni chigainai");
       });
     });
 
-
-    group('compound syllables', (){
-
+    group('compound syllables', () {
       List<String> originalStrings = [
-        "キャ", "キュ", "キョ", "シャ", "シュ", "ショ",
-        "シ","ツ", "チャ", "チュ", "チ", "ニャ", "ニュ", "ニョ", "ヒャ","ヒュ", "ヒョ",
-        "ミャ", "ミュ", "ミョ", "リャ", "リュ", "リョ", "ギャ", "ギュ", "ギョ", "ビャ", "ビュ",
-        "ビョ", "ピャ", "ピュ", "ピョ"
+        "キャ",
+        "キュ",
+        "キョ",
+        "シャ",
+        "シュ",
+        "ショ",
+        "シ",
+        "ツ",
+        "チャ",
+        "チュ",
+        "チ",
+        "ニャ",
+        "ニュ",
+        "ニョ",
+        "ヒャ",
+        "ヒュ",
+        "ヒョ",
+        "ミャ",
+        "ミュ",
+        "ミョ",
+        "リャ",
+        "リュ",
+        "リョ",
+        "ギャ",
+        "ギュ",
+        "ギョ",
+        "ビャ",
+        "ビュ",
+        "ビョ",
+        "ピャ",
+        "ピュ",
+        "ピョ"
       ];
 
-      List<String> expectedTranslations = ["kya", "kyu", "kyo", "sha", "shu", "sho",
-        "shi","tsu", "cha", "chu", "chi", "nya", "nyu", "nyo", "hya","hyu", "hyo",
-        "mya", "myu", "myo", "rya", "ryu", "ryo", "gya", "gyu", "gyo", "bya", "byu",
-        "byo", "pya", "pyu", "pyo"
+      List<String> expectedTranslations = [
+        "kya",
+        "kyu",
+        "kyo",
+        "sha",
+        "shu",
+        "sho",
+        "shi",
+        "tsu",
+        "cha",
+        "chu",
+        "chi",
+        "nya",
+        "nyu",
+        "nyo",
+        "hya",
+        "hyu",
+        "hyo",
+        "mya",
+        "myu",
+        "myo",
+        "rya",
+        "ryu",
+        "ryo",
+        "gya",
+        "gyu",
+        "gyo",
+        "bya",
+        "byu",
+        "byo",
+        "pya",
+        "pyu",
+        "pyo"
       ];
 
       int length = originalStrings.length;
-      for (int i = 0; i < length; i++){
+      for (int i = 0; i < length; i++) {
         test('${originalStrings[i]}', () {
           String givenString = getRomConversion(originalStrings[i]);
           expect(givenString, expectedTranslations[i]);
