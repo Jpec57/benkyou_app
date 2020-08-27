@@ -42,7 +42,7 @@ class KanaEditableText extends EditableText {
             selectionColor: selectionColor,
             selectionControls: selectionControls,
             onChanged: (text) async {
-              if (isKana) {
+              if (isKana && !doesStringContainsKanji(text)) {
                 String japanese = getDynamicHiraganaConversion(text);
                 final origPosition = controller.selection.start;
                 final origLength = text.length;
