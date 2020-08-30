@@ -2,6 +2,17 @@ import 'package:benkyou/services/translator/TextConversion.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  group("Mixed", () {
+    test("korehaTOMUdesuJAPANtesuto to Japanese", () {
+      String res = getDynamicHiraganaConversion("korehaTOMUdesuJAPANtesuto");
+      expect(res, "これはトムですジャパンてすと");
+    });
+
+    test("これはトムですジャパンてすと to rom", () {
+      String res = getRomConversion("これはトムですジャパンてすと", isDynamic: true);
+      expect(res, "korehaTOMUdesuJAPANNtesuto");
+    });
+  });
   group('Hiragana', () {
     group('Particular case: ha', () {
       test('wa dynamic', () {
@@ -15,14 +26,13 @@ void main() {
       });
     });
 
-    //TODO
     test('kanoke', () {
-      String test = getHiragana('kanoke');
+      String test = getDynamicHiraganaConversion('kanoke');
       expect(test, "かのけ");
     });
 
     test('kannoke', () {
-      String test = getHiragana('kannoke');
+      String test = getDynamicHiraganaConversion('kannoke');
       expect(test, "かんおけ");
     });
     //END

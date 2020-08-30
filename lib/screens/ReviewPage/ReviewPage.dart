@@ -69,25 +69,8 @@ class ReviewPageState extends State<ReviewPage>
     _processedCards = [];
     _processedCardIds = [];
     currentCard = _remainingCards[0];
-    //first card
     initializeTts();
     _answerController = new TextEditingController();
-    //TODO Add converter
-//    _answerController.addListener(() {
-//      final text = _answerController.text;
-//      var res = onConversionChanged(text, currentCard.card.answerLanguageCode == LANGUAGE_CODE_JAPANESE, _answerController, _hiddenAnswerController);
-//      print("text ${res.text}");
-//      print("base offset ${_answerController.selection.baseOffset}");
-//      print("extent offset ${_answerController.selection.extentOffset}");
-//      setState(() {
-//        _answerController.value =  _answerController.value.copyWith(
-//          text: res.text,
-//          selection: TextSelection(baseOffset: res.offset, extentOffset: res.offset),
-//          composing: TextRange.empty,
-//        );
-//      });
-//    });
-
     _focusNode = new FocusNode();
     _hiddenAnswerController = TextEditingController();
     setShakeAnimation();
@@ -241,6 +224,7 @@ class ReviewPageState extends State<ReviewPage>
                       context: context,
                       builder: (BuildContext context) => CompleteTextDialog(
                             text: '',
+                            isKana: currentCard.card.answerLanguageCode == 1,
                             positiveCallback: (text) async {
                               UserCard updatedUserCard =
                                   await addUserAnswer(currentCard.id, text);
@@ -318,6 +302,8 @@ class ReviewPageState extends State<ReviewPage>
     List<String> parsedAnswers = getStringAnswers(currentCard.card.answers);
     for (String parsedAnswer in parsedAnswers) {
       if (isStringDistanceValid(parsedAnswer, userAnswer) ||
+          getKatakana(getRomConversion(userAnswer, isDynamic: true)) ==
+              parsedAnswer ||
           getKatakana(userAnswer) == parsedAnswer ||
           getJapaneseTranslation(userAnswer) == parsedAnswer) {
         return true;

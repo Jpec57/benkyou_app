@@ -38,6 +38,7 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
   bool _isAnswerVisible = false;
   bool _isAnswerCorrect = false;
   String _error;
+  String _currentSentence = "";
   List<TextEditingController> _answerControllers;
   List<FocusNode> _focusNodes;
   List<UserCard> _remainingCards;
@@ -139,6 +140,7 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
       if (!isFormComplete) {
         return false;
       }
+      print("gapSentence $gapSentence");
       RegExp regExp = new RegExp(r"{[^}]+}");
       Iterable<RegExpMatch> matches = regExp.allMatches(gapSentence);
       int i = 0;
@@ -147,6 +149,7 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
       for (var match in matches) {
         String desiredString =
             gapSentence.substring(match.start + 1, match.end - 1).trim();
+        print("DesiredString $desiredString");
         String givenAnswer = _answerControllers[i].text.trim();
 
         String replacement = "ありません";
@@ -157,6 +160,7 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
           politeDesiredString =
               (desiredString.substring(0, res.start) + replacement);
         }
+        print("politeDesiredString $politeDesiredString");
 
         correctAnswers.add(desiredString);
         if (
@@ -366,8 +370,9 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
         return;
       }
     }
+
     if (!isEmpty) {
-      validate(_remainingCards[0].grammarCard.gapSentences[0]);
+      validate(_remainingCards[0].grammarCard.gapSentences[_sentenceIndex]);
     }
   }
 

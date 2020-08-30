@@ -17,7 +17,7 @@ class KanaEditableText extends EditableText {
     TextEditingController controller,
     TextStyle style,
     this.textAlign = TextAlign.start,
-    bool autofocus,
+    bool autofocus = false,
     ValueChanged<String> onSubmitted,
     Color cursorColor,
     Color selectionColor,
@@ -42,7 +42,9 @@ class KanaEditableText extends EditableText {
             selectionColor: selectionColor,
             selectionControls: selectionControls,
             onChanged: (text) async {
-              if (isKana && !doesStringContainsKanji(text)) {
+              if (text.isNotEmpty &&
+                  isKana &&
+                  !doesStringContainsKanji(text)) {
                 String japanese = getDynamicHiraganaConversion(text);
                 final origPosition = controller.selection.start;
                 final origLength = text.length;

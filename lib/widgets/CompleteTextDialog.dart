@@ -3,32 +3,41 @@ import 'package:benkyou/widgets/Localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class CompleteTextDialog extends StatefulWidget{
+import 'KanaTextForm.dart';
+
+class CompleteTextDialog extends StatefulWidget {
   final Function positiveCallback;
   final String text;
+  final isKana;
 
-  const CompleteTextDialog({Key key, this.text, @required this.positiveCallback}) : super(key: key);
+  const CompleteTextDialog(
+      {Key key,
+      this.text,
+      @required this.positiveCallback,
+      this.isKana = false})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => CompleteTextDialogState();
-
 }
 
-class CompleteTextDialogState extends State<CompleteTextDialog>{
+class CompleteTextDialogState extends State<CompleteTextDialog> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController _controller;
+  FocusNode _focusNode;
 
   @override
   void initState() {
     super.initState();
     _controller = new TextEditingController(text: widget.text);
+    _focusNode = new FocusNode();
   }
-
 
   @override
   void dispose() {
     super.dispose();
     _controller.dispose();
+    _focusNode.dispose();
   }
 
   @override
@@ -37,7 +46,8 @@ class CompleteTextDialogState extends State<CompleteTextDialog>{
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(32.0))),
       contentPadding: EdgeInsets.all(10.0),
-      title: Text(LocalizationWidget.of(context).getLocalizeValue('add_edit_text')),
+      title: Text(
+          LocalizationWidget.of(context).getLocalizeValue('add_edit_text')),
       content: GestureDetector(
         onTap: () {
           FocusScopeNode currentFocus = FocusScope.of(context);
@@ -55,33 +65,32 @@ class CompleteTextDialogState extends State<CompleteTextDialog>{
               children: <Widget>[
                 Form(
                   key: _formKey,
-                  child: TextFormField(
-                    controller: _controller,
-                    decoration: InputDecoration(
-                      hintText: LocalizationWidget.of(context)
-                          .getLocalizeValue('enter_something_here'),
-                      labelStyle: TextStyle(),
-                    ),
-                  ),
+                  child: KanaTextForm(
+                      cursorColor: Colors.black,
+                      isKana: widget.isKana,
+                      focusNode: _focusNode,
+                      controller: _controller,
+                      maxLines: null),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 5.0, top: 15.0),
                   child: IntrinsicHeight(
-                      child: RaisedButton(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)
-                        ),
-                        color: Color(COLOR_ORANGE),
-                        child: Text(LocalizationWidget.of(context).getLocalizeValue('save').toUpperCase(),
-                          style: TextStyle(
-                              color: Colors.white
-                          ),
-                        ),
-                        onPressed: () async {
-                          widget.positiveCallback(_controller.text);
-                          Navigator.pop(context);
-                        },),
+                    child: RaisedButton(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      color: Color(COLOR_ORANGE),
+                      child: Text(
+                        LocalizationWidget.of(context)
+                            .getLocalizeValue('save')
+                            .toUpperCase(),
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: () async {
+                        widget.positiveCallback(_controller.text);
+                        Navigator.pop(context);
+                      },
                     ),
+                  ),
                 )
               ],
             ),
@@ -90,5 +99,4 @@ class CompleteTextDialogState extends State<CompleteTextDialog>{
       ),
     );
   }
-
 }
