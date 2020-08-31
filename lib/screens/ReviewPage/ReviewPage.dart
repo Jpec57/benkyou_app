@@ -192,6 +192,36 @@ class ReviewPageState extends State<ReviewPage>
     );
   }
 
+  void _showUserNoteDialog() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => CompleteTextDialog(
+              text: currentCard.userNote,
+              positiveCallback: (text) async {
+                UserCard updatedUserCard =
+                    await postUserNote(currentCard.id, text);
+                if (updatedUserCard != null) {
+                  updateCurrentUserCard(updatedUserCard);
+                } else {
+                  Get.snackbar(
+                      LocalizationWidget.of(context).getLocalizeValue('error'),
+                      LocalizationWidget.of(context)
+                          .getLocalizeValue('generic_error'),
+                      snackPosition: SnackPosition.BOTTOM);
+                }
+              },
+            ));
+  }
+
+  void deleteCard() {
+    _remainingCards.removeAt(0);
+    int currentCardId = currentCard.id;
+    _processedCardIds.removeWhere((element) => element == currentCard.id);
+    _answerController.clear();
+    deleteUserCard(currentCardId);
+    assignNextCardOrLeave();
+  }
+
   Widget _renderAnswerPart() {
     if (!isAnswerVisible) {
       return Container();
@@ -266,25 +296,7 @@ class ReviewPageState extends State<ReviewPage>
               padding: const EdgeInsets.all(8.0),
               child: GestureDetector(
                 onTap: () {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) => CompleteTextDialog(
-                            text: currentCard.userNote,
-                            positiveCallback: (text) async {
-                              UserCard updatedUserCard =
-                                  await postUserNote(currentCard.id, text);
-                              if (updatedUserCard != null) {
-                                updateCurrentUserCard(updatedUserCard);
-                              } else {
-                                Get.snackbar(
-                                    LocalizationWidget.of(context)
-                                        .getLocalizeValue('error'),
-                                    LocalizationWidget.of(context)
-                                        .getLocalizeValue('generic_error'),
-                                    snackPosition: SnackPosition.BOTTOM);
-                              }
-                            },
-                          ));
+                  _showUserNoteDialog();
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
@@ -292,6 +304,20 @@ class ReviewPageState extends State<ReviewPage>
                 ),
               ),
             ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 20),
+            child: RaisedButton(
+                color: Color(COLOR_ORANGE),
+                child: Text(
+                  LocalizationWidget.of(context)
+                      .getLocalizeValue("delete_card")
+                      .toUpperCase(),
+                  style: TextStyle(color: Colors.white),
+                ),
+                onPressed: () {
+                  deleteCard();
+                }),
           )
         ],
       ),
@@ -334,13 +360,9 @@ class ReviewPageState extends State<ReviewPage>
     }
   }
 
-  _moveToNextQuestion(bool isAnswerCorrect) async {
+  void assignNextCardOrLeave() async {
     isAnswerVisible = false;
     _isPlayingAnimation = false;
-    //Remove only if correct
-    if (isAnswerCorrect) {
-      _remainingCards.removeAt(0);
-    }
     int length = _remainingCards.length;
     if (length > 0) {
       currentCard = _remainingCards[0];
@@ -351,6 +373,16 @@ class ReviewPageState extends State<ReviewPage>
       await _sendReview(_processedCards);
       _handleNavigation();
     }
+  }
+
+  _moveToNextQuestion(bool isAnswerCorrect) async {
+    isAnswerVisible = false;
+    _isPlayingAnimation = false;
+    //Remove only if correct
+    if (isAnswerCorrect) {
+      _remainingCards.removeAt(0);
+    }
+    assignNextCardOrLeave();
     FocusScope.of(context).requestFocus(_focusNode);
     setState(() {
       _answerController.clear();
@@ -621,7 +653,7 @@ class ReviewPageState extends State<ReviewPage>
                           isKana: !toEnglish,
                           controller: _answerController,
                           focusNode: _focusNode,
-                          textInputAction: TextInputAction.go,
+                          textInputAction: TextInputAction.send,
                           textAlign: TextAlign.center,
                           onFieldSubmitted: (value) {
                             if (_answerController.text.isNotEmpty) {

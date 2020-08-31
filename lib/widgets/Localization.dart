@@ -71,6 +71,7 @@ class LocalizationWidget {
       'enter_description': 'Enter a description',
       'description': "Description",
       'title': 'Title',
+      'delete_card': 'Delete card',
       'enter_title': 'Enter a title',
       'min_2_title': 'Your title must use at least 2 characters.',
       'action_to_create_deck': 'to create a deck.',

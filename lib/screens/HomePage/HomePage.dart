@@ -513,53 +513,56 @@ class _HomePageState extends State<HomePage> {
               child: Padding(
                 padding: const EdgeInsets.only(
                     top: 10, left: 35, right: 35, bottom: 10),
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: Row(
-                        children: [
-                          //TODO
-                          _renderVocabSectionWithNotif(
-                              LocalizationWidget.of(context)
-                                  .getLocalizeValue("vocabulary")),
-                          _renderGrammarSectionWithNotif(
-                              LocalizationWidget.of(context)
-                                  .getLocalizeValue("grammar")),
-                          Expanded(
-                            child: _renderSection(
-                                _renderLessonSection(),
+                child: Visibility(
+                  visible: MediaQuery.of(context).viewInsets.bottom == 0,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: Row(
+                          children: [
+                            //TODO
+                            _renderVocabSectionWithNotif(
                                 LocalizationWidget.of(context)
-                                    .getLocalizeValue("lessons")),
-                          ),
-                        ],
+                                    .getLocalizeValue("vocabulary")),
+                            _renderGrammarSectionWithNotif(
+                                LocalizationWidget.of(context)
+                                    .getLocalizeValue("grammar")),
+                            Expanded(
+                              child: _renderSection(
+                                  _renderLessonSection(),
+                                  LocalizationWidget.of(context)
+                                      .getLocalizeValue("lessons")),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Expanded(
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: _renderSection(
-                                _renderThemeSection(),
-                                LocalizationWidget.of(context)
-                                    .getLocalizeValue("themes")),
-                          ),
-                          Expanded(
-                            child: _renderSection(
-                                _renderAllSection(),
-                                LocalizationWidget.of(context)
-                                    .getLocalizeValue("all_reviews"),
-                                color: Color(COLOR_MID_DARK_GREY)),
-                          ),
-                          Expanded(
-                            child: _renderSection(
-                                _renderDrawSection(),
-                                LocalizationWidget.of(context)
-                                    .getLocalizeValue("draw")),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: _renderSection(
+                                  _renderThemeSection(),
+                                  LocalizationWidget.of(context)
+                                      .getLocalizeValue("themes")),
+                            ),
+                            Expanded(
+                              child: _renderSection(
+                                  _renderAllSection(),
+                                  LocalizationWidget.of(context)
+                                      .getLocalizeValue("all_reviews"),
+                                  color: Color(COLOR_MID_DARK_GREY)),
+                            ),
+                            Expanded(
+                              child: _renderSection(
+                                  _renderDrawSection(),
+                                  LocalizationWidget.of(context)
+                                      .getLocalizeValue("draw")),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
             )

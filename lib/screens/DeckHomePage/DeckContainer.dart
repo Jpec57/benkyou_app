@@ -19,6 +19,7 @@ class DeckContainer extends StatefulWidget {
 
 class _DeckContainerState extends State<DeckContainer> {
   Future<ImageProvider> _deckCover;
+  bool _isShaking = false;
 
   @override
   void initState() {
@@ -72,31 +73,34 @@ class _DeckContainerState extends State<DeckContainer> {
                 );
               case ConnectionState.done:
                 if (deckCoverSnap.hasData && deckCoverSnap.data != null) {
-                  return Container(
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: deckCoverSnap.data,
-                    )),
-                    child: Center(
-                        child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        widget.deck.title,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: Colors.white,
-                            shadows: <Shadow>[
-                              Shadow(
-                                offset: Offset(2.0, 2.0),
-                                blurRadius: 3.0,
-                                color: Colors.grey,
-                              ),
-                            ],
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    )),
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(5.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: deckCoverSnap.data,
+                      )),
+                      child: Center(
+                          child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          widget.deck.title,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Colors.white,
+                              shadows: <Shadow>[
+                                Shadow(
+                                  offset: Offset(2.0, 2.0),
+                                  blurRadius: 3.0,
+                                  color: Colors.grey,
+                                ),
+                              ],
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      )),
+                    ),
                   );
                 }
                 return defaultDeckWidget;
