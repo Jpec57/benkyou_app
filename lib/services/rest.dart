@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:benkyou/main.dart';
 import 'package:benkyou/services/api/userRequests.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<HttpClientResponse> handleGenericErrors(
@@ -65,6 +66,26 @@ Future<HttpClientResponse> getLocaleGetRequestResponse(String uri,
   return response;
 }
 
+Future<http.Response> getFileRequestResponse(String uri,
+    {canHandleGenericErrors = true}) async {
+  HttpClient client = new HttpClient();
+  client.badCertificateCallback =
+      ((X509Certificate cert, String host, int port) => true);
+  String url;
+  if (DEBUG) {
+    url = 'https://10.0.2.2:8000$uri';
+  } else {
+    url = 'https://jpec.be$uri';
+  }
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  String apiToken = sharedPreferences.get('apiToken');
+  Map<String, String> headers = new Map();
+  headers.putIfAbsent(
+      HttpHeaders.authorizationHeader, () => 'Bearer $apiToken');
+  headers.putIfAbsent(HttpHeaders.contentTypeHeader, () => 'application/json');
+  return http.get(url, headers: headers);
+}
+
 Future<HttpClientResponse> getLocalePostRequestResponse(String uri, Map body,
     {canHandleGenericErrors = true}) async {
   HttpClient client = new HttpClient();
@@ -84,6 +105,7 @@ Future<HttpClientResponse> getLocalePostRequestResponse(String uri, Map body,
     request.headers.set(HttpHeaders.authorizationHeader, 'Bearer $apiToken');
   }
   request.headers.set(HttpHeaders.contentTypeHeader, 'application/json');
+  print(body);
   List<int> parsedBody = utf8.encode(json.encode(body));
   request.headers.set(HttpHeaders.contentLengthHeader, parsedBody.length);
   request.add(parsedBody);

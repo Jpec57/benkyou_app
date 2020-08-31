@@ -38,6 +38,7 @@ class CreateCardPageState extends State<CreateCardPage> {
   String _bottomButtonLabel = '';
   String _error = '';
   String _researchWord = '';
+  bool _isSubmitting = false;
   PageController _pageController =
       PageController(initialPage: 0, keepPage: false);
 
@@ -81,7 +82,7 @@ class CreateCardPageState extends State<CreateCardPage> {
   }
 
   Future<bool> _createCardOrLeave() async {
-    if (_pageController.page == 0) {
+    if (_pageController.page == 0 && answerWidgetKey.currentState != null) {
       String error = await _validateCreateCard();
       if (error != null) {
         //TODO prevent on error to refetch API
@@ -121,7 +122,7 @@ class CreateCardPageState extends State<CreateCardPage> {
       map.putIfAbsent('deck', () => widget.deckId);
       map.putIfAbsent('isReversible', () => true);
       map.putIfAbsent('answers', () => answers);
-      postCard(widget.deckId, map);
+      await postCard(widget.deckId, map);
       setLastUsedDeckIdFromLocalStorage(widget.deckId);
 
       setState(() {
@@ -264,7 +265,9 @@ class CreateCardPageState extends State<CreateCardPage> {
                                   controller: _kanjiEditingController,
                                   onChanged: (text) {
                                     _isQuestionErrorVisible = false;
-                                    _formKey.currentState.validate();
+                                    if (_formKey.currentState != null) {
+                                      _formKey.currentState.validate();
+                                    }
                                   },
                                   validator: (value) {
                                     if (_isQuestionErrorVisible) {
@@ -445,14 +448,25 @@ class CreateCardPageState extends State<CreateCardPage> {
             ),
             GestureDetector(
                 onTap: () async {
-                  _createCardOrLeave();
+                  if (_isSubmitting == false) {
+                    setState(() {
+                      _isSubmitting = true;
+                    });
+                    await _createCardOrLeave();
+                    setState(() {
+                      _isSubmitting = false;
+                    });
+                  }
                 },
                 child: Container(
                   height: MediaQuery.of(context).size.height * 0.1,
                   decoration: BoxDecoration(color: Color(COLOR_ORANGE)),
                   child: Center(
                     child: Text(
-                      _bottomButtonLabel,
+                      _isSubmitting
+                          ? LocalizationWidget.of(context)
+                              .getLocalizeValue('submitting')
+                          : _bottomButtonLabel,
                       style: TextStyle(fontSize: 30, color: Colors.white),
                     ),
                   ),

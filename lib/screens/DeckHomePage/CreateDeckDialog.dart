@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:benkyou/models/Deck.dart';
@@ -11,6 +12,7 @@ import 'package:benkyou/widgets/Localization.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 class CreateDeckDialog extends StatefulWidget {
@@ -111,10 +113,34 @@ class CreateDeckDialogState extends State<CreateDeckDialog> {
     PickedFile pickedFile =
         await imagePicker.getImage(source: ImageSource.gallery);
     File file = File(pickedFile.path);
+    String ext = p.extension(pickedFile.path);
+    String prefix;
+    if (ext == '.jpeg' || ext == '.jpg') {
+      prefix = "data:image/jpeg;base64,";
+    } else if (ext == '.png') {
+      prefix = "data:image/png;base64,";
+    } else {
+      Get.snackbar('Invalid file',
+          "The extension $ext is not supported. Please use a png or a jpeg picture.");
+      return;
+    }
+
     // getting a directory path for saving
     final String path = (await getApplicationDocumentsDirectory()).path;
     // copy the file to a new path
-    await file.copy('$path/DeckCover-$deckId.png');
+    String newPath = '$path/DeckCover-$deckId$ext';
+    await file.copy(newPath);
+    File newFile = File(newPath);
+//    String imgStr =
+//        prefix + base64.encode(newFile.readAsBytesSync().sublist(2));
+    String imgStr = prefix + base64.encode(newFile.readAsBytesSync());
+//    String imgStr = base64.encode(newFile.readAsBytesSync());
+
+    Deck deck = await postDeck(
+        _titleController.text, _descriptionController.text,
+        deckId: widget.isEditing ? widget.deck.id : null,
+        isGrammar: widget.isGrammar,
+        cover: imgStr);
   }
 
   @override
@@ -182,7 +208,9 @@ class CreateDeckDialogState extends State<CreateDeckDialog> {
                         child: RaisedButton(
                           color: Color(COLOR_DARK_GREY),
                           child: Text(
-                            "Upload deck background".toUpperCase(),
+                            LocalizationWidget.of(context)
+                                .getLocalizeValue('upload_deck_background')
+                                .toUpperCase(),
                             style: TextStyle(color: Colors.white),
                           ),
                           onPressed: () async {

@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'hiraganaPhoneticsGroups.dart';
 
-String getTrimmedLowerString(String string){
+String getTrimmedLowerString(String string) {
   return string.trim().toLowerCase();
 }
 
@@ -84,7 +84,7 @@ double normalizedStringDistance(String s1, String s2) {
   return stringDistance(s1, s2) / maxLength;
 }
 
-bool isStringDistanceValid(String s1, String s2){
+bool isStringDistanceValid(String s1, String s2) {
   return (1 - normalizedStringDistance(s1, s2)) >= 0.8;
 }
 
@@ -92,8 +92,8 @@ String replaceCharPhoneticAt(Random random, String oldString, int index) {
   List<String> group = [];
   String oldChar = oldString[index];
   PHONETIC_GROUPS.forEach((key, List<String> value) {
-    for (String phoneme in value){
-      if (oldChar == HIRAGANA_ALPHABET_MAPPING[phoneme]){
+    for (String phoneme in value) {
+      if (oldChar == HIRAGANA_ALPHABET_MAPPING[phoneme]) {
         value.forEach((element) {
           group.add(HIRAGANA_ALPHABET_MAPPING[element]);
         });
@@ -101,30 +101,33 @@ String replaceCharPhoneticAt(Random random, String oldString, int index) {
       }
     }
   });
-  if (group.isEmpty){
+  if (group.isEmpty) {
     return null;
   }
   group.remove(oldChar);
   String newChar = group[random.nextInt(group.length)];
-  return oldString.substring(0, index) + newChar + oldString.substring(index + 1);
+  return oldString.substring(0, index) +
+      newChar +
+      oldString.substring(index + 1);
 }
 
-List<String> getSentenceBadVariations(String sentence, {int number = 3, int nbChanges = 2}){
+List<String> getSentenceBadVariations(String sentence,
+    {int number = 3, int nbChanges = 2}) {
   Random random = new Random();
   List<String> list = [];
-  for (int i = 0; i < number; i++){
+  for (int i = 0; i < number; i++) {
     int length = sentence.length;
     String oldString = sentence;
     String newString;
     int retry = 3;
-    for (int j = 0; j < nbChanges; j++){
+    for (int j = 0; j < nbChanges; j++) {
       int pos = random.nextInt(length);
       newString = replaceCharPhoneticAt(random, oldString, pos);
-      if (newString != null){
+      if (newString != null) {
         oldString = newString;
       } else {
         retry--;
-        if (retry > 0){
+        if (retry > 0) {
           j--;
         }
       }
@@ -132,4 +135,10 @@ List<String> getSentenceBadVariations(String sentence, {int number = 3, int nbCh
     list.add(oldString);
   }
   return list;
+}
+
+void printWrapped(String text) {
+  print("WRAPPED");
+  final pattern = RegExp('.{1,800}'); // 800 is the size of each chunk
+  pattern.allMatches(text).forEach((match) => print(match.group(0)));
 }

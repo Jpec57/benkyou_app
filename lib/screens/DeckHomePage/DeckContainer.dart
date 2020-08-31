@@ -1,10 +1,8 @@
-import 'dart:io';
-
 import 'package:benkyou/screens/DeckHomePage/CreateDeckDialog.dart';
+import 'package:benkyou/services/api/deckRequests.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 
 import '../../models/Deck.dart';
 import '../DeckPage/DeckPage.dart';
@@ -20,7 +18,7 @@ class DeckContainer extends StatefulWidget {
 }
 
 class _DeckContainerState extends State<DeckContainer> {
-  Future<File> _deckCover;
+  Future<ImageProvider> _deckCover;
 
   @override
   void initState() {
@@ -28,14 +26,8 @@ class _DeckContainerState extends State<DeckContainer> {
     _deckCover = getBackgroundImageIfExisting();
   }
 
-  Future<File> getBackgroundImageIfExisting() async {
-    final String path = (await getApplicationDocumentsDirectory()).path;
-    File file = File('$path/DeckCover-${widget.deck.id}.png');
-    bool isExisting = await file.exists();
-    if (isExisting) {
-      return file;
-    }
-    return null;
+  Future<ImageProvider> getBackgroundImageIfExisting() async {
+    return await getDeckCover(widget.deck.id, widget.deck.cover);
   }
 
   @override
@@ -71,7 +63,8 @@ class _DeckContainerState extends State<DeckContainer> {
         },
         child: FutureBuilder(
           future: _deckCover,
-          builder: (BuildContext context, AsyncSnapshot<File> deckCoverSnap) {
+          builder: (BuildContext context,
+              AsyncSnapshot<ImageProvider> deckCoverSnap) {
             switch (deckCoverSnap.connectionState) {
               case ConnectionState.waiting:
                 return Center(
@@ -83,7 +76,7 @@ class _DeckContainerState extends State<DeckContainer> {
                     decoration: BoxDecoration(
                         image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: FileImage(deckCoverSnap.data),
+                      image: deckCoverSnap.data,
                     )),
                     child: Center(
                         child: Padding(

@@ -1,6 +1,9 @@
 import 'dart:io';
 
 import 'package:benkyou/services/localStorage/localStorageService.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../models/Deck.dart';
 import '../rest.dart';
@@ -89,8 +92,36 @@ Future<Deck> getDeck(int id) async {
   return Deck.fromJson(deck);
 }
 
+Future<ImageProvider> getDeckCover(int id, String coverPath) async {
+  if (coverPath == null) {
+    return null;
+  }
+  //    get locale image if exists
+  final String path = (await getApplicationDocumentsDirectory()).path;
+  File file = File('$path/DeckCover-$id.png');
+  bool isExisting = await file.exists();
+  if (isExisting) {
+    return FileImage(file);
+  }
+  //end
+  try {
+    Response response = await getFileRequestResponse("/decks/$id/cover");
+    if (!isRequestValid(response.statusCode)) {
+      return null;
+    }
+    var bytes = response.bodyBytes;
+    if (bytes != null) {
+      return MemoryImage(bytes);
+    }
+  } catch (e) {
+    print(e);
+  }
+
+  return null;
+}
+
 Future<Deck> postDeck(String title, String description,
-    {int deckId, bool isGrammar = false}) async {
+    {int deckId, bool isGrammar = false, String cover}) async {
   Map map = new Map();
   if (deckId != null) {
     map.putIfAbsent('id', () => deckId);
@@ -98,6 +129,7 @@ Future<Deck> postDeck(String title, String description,
   map.putIfAbsent('title', () => title);
   map.putIfAbsent('description', () => description);
   map.putIfAbsent('cardType', () => isGrammar ? 1 : 0);
+  map.putIfAbsent('cover', () => cover);
   HttpClientResponse response =
       await getLocalePostRequestResponse("/decks", map);
   if (!isRequestValid(response.statusCode)) {
