@@ -96,7 +96,7 @@ Future<ImageProvider> getDeckCover(int id, String coverPath) async {
   if (coverPath == null) {
     return null;
   }
-  //    get locale image if exists
+  //get locale image if exists
   final String path = (await getApplicationDocumentsDirectory()).path;
   File file = File('$path/DeckCover-$id.png');
   bool isExisting = await file.exists();
@@ -140,11 +140,27 @@ Future<Deck> postDeck(String title, String description,
   return Deck.fromJson(deck);
 }
 
+Future<void> removeDeckCover(int deckId) async {
+  final String path = (await getApplicationDocumentsDirectory()).path;
+  File jpegFile = File('$path/DeckCover-$deckId.jpeg');
+  bool exist = await jpegFile.exists();
+  if (exist) {
+    jpegFile.delete();
+  } else {
+    File pngFile = File('$path/DeckCover-$deckId.png');
+    bool exist = await pngFile.exists();
+    if (exist) {
+      pngFile.delete();
+    }
+  }
+}
+
 Future<bool> deleteDeck(int deckId) async {
   int saveDeckId = await getLastUsedDeckIdFromLocalStorage();
   if (saveDeckId == deckId) {
     await setLastUsedDeckIdFromLocalStorage(null);
   }
+  removeDeckCover(deckId);
   HttpClientResponse response =
       await getLocaleDeleteRequestResponse("/decks/$deckId");
   if (!isRequestValid(response.statusCode)) {

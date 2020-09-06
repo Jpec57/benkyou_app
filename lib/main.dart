@@ -11,6 +11,9 @@ import 'package:benkyou/screens/DialogPage/InDialogPageArguments.dart';
 import 'package:benkyou/screens/DrawPage/DrawPage.dart';
 import 'package:benkyou/screens/Grammar/CreateGrammarCardArguments.dart';
 import 'package:benkyou/screens/Grammar/CreateGrammarPage.dart';
+import 'package:benkyou/screens/Grammar/GrammarCardEditionPage.dart';
+import 'package:benkyou/screens/Grammar/GrammarCardEditionPageArguments.dart';
+import 'package:benkyou/screens/Grammar/GrammarCardListPage.dart';
 import 'package:benkyou/screens/Grammar/GrammarDeckPage.dart';
 import 'package:benkyou/screens/Grammar/GrammarDeckPageArguments.dart';
 import 'package:benkyou/screens/Grammar/GrammarHomePage.dart';
@@ -54,7 +57,7 @@ import 'screens/DeckPage/DeckPageArguments.dart';
 final SentryClient _sentry = new SentryClient(dsn: DSN);
 
 const bool DEBUG = false;
-const bool SENTRY = false;
+const bool SENTRY = true;
 
 class App extends StatelessWidget {
   final Widget home;
@@ -251,6 +254,16 @@ class App extends StatelessWidget {
             },
           );
         }
+        if (settings.name == GrammarCardEditionPage.routeName) {
+          final GrammarCardEditionPageArguments args = settings.arguments;
+          return MaterialPageRoute(
+            builder: (context) {
+              return GrammarCardEditionPage(
+                cardId: args.cardId,
+              );
+            },
+          );
+        }
         assert(false, 'Need to implement ${settings.name}');
         return null;
       },
@@ -258,8 +271,8 @@ class App extends StatelessWidget {
         LoginPage.routeName: (context) => LoginPage(),
         LessonHomePage.routeName: (context) => LessonHomePage(),
         ThemeLearningHomePage.routeName: (context) => ThemeLearningHomePage(),
-//            InDialogPage.routeName: (context) => InDialogPage(),
         ListDialogPage.routeName: (context) => ListDialogPage(),
+        GrammarCardListPage.routeName: (context) => GrammarCardListPage(),
         GrammarHomePage.routeName: (context) => GrammarHomePage(),
         DialogPage.routeName: (context) => DialogPage(),
         CreateUserPage.routeName: (context) => CreateUserPage(),

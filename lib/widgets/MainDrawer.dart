@@ -1,4 +1,5 @@
 import 'package:benkyou/screens/BrowseDeckPage/BrowseDeckPage.dart';
+import 'package:benkyou/screens/Grammar/GrammarCardListPage.dart';
 import 'package:benkyou/screens/Grammar/GrammarHomePage.dart';
 import 'package:benkyou/screens/HomePage/HomePage.dart';
 import 'package:benkyou/screens/LessonHomePage/LessonHomePage.dart';
@@ -268,18 +269,25 @@ class MainDrawerState extends State<MainDrawer> {
             child: Padding(
               padding: const EdgeInsets.only(left: 15.0, top: 8.0),
               child: Text(
-                'Others',
+                LocalizationWidget.of(context).getLocalizeValue('my_cards'),
                 style:
                     TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
               ),
             ),
           ),
           ListTile(
-            title: Text(
-                LocalizationWidget.of(context).getLocalizeValue('my_cards')),
+            title: Text(LocalizationWidget.of(context)
+                .getLocalizeValue('my_word_cards')),
             onTap: () {
               Navigator.pushNamed(context, ListCardPage.routeName,
                   arguments: ListCardPageArguments());
+            },
+          ),
+          ListTile(
+            title: Text(LocalizationWidget.of(context)
+                .getLocalizeValue('my_grammar_cards')),
+            onTap: () {
+              Navigator.pushNamed(context, GrammarCardListPage.routeName);
             },
           ),
           _renderLoginTile(),

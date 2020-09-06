@@ -105,7 +105,6 @@ class _GrammarHomePageState extends State<GrammarHomePage> {
         children: [
           GestureDetector(
             onTap: () {
-              print("Cool");
               //TODO IMPLEMENT
             },
             child: ClipPath(

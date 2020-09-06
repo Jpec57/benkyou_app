@@ -520,7 +520,6 @@ class _HomePageState extends State<HomePage> {
                       Expanded(
                         child: Row(
                           children: [
-                            //TODO
                             _renderVocabSectionWithNotif(
                                 LocalizationWidget.of(context)
                                     .getLocalizeValue("vocabulary")),

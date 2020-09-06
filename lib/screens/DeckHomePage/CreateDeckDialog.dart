@@ -64,10 +64,13 @@ class CreateDeckDialogState extends State<CreateDeckDialog> {
             _titleController.text, _descriptionController.text,
             deckId: widget.isEditing ? widget.deck.id : null,
             isGrammar: widget.isGrammar);
-        Navigator.pop(context);
+        _isSubmitting = false;
+        Navigator.pop(context, true);
         if (widget.callback != null) {
           widget.callback();
-        } else {
+          return;
+        }
+        if (widget.isEditing == false) {
           Navigator.pushReplacementNamed(context, DeckPage.routeName,
               arguments: DeckPageArguments(deck.id));
         }
@@ -115,7 +118,9 @@ class CreateDeckDialogState extends State<CreateDeckDialog> {
     File file = File(pickedFile.path);
     String ext = p.extension(pickedFile.path);
     String prefix;
-    if (ext == '.jpeg' || ext == '.jpg') {
+    if (ext == '.jpeg') {
+      prefix = "data:image/jpeg;base64,";
+    } else if (ext == '.jpg') {
       prefix = "data:image/jpeg;base64,";
     } else if (ext == '.png') {
       prefix = "data:image/png;base64,";
@@ -124,6 +129,7 @@ class CreateDeckDialogState extends State<CreateDeckDialog> {
           "The extension $ext is not supported. Please use a png or a jpeg picture.");
       return;
     }
+    ext = ext == ".jpg" ? ".jpeg" : ext;
 
     // getting a directory path for saving
     final String path = (await getApplicationDocumentsDirectory()).path;
@@ -131,16 +137,17 @@ class CreateDeckDialogState extends State<CreateDeckDialog> {
     String newPath = '$path/DeckCover-$deckId$ext';
     await file.copy(newPath);
     File newFile = File(newPath);
-//    String imgStr =
-//        prefix + base64.encode(newFile.readAsBytesSync().sublist(2));
     String imgStr = prefix + base64.encode(newFile.readAsBytesSync());
-//    String imgStr = base64.encode(newFile.readAsBytesSync());
 
     Deck deck = await postDeck(
         _titleController.text, _descriptionController.text,
         deckId: widget.isEditing ? widget.deck.id : null,
         isGrammar: widget.isGrammar,
         cover: imgStr);
+    //Wait for image upload
+    await new Future.delayed(const Duration(seconds: 2), () {
+      Navigator.pop(context, true);
+    });
   }
 
   @override

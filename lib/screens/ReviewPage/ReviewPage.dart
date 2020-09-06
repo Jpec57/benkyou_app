@@ -651,6 +651,7 @@ class ReviewPageState extends State<ReviewPage>
                             border: Border.all(color: Colors.grey),
                           ),
                           isKana: !toEnglish,
+//                          selectionControls: MySelectionControls(),
                           controller: _answerController,
                           focusNode: _focusNode,
                           textInputAction: TextInputAction.send,

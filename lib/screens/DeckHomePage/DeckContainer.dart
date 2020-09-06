@@ -44,16 +44,51 @@ class _DeckContainerState extends State<DeckContainer> {
           widget.deck.title,
           textAlign: TextAlign.center,
           style: TextStyle(
-              color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+              color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
         ),
       )),
     );
+
+    Widget defaultLoadingDeck = ClipRRect(
+      borderRadius: BorderRadius.circular(5.0),
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5.0),
+            color: Color(COLOR_MID_DARK_GREY)),
+        child: Center(
+            child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            widget.deck.title,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                color: Colors.white,
+                shadows: <Shadow>[
+                  Shadow(
+                    offset: Offset(2.0, 2.0),
+                    blurRadius: 3.0,
+                    color: Colors.grey,
+                  ),
+                ],
+                fontSize: 22,
+                fontWeight: FontWeight.bold),
+          ),
+        )),
+      ),
+    );
     return GestureDetector(
-        onLongPress: () {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) =>
-                  CreateDeckDialog(isEditing: true, deck: widget.deck));
+        onLongPress: () async {
+          await showDialog(
+                  context: context,
+                  builder: (BuildContext context) =>
+                      CreateDeckDialog(isEditing: true, deck: widget.deck))
+              .then((value) {
+            if (value != null && value) {
+              setState(() {
+                _deckCover = getBackgroundImageIfExisting();
+              });
+            }
+          });
         },
         onTap: () {
           Navigator.pushNamed(
@@ -69,7 +104,7 @@ class _DeckContainerState extends State<DeckContainer> {
             switch (deckCoverSnap.connectionState) {
               case ConnectionState.waiting:
                 return Center(
-                  child: CircularProgressIndicator(),
+                  child: defaultLoadingDeck,
                 );
               case ConnectionState.done:
                 if (deckCoverSnap.hasData && deckCoverSnap.data != null) {
@@ -96,7 +131,7 @@ class _DeckContainerState extends State<DeckContainer> {
                                   color: Colors.grey,
                                 ),
                               ],
-                              fontSize: 16,
+                              fontSize: 24,
                               fontWeight: FontWeight.bold),
                         ),
                       )),

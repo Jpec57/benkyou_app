@@ -2,7 +2,43 @@ import 'package:benkyou/services/translator/TextConversion.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class KanaController extends TextEditingController {}
+//class MySelectionControls extends TextSelectionControls {
+//  @override
+//  Widget buildHandle(BuildContext context, TextSelectionHandleType type,
+//      double textLineHeight) {
+//    // TODO: implement buildHandle
+//    return null;
+//  }
+//
+//  @override
+//  // TODO: implement handleSize
+//  Size get handleSize => null;
+//
+//  @override
+//  Offset getHandleAnchor(TextSelectionHandleType type, double textLineHeight) {
+//    // TODO: implement getHandleAnchor
+//    throw UnimplementedError();
+//  }
+//
+//  @override
+//  Size getHandleSize(double textLineHeight) {
+//    // TODO: implement getHandleSize
+//    throw UnimplementedError();
+//  }
+//
+//  @override
+//  Widget buildToolbar(
+//      BuildContext context,
+//      Rect globalEditableRegion,
+//      double textLineHeight,
+//      Offset position,
+//      List<TextSelectionPoint> endpoints,
+//      TextSelectionDelegate delegate,
+//      ClipboardStatusNotifier clipboardStatus) {
+//    // TODO: implement buildToolbar
+//    throw UnimplementedError();
+//  }
+//}
 
 class KanaEditableText extends EditableText {
   final bool isKana;
@@ -42,9 +78,7 @@ class KanaEditableText extends EditableText {
             selectionColor: selectionColor,
             selectionControls: selectionControls,
             onChanged: (text) async {
-              if (text.isNotEmpty &&
-                  isKana &&
-                  !doesStringContainsKanji(text)) {
+              if (text.isNotEmpty && isKana && !doesStringContainsKanji(text)) {
                 String japanese = getDynamicHiraganaConversion(text);
                 final origPosition = controller.selection.start;
                 final origLength = text.length;
