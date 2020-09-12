@@ -64,6 +64,11 @@ class LocalizationWidget {
       'register': 'Register',
       'delete_deck': 'Delete deck',
       'edit_deck': 'Edit deck',
+      'synonyms': 'Synonyms',
+      'synonym_info':
+          'You can enter here all the answers that will be counted as accepted to fill the gap sentences',
+      'gap_sentences_info':
+          'Surround with curly braces the part you want later to fill. Usually, it matches the grammar point name content.',
       'update_deck': 'Update deck',
       'create_deck': 'Create deck',
       'create_a_deck': 'Create a deck',

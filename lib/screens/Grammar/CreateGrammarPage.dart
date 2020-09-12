@@ -9,13 +9,16 @@ import 'package:benkyou/widgets/Localization.dart';
 import 'package:benkyou/widgets/SentenceSeekerWidget.dart';
 import 'package:benkyou/widgets/TextRecognizerIcon.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:get/get.dart';
 
 class CreateGrammarCardPage extends StatefulWidget {
   static const routeName = '/create/grammar';
   final int deckId;
+  final int grammarCardId;
 
-  const CreateGrammarCardPage({Key key, @required this.deckId})
+  const CreateGrammarCardPage(
+      {Key key, @required this.deckId, this.grammarCardId})
       : super(key: key);
 
   @override
@@ -29,8 +32,10 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
   TextEditingController _grammarHint;
   String _researchTerm;
   List<TextEditingController> _controllers = [];
+  List<TextEditingController> _synonymControllers = [];
   FocusNode _grammarNameFocus;
   List<FocusNode> _focusNodes = [];
+  List<FocusNode> _synonymFocusNodes = [];
   ScrollController _scrollController;
 
   @override
@@ -64,7 +69,20 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
     for (var node in _focusNodes) {
       node.dispose();
     }
+    for (var controller in _synonymControllers) {
+      controller.dispose();
+    }
+    for (var node in _synonymFocusNodes) {
+      node.dispose();
+    }
     super.dispose();
+  }
+
+  void _addSynonym() {
+    _synonymFocusNodes.add(new FocusNode());
+    _synonymControllers.add(new TextEditingController());
+    _synonymFocusNodes[_synonymFocusNodes.length - 1].requestFocus();
+    setState(() {});
   }
 
   void _addSentence() {
@@ -96,13 +114,14 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
         RegExp regExp = new RegExp(r"{[^}]+}");
         if (regExp.hasMatch(text)) {
           gapSentences.add(text);
-        } else {
-          //          Get.snackbar("Error", "Your sentence must contain a gap",
-//              snackPosition: SnackPosition.TOP);
-
-          // A sentence does contain gap with grammar point
-//          return false;
         }
+      }
+    }
+    List<String> acceptedAnswers = [];
+    for (TextEditingController controller in _synonymControllers) {
+      String text = controller.text;
+      if (text.isNotEmpty) {
+        acceptedAnswers.add(text);
       }
     }
     if (gapSentences.isEmpty) {
@@ -123,6 +142,7 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
     map.putIfAbsent('gapSentences', () => gapSentences);
     map.putIfAbsent('deck', () => widget.deckId);
     map.putIfAbsent('answers', () => answers);
+    map.putIfAbsent('acceptedAnswers', () => acceptedAnswers);
     GrammarPointCard grammarPointCard =
         await postGrammarCard(widget.deckId, map);
     if (grammarPointCard != null) {
@@ -196,8 +216,9 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
     );
   }
 
-  Widget _renderSentenceBuilderWidget() {
-    return Container(
+  Widget _renderSynonymBuilderWidget() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
@@ -206,53 +227,36 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
             mainAxisSize: MainAxisSize.max,
             children: [
               Text(
-                LocalizationWidget.of(context)
-                    .getLocalizeValue('gap_sentences'),
-                style: Theme.of(context).textTheme.headline6,
+                LocalizationWidget.of(context).getLocalizeValue('synonyms'),
+                style: Theme.of(context)
+                    .textTheme
+                    .headline6
+                    .copyWith(fontStyle: FontStyle.italic),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
                 child: InfoIcon(
-                  info:
-                      "Surround with curly braces the part you want later to fill. Usually, it matches the grammar point name content.",
+                  info: LocalizationWidget.of(context)
+                      .getLocalizeValue('synonym_info'),
                 ),
               ),
-              Expanded(
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: ClipOval(
-                      child: Container(
-                        padding: EdgeInsets.all(5),
-                        color: Color(COLOR_MUSTARD),
-                        child: TextRecognizerIcon(
-                          size: 20,
-                          color: Colors.black,
-                          callback: sentenceCallback,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              )
             ],
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 12, bottom: 20),
+            padding: const EdgeInsets.only(top: 12, bottom: 15),
             child: ListView.builder(
                 shrinkWrap: true,
-                itemCount: _controllers.length,
+                itemCount: _synonymControllers.length,
                 itemBuilder: (context, index) {
                   return Dismissible(
                     key: UniqueKey(),
                     onDismissed: (direction) {
-                      _controllers.removeAt(index);
-                      _focusNodes.removeAt(index);
+                      _synonymControllers.removeAt(index);
+                      _synonymFocusNodes.removeAt(index);
                       setState(() {});
                     },
                     child: Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.only(bottom: 5),
                       child: Container(
                         child: Row(
                           children: [
@@ -269,22 +273,13 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
                                 decoration: BoxDecoration(
                                     border: Border.all(color: Colors.grey),
                                     borderRadius: BorderRadius.circular(12)),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 8.0,
-                                      right: 8.0,
-                                      top: 12,
-                                      bottom: 12),
-                                  child: ColorizedTextForm(
-                                      cursorColor: Colors.black,
-                                      style: TextStyle(color: Colors.black),
-                                      focusNode: _focusNodes[index],
-                                      controller: _controllers[index],
-                                      regexAnnotation: RegexAnnotation(
-                                          style: TextStyle(color: Colors.red),
-                                          regex: new RegExp(r"{[^}]+}")),
-                                      maxLines: null),
-                                ),
+                                child: TextFormField(
+                                    decoration: InputDecoration(
+                                        border: InputBorder.none),
+                                    style: TextStyle(color: Colors.black),
+                                    focusNode: _synonymFocusNodes[index],
+                                    controller: _synonymControllers[index],
+                                    maxLines: 1),
                               ),
                             ),
                           ],
@@ -296,12 +291,12 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
           ),
           GestureDetector(
             onTap: () {
-              _addSentence();
+              _addSynonym();
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Container(
-                color: Color(COLOR_ORANGE),
+                color: Color(COLOR_ANTRACITA),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Icon(
@@ -314,6 +309,121 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
           )
         ],
       ),
+    );
+  }
+
+  Widget _renderSentenceBuilderWidget() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Text(
+              LocalizationWidget.of(context).getLocalizeValue('gap_sentences'),
+              style: Theme.of(context).textTheme.headline6,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: InfoIcon(
+                info: LocalizationWidget.of(context)
+                    .getLocalizeValue('gap_sentence_info'),
+              ),
+            ),
+            Expanded(
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: ClipOval(
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      color: Color(COLOR_MUSTARD),
+                      child: TextRecognizerIcon(
+                        size: 20,
+                        color: Colors.black,
+                        callback: sentenceCallback,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 12, bottom: 20),
+          child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: _controllers.length,
+              itemBuilder: (context, index) {
+                return Dismissible(
+                  key: UniqueKey(),
+                  onDismissed: (direction) {
+                    _controllers.removeAt(index);
+                    _focusNodes.removeAt(index);
+                    setState(() {});
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Container(
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                top: 8.0, bottom: 8.0, left: 8, right: 20),
+                            child: Text(
+                              "${index + 1}",
+                              style: Theme.of(context).textTheme.headline6,
+                            ),
+                          ),
+                          Flexible(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(12)),
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 8.0, right: 8.0, top: 12, bottom: 12),
+                                child: ColorizedTextForm(
+                                    cursorColor: Colors.black,
+                                    style: TextStyle(color: Colors.black),
+                                    focusNode: _focusNodes[index],
+                                    controller: _controllers[index],
+                                    regexAnnotation: RegexAnnotation(
+                                        style: TextStyle(color: Colors.red),
+                                        regex: new RegExp(r"{[^}]+}")),
+                                    maxLines: null),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }),
+        ),
+        GestureDetector(
+          onTap: () {
+            _addSentence();
+          },
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Container(
+              color: Color(COLOR_ORANGE),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(
+                  Icons.add,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        )
+      ],
     );
   }
 
@@ -382,6 +492,7 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
                               isTextArea: true,
                               info:
                                   "While reviewing, if you were to ask for help, this hint will show up. If it is empty, the meaning will be displayed as hint."),
+                          _renderSynonymBuilderWidget(),
                           _renderSentenceBuilderWidget(),
                           Padding(
                             padding: const EdgeInsets.only(top: 15),

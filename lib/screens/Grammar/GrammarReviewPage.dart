@@ -14,6 +14,7 @@ import 'package:benkyou/services/api/cardRequests.dart';
 import 'package:benkyou/services/translator/TextConversion.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/utils/random.dart';
+import 'package:benkyou/widgets/GrammarPointWidget.dart';
 import 'package:benkyou/widgets/KanaTextForm.dart';
 import 'package:benkyou/widgets/Localization.dart';
 import 'package:flutter/cupertino.dart';
@@ -376,85 +377,6 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
     }
   }
 
-  Widget _renderGrammarPoint(DeckCard card, GrammarPointCard grammarCard) {
-    String exampleSentence = "";
-    if (grammarCard.gapSentences != null &&
-        grammarCard.gapSentences.isNotEmpty) {
-      exampleSentence =
-          grammarCard.gapSentences[0].replaceAll(new RegExp(r'{|}'), '');
-    }
-    String currentMeaning = (card.answers != null && card.answers.isNotEmpty
-        ? card.answers[0].text
-        : card.hint);
-    return Padding(
-      padding: const EdgeInsets.only(top: 15),
-      child: Center(
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: Container(
-            decoration: BoxDecoration(color: Colors.white, boxShadow: [
-              BoxShadow(
-                color: Colors.black54,
-                blurRadius: 5.0,
-                spreadRadius: 0.0,
-                offset: Offset(5.0, 5.0), // shadow direction: bottom right
-              )
-            ]),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Container(
-                    color: Color(COLOR_DARK_BLUE),
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          left: 8.0, top: 5, bottom: 5, right: 8),
-                      child: Text(
-                        "Grammar point: ${card.question}",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600),
-                      ),
-                    )),
-                Padding(
-                  padding:
-                      const EdgeInsets.only(left: 8.0, right: 8, bottom: 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Text(
-                          "Use case:",
-                          style: TextStyle(
-                              decoration: TextDecoration.underline,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                      Text("${currentMeaning ?? ""}"),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Text(
-                          "Example:",
-                          style: TextStyle(
-                              decoration: TextDecoration.underline,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                      Text(exampleSentence),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   List<Widget> _renderTextFormFields(List<TextEditingController> controllers) {
     List<Widget> list = [];
     int controllerLength = controllers.length;
@@ -596,8 +518,9 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
                         padding: const EdgeInsets.only(
                             top: 15, left: 15.0, right: 15, bottom: 50),
                         child: _isAnswerVisible
-                            ? _renderGrammarPoint(_remainingCards[0].card,
-                                _remainingCards[0].grammarCard)
+                            ? GrammarPointCardWidget(
+                                card: _remainingCards[0].card,
+                                grammarCard: _remainingCards[0].grammarCard)
                             : Form(
                                 key: _formKey,
                                 child: Column(

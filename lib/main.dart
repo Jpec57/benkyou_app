@@ -57,7 +57,7 @@ import 'screens/DeckPage/DeckPageArguments.dart';
 final SentryClient _sentry = new SentryClient(dsn: DSN);
 
 const bool DEBUG = false;
-const bool SENTRY = true;
+const bool SENTRY = false;
 
 class App extends StatelessWidget {
   final Widget home;
@@ -302,7 +302,7 @@ void main() {
   runZoned(
     () => runApp(App(
 //          home: ThemeTinderWordPage(theme: new DeckTheme.fromJson({"id":21,"name":"Work","backgroundImg": null,"deck":{"id":59}})),
-      home: HomePage(),
+      home: GrammarHomePage(),
 //      home: CreateCardPage(
 //        deckId: 127,
 //      ),

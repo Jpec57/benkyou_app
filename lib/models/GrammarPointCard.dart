@@ -3,15 +3,17 @@ import 'DeckCard.dart';
 
 class GrammarPointCard extends DeckCard {
   List<String> gapSentences;
-  List<Answer> almostAnswers;
+  List<String> acceptedAnswers;
 
-  GrammarPointCard.fromJson(Map<String, dynamic> json)
-      : gapSentences = List<String>.from(json['gapSentences']),
-        almostAnswers = decodeAnswerJsonArray(json['almostAnswers']);
+  GrammarPointCard.fromJson(Map<String, dynamic> json) : super.fromJson(json) {
+    gapSentences = List<String>.from(json['gapSentences']);
+    acceptedAnswers =
+        json['acceptedAnswers'] != null ? json['acceptedAnswers'] : [];
+  }
 
   @override
   String toString() {
-    return 'GrammarPointCard{gapSentences: $gapSentences, almostAnswers: $almostAnswers}';
+    return 'GrammarPointCard{gapSentences: $gapSentences, acceptedAnswers: $acceptedAnswers, ${super.toString()}';
   }
 }
 

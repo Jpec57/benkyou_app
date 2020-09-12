@@ -61,6 +61,30 @@ Future<List<UserCard>> getUserCardsForDeck(int deckId) async {
   return parsedCards;
 }
 
+Future<GrammarPointCard> getUserGrammarCard(int id) async {
+  HttpClientResponse cardResponse =
+      await getLocaleGetRequestResponse("/grammar-cards/$id");
+  var cards = await getJsonFromHttpResponse(cardResponse);
+  if (!isRequestValid(cardResponse.statusCode)) {
+    print(cards);
+    return null;
+  }
+  print(cards);
+  return GrammarPointCard.fromJson(cards);
+}
+
+Future<List<UserCard>> getUserGrammarCards() async {
+  HttpClientResponse cardResponse =
+      await getLocaleGetRequestResponse("/users/grammar-cards");
+  var cards = await getJsonFromHttpResponse(cardResponse);
+  if (!isRequestValid(cardResponse.statusCode)) {
+    print(cards);
+    return null;
+  }
+  List<UserCard> parsedCards = decodeUserCardJsonArray(cards);
+  return parsedCards;
+}
+
 Future<List<UserCard>> getUserCardsGroupByDeck() async {
   HttpClientResponse cardResponse =
       await getLocaleGetRequestResponse("/users/cards");

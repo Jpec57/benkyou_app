@@ -2,5 +2,6 @@ import 'package:flutter/cupertino.dart';
 
 class CreateGrammarCardArguments {
   int deckId;
-  CreateGrammarCardArguments({@required this.deckId});
+  int grammarCardId;
+  CreateGrammarCardArguments({@required this.deckId, this.grammarCardId});
 }

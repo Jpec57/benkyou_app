@@ -94,6 +94,7 @@ String getDynamicHiraganaConversion(String val,
     return val;
   }
   String romaji = getRomConversion(val, isDynamic: true);
+
   List<String> words = separateKanaWords(romaji);
   String res = "";
   for (int i = 0; i < words.length; i++) {
