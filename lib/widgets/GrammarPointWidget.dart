@@ -14,11 +14,19 @@ class GrammarPointCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String exampleSentence = "";
-    if (grammarCard.gapSentences != null &&
-        grammarCard.gapSentences.isNotEmpty) {
-      exampleSentence =
-          grammarCard.gapSentences[0].replaceAll(new RegExp(r'{|}'), '');
+    List<String> exampleSentences = [];
+    if (grammarCard.gapSentences != null) {
+      int length = grammarCard.gapSentences.length;
+      List<String> extractSentences = (length > 2)
+          ? grammarCard.gapSentences.getRange(0, 2).toList()
+          : grammarCard.gapSentences;
+      for (String sent in extractSentences) {
+        sent = sent.replaceAllMapped(new RegExp(r'{.*\/.*}'), (match) {
+          return match.input
+              .substring(match.start + 1, match.input.indexOf('/'));
+        });
+        exampleSentences.add(sent.replaceAll(new RegExp(r'{|}'), ''));
+      }
     }
     String currentMeaning = (card.answers != null && card.answers.isNotEmpty
         ? card.answers[0].text
@@ -72,17 +80,38 @@ class GrammarPointCardWidget extends StatelessWidget {
                           ),
                         ),
                         Text("${currentMeaning ?? ""}"),
+                        Visibility(
+                          visible: grammarCard.acceptedAnswers != null &&
+                              grammarCard.acceptedAnswers.length > 0,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Text(
+                                  "Synonyms:",
+                                  style: TextStyle(
+                                      decoration: TextDecoration.underline,
+                                      fontStyle: FontStyle.italic,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                              Text(grammarCard.acceptedAnswers.join(", ")),
+                            ],
+                          ),
+                        ),
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Text(
-                            "Example:",
+                            "Examples:",
                             style: TextStyle(
                                 decoration: TextDecoration.underline,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600),
                           ),
                         ),
-                        Text(exampleSentence),
+                        Text(exampleSentences.join("\n\n")),
                       ],
                     ),
                   ),

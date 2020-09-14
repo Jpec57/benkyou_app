@@ -18,6 +18,17 @@ Future<bool> deleteUserCard(int userCardId) async {
   return true;
 }
 
+Future<bool> deleteCard(int cardId) async {
+  HttpClientResponse cardResponse =
+      await getLocaleDeleteRequestResponse("/cards/$cardId");
+  var cards = await getJsonFromHttpResponse(cardResponse);
+  if (!isRequestValid(cardResponse.statusCode)) {
+    print(cards);
+    return false;
+  }
+  return true;
+}
+
 Future<UserCard> updateCardAnswers(int userCardId, List<String> answers) async {
   Map map = new Map();
   List<Map> answerArray = [];

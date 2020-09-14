@@ -268,6 +268,11 @@ String getConversion(String val, alphabet,
     }
 
     while (i < wordLength) {
+      if (!isAlpha(word[i])) {
+        res += word[i];
+        i++;
+        continue;
+      }
       //3 letter syllable
       tmpChar = getMatchingCharacterInAlphabet(
           3, getSafeSubstring(word, i, 3, wordLength), alphabet);

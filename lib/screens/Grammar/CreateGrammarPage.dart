@@ -1,10 +1,12 @@
 import 'package:benkyou/models/GrammarPointCard.dart';
+import 'package:benkyou/screens/Grammar/GrammarCardListPage.dart';
 import 'package:benkyou/screens/Grammar/GrammarHomePage.dart';
 import 'package:benkyou/services/api/cardRequests.dart';
 import 'package:benkyou/services/translator/TextConversion.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/ColorizedTextForm.dart';
 import 'package:benkyou/widgets/InfoIcon.dart';
+import 'package:benkyou/widgets/KanaTextForm.dart';
 import 'package:benkyou/widgets/Localization.dart';
 import 'package:benkyou/widgets/SentenceSeekerWidget.dart';
 import 'package:benkyou/widgets/TextRecognizerIcon.dart';
@@ -30,6 +32,8 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
   TextEditingController _grammarPointName;
   TextEditingController _grammarPointMeaning;
   TextEditingController _grammarHint;
+  Future<GrammarPointCard> _grammarCardEditedFuture;
+  GrammarPointCard _grammarCardEdited;
   String _researchTerm;
   List<TextEditingController> _controllers = [];
   List<TextEditingController> _synonymControllers = [];
@@ -55,6 +59,45 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
     _grammarHint = new TextEditingController();
     _controllers.add(new TextEditingController());
     _focusNodes.add(new FocusNode());
+    getEditedGrammarCard();
+  }
+
+  void getEditedGrammarCard() async {
+    _grammarCardEditedFuture = getUserGrammarCard(widget.grammarCardId);
+    if (widget.grammarCardId != null) {
+      _grammarCardEdited = await getUserGrammarCard(widget.grammarCardId);
+      _grammarPointName.text = _grammarCardEdited.question;
+      var answers = _grammarCardEdited.answers;
+      if (answers != null && answers.length > 0) {
+        _grammarPointMeaning.text = answers[0].text;
+      }
+      _grammarHint.text = _grammarCardEdited.hint;
+      List<String> synonyms = _grammarCardEdited.acceptedAnswers;
+      int i = 0;
+      for (String syn in synonyms) {
+        if (_synonymControllers.length > i) {
+          _synonymControllers[i].text = syn;
+        } else {
+          _synonymControllers.add(new TextEditingController());
+          _synonymFocusNodes.add(new FocusNode());
+          _synonymControllers[i].text = syn;
+        }
+        i++;
+      }
+      i = 0;
+      List<String> gapSentences = _grammarCardEdited.gapSentences;
+      for (String sent in gapSentences) {
+        if (_controllers.length > i) {
+          _controllers[i].text = sent;
+        } else {
+          _controllers.add(new TextEditingController());
+          _focusNodes.add(new FocusNode());
+          _controllers[i].text = sent;
+        }
+        i++;
+      }
+      setState(() {});
+    }
   }
 
   @override
@@ -93,7 +136,7 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
   }
 
   Future<bool> isFormValid() async {
-    String grammarPoint = getJapaneseTranslation(_grammarPointName.text);
+    String grammarPoint = _grammarPointName.text;
     String grammarMeaning = _grammarPointMeaning.text;
     String grammarHint = _grammarHint.text;
     List<String> gapSentences = [];
@@ -137,6 +180,10 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
     answers.add(innerMap);
 
     Map map = new Map();
+    //TODO
+    if (_grammarCardEdited != null && _grammarCardEdited.id != null) {
+      map.putIfAbsent('id', () => _grammarCardEdited.id);
+    }
     map.putIfAbsent('question', () => grammarPoint);
     map.putIfAbsent('hint', () => grammarHint);
     map.putIfAbsent('gapSentences', () => gapSentences);
@@ -152,8 +199,17 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
         curve: Curves.easeOut,
         duration: const Duration(milliseconds: 300),
       );
-      Get.snackbar("Success", "Your card has correctly been created.",
+      Get.snackbar(
+          "Success",
+          _grammarCardEdited != null
+              ? "Your card has correctly been edited."
+              : "Your card has correctly been created.",
           snackPosition: SnackPosition.TOP);
+      if (_grammarCardEdited != null) {
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            GrammarCardListPage.routeName,
+            ModalRoute.withName(GrammarCardListPage.routeName));
+      }
     }
 
     return true;
@@ -163,8 +219,17 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
     _grammarPointMeaning.clear();
     _grammarPointName.clear();
     _grammarHint.clear();
-    _controllers[0].clear();
-    _controllers.removeRange(1, _controllers.length);
+    int length = _controllers.length;
+    if (length > 0) {
+      _controllers[0].clear();
+    }
+    if (length > 1) {
+      _controllers.removeRange(1, _controllers.length);
+    }
+    int synLength = _synonymControllers.length;
+    if (synLength > 0) {
+      _synonymControllers.removeRange(0, synLength);
+    }
     setState(() {});
   }
 
@@ -436,7 +501,7 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
       }
     }
     // Use "{...}"
-    String searchWord = getJapaneseTranslation(_grammarPointName.text);
+    String searchWord = _grammarPointName.text;
     if (searchWord.isNotEmpty) {
       text = text.replaceAll(searchWord, "{$searchWord}");
     }
@@ -454,10 +519,29 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Create Grammar point'),
+        title: FutureBuilder(
+          future: _grammarCardEditedFuture,
+          builder:
+              (BuildContext context, AsyncSnapshot<GrammarPointCard> gramSnap) {
+            var defaultWidget = Text('Create Grammar point');
+            switch (gramSnap.connectionState) {
+              case ConnectionState.done:
+                if (!gramSnap.hasData) {
+                  return defaultWidget;
+                }
+                return Text('Edit Grammar point with id ${gramSnap.data.id}');
+              default:
+                return defaultWidget;
+            }
+          },
+        ),
         leading: IconButton(
           onPressed: () {
-            Navigator.pushNamed(context, GrammarHomePage.routeName);
+            if (widget.grammarCardId != null) {
+              Navigator.pushNamed(context, GrammarCardListPage.routeName);
+            } else {
+              Navigator.pushNamed(context, GrammarHomePage.routeName);
+            }
           },
           icon: Icon(Icons.arrow_back),
         ),
@@ -483,8 +567,41 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          _renderField("Grammar point name", _grammarPointName,
-                              isMainField: true),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 20),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 5, bottom: 8.0),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        "Grammar point name",
+                                        textAlign: TextAlign.left,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline6,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                KanaTextForm(
+                                  boxDecoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(12)),
+                                    border: Border.all(color: Colors.grey),
+                                  ),
+                                  controller: _grammarPointName,
+                                  focusNode: _grammarNameFocus,
+                                  isReadOnly: false,
+                                  autofocus: true,
+                                ),
+                              ],
+                            ),
+                          ),
                           _renderField(
                               "Meaning/Translation", _grammarPointMeaning,
                               isTextArea: true),
@@ -500,6 +617,53 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
                               searchTerm: _researchTerm,
                               sentenceCallBack: sentenceCallback,
                             ),
+                          ),
+                          FutureBuilder(
+                            future: _grammarCardEditedFuture,
+                            builder: (BuildContext context,
+                                AsyncSnapshot<GrammarPointCard> grammarSnap) {
+                              switch (grammarSnap.connectionState) {
+                                case ConnectionState.done:
+                                  if (!grammarSnap.hasData) {
+                                    return Container();
+                                  }
+                                  return Padding(
+                                    padding: const EdgeInsets.only(top: 15),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        deleteCard(grammarSnap.data.id);
+                                        Navigator.of(context)
+                                            .pushNamedAndRemoveUntil(
+                                                GrammarCardListPage.routeName,
+                                                ModalRoute.withName(
+                                                    GrammarCardListPage
+                                                        .routeName));
+                                      },
+                                      child: Container(
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                            color: Color(COLOR_DARK_RED),
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(12))),
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 15, bottom: 15),
+                                          child: Text(
+                                            "Delete card".toUpperCase(),
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 20),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                default:
+                                  return Container();
+                              }
+                            },
                           ),
                         ],
                       ),
@@ -517,7 +681,8 @@ class _CreateGrammarCardPageState extends State<CreateGrammarCardPage> {
                   child: Padding(
                     padding: const EdgeInsets.only(top: 15, bottom: 15),
                     child: Text(
-                      "Create".toUpperCase(),
+                      (_grammarCardEdited != null ? "Edit" : "Create")
+                          .toUpperCase(),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           color: Colors.white,

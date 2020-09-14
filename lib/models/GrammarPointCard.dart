@@ -7,8 +7,9 @@ class GrammarPointCard extends DeckCard {
 
   GrammarPointCard.fromJson(Map<String, dynamic> json) : super.fromJson(json) {
     gapSentences = List<String>.from(json['gapSentences']);
-    acceptedAnswers =
-        json['acceptedAnswers'] != null ? json['acceptedAnswers'] : [];
+    acceptedAnswers = json['acceptedAnswers'] != null
+        ? List<String>.from(json['acceptedAnswers'])
+        : [];
   }
 
   @override

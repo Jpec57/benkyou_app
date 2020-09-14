@@ -138,7 +138,24 @@ List<String> getSentenceBadVariations(String sentence,
 }
 
 void printWrapped(String text) {
-  print("WRAPPED");
   final pattern = RegExp('.{1,800}'); // 800 is the size of each chunk
   pattern.allMatches(text).forEach((match) => print(match.group(0)));
+}
+
+List<List<String>> getAcceptedAnswerFromGrammarSentences(String sentence) {
+  List<List<String>> answers = [];
+  RegExp regExp = new RegExp(r"{[^}]+}");
+  Iterable<RegExpMatch> matches = regExp.allMatches(sentence);
+  for (var match in matches) {
+    List<String> answersForOneGap = [];
+    String desiredString =
+        sentence.substring(match.start + 1, match.end - 1).trim();
+    if (desiredString.contains('/')) {
+      answersForOneGap = desiredString.split('/');
+    } else {
+      answersForOneGap.add(desiredString);
+    }
+    answers.add(answersForOneGap);
+  }
+  return answers;
 }

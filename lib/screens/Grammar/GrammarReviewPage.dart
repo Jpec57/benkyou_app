@@ -19,6 +19,7 @@ import 'package:benkyou/widgets/KanaTextForm.dart';
 import 'package:benkyou/widgets/Localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class GrammarReviewPage extends StatefulWidget {
   static const routeName = '/grammar/review';
@@ -39,8 +40,8 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
   bool _isAnswerVisible = false;
   bool _isAnswerCorrect = false;
   String _error;
-  String _currentSentence = "";
   List<TextEditingController> _answerControllers;
+  List<Widget> gapWidgets = [];
   List<FocusNode> _focusNodes;
   List<UserCard> _remainingCards;
   List<UserCardProcessedInfo> _processedCards;
@@ -89,6 +90,7 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
   }
 
   void _goToNextQuestion(bool isCorrect) async {
+    gapWidgets = [];
     //empty text controllers
     _answerControllers.forEach((element) {
       element.clear();
@@ -133,6 +135,27 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
     //TODO show pop up
   }
 
+  bool isAnswerCorrect(List<String> acceptedAnswers, String givenAnswer) {
+    for (String accepted in acceptedAnswers) {
+      String replacement = "ありません";
+      RegExp exp = new RegExp(r"ない$");
+      RegExpMatch res = exp.firstMatch(accepted);
+      String politeAcceptedOption;
+      if (res != null) {
+        politeAcceptedOption = (accepted.substring(0, res.start) + replacement);
+      }
+      print("politeDesiredString $politeAcceptedOption");
+
+      if (givenAnswer == politeAcceptedOption ||
+          accepted == givenAnswer ||
+          getHiragana(givenAnswer) == accepted ||
+          getKatakana(givenAnswer) == accepted) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   Future<bool> validate(String gapSentence) async {
     if (_isAnswerVisible) {
       _goToNextQuestion(_isAnswerCorrect);
@@ -141,43 +164,106 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
       if (!isFormComplete) {
         return false;
       }
-      print("gapSentence $gapSentence");
       RegExp regExp = new RegExp(r"{[^}]+}");
       Iterable<RegExpMatch> matches = regExp.allMatches(gapSentence);
       int i = 0;
       bool isCorrect = true;
       List<String> correctAnswers = [];
       for (var match in matches) {
-        String desiredString =
-            gapSentence.substring(match.start + 1, match.end - 1).trim();
-        print("DesiredString $desiredString");
         String givenAnswer = _answerControllers[i].text.trim();
 
-        String replacement = "ありません";
-        RegExp exp = new RegExp(r"ない$");
-        RegExpMatch res = exp.firstMatch(desiredString);
-        String politeDesiredString;
-        if (res != null) {
-          politeDesiredString =
-              (desiredString.substring(0, res.start) + replacement);
+        List<String> acceptedAnswers = [];
+        String desiredString =
+            gapSentence.substring(match.start + 1, match.end - 1).trim();
+        if (desiredString.contains('/')) {
+          acceptedAnswers = desiredString.split('/');
+        } else {
+          acceptedAnswers.add(desiredString);
         }
-        print("politeDesiredString $politeDesiredString");
-
-        correctAnswers.add(desiredString);
-        if (
-            //Politeness
-            givenAnswer != politeDesiredString &&
-                desiredString != givenAnswer &&
-                getHiragana(givenAnswer) != desiredString &&
-                getKatakana(givenAnswer) != desiredString) {
-          isCorrect = false;
+        List<String> synonyms = _remainingCards[0].grammarCard.acceptedAnswers;
+        if (synonyms.length > 0) {
+          acceptedAnswers.addAll(synonyms);
         }
-        _answerControllers[i].text = desiredString;
+        isCorrect = isAnswerCorrect(acceptedAnswers, givenAnswer);
+        var rand = new Random();
+        int length = acceptedAnswers.length;
+        String a = (length > 2)
+            ? acceptedAnswers[rand.nextInt(length)]
+            : acceptedAnswers[0];
+        correctAnswers.add(a);
+        _answerControllers[i].text = a;
         i++;
       }
       _handleQuestion(isCorrect, correctAnswers);
     }
     return true;
+  }
+
+  //todo
+  Widget renderGapUpdateWidget() {
+    if (gapWidgets.isEmpty) {
+      String gapSentence = _remainingCards[0].grammarCard.gapSentences[0];
+      RegExp regExp = new RegExp(r"{[^}]+}");
+      Iterable<RegExpMatch> matches = regExp.allMatches(gapSentence);
+      int i = 1;
+      List<FocusNode> nodes = [];
+      List<TextEditingController> _possibleAnswers = [];
+      for (var match in matches) {
+        String desiredString =
+            gapSentence.substring(match.start + 1, match.end - 1).trim();
+        gapWidgets.add(
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0, left: 8),
+            child: Text(
+              'Gap $i:',
+            ),
+          ),
+        );
+
+        FocusNode focusNode = new FocusNode();
+        nodes.add(focusNode);
+
+        TextEditingController _answerController = new TextEditingController();
+        _possibleAnswers.add(_answerController);
+        gapWidgets.add(Padding(
+          padding: const EdgeInsets.only(bottom: 8.0, left: 8, top: 8),
+          child: KanaTextForm(
+            boxDecoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+              border: Border.all(color: Colors.grey),
+            ),
+            controller: _answerController,
+            focusNode: focusNode,
+            isReadOnly: false,
+            autofocus: false,
+          ),
+        ));
+        _answerController.value = _answerController.value.copyWith(
+            text: desiredString,
+            composing: TextRange(start: 0, end: desiredString.length),
+            selection: TextSelection(
+                baseOffset: desiredString.length,
+                extentOffset: desiredString.length));
+        i++;
+      }
+      print(gapWidgets.length);
+    }
+    return Padding(
+      padding: const EdgeInsets.only(top: 20),
+      child: Container(
+        decoration: BoxDecoration(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'Possible answers:',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            ),
+            ...gapWidgets
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _renderQuestionWithGap(
@@ -518,9 +604,18 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
                         padding: const EdgeInsets.only(
                             top: 15, left: 15.0, right: 15, bottom: 50),
                         child: _isAnswerVisible
-                            ? GrammarPointCardWidget(
-                                card: _remainingCards[0].card,
-                                grammarCard: _remainingCards[0].grammarCard)
+                            ? Column(
+                                children: [
+                                  GrammarPointCardWidget(
+                                      card: _remainingCards[0].card,
+                                      grammarCard:
+                                          _remainingCards[0].grammarCard),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 15),
+                                    child: renderGapUpdateWidget(),
+                                  )
+                                ],
+                              )
                             : Form(
                                 key: _formKey,
                                 child: Column(

@@ -1,6 +1,6 @@
 import 'package:benkyou/models/UserCard.dart';
-import 'package:benkyou/screens/Grammar/GrammarCardEditionPage.dart';
-import 'package:benkyou/screens/Grammar/GrammarCardEditionPageArguments.dart';
+import 'package:benkyou/screens/Grammar/CreateGrammarCardArguments.dart';
+import 'package:benkyou/screens/Grammar/CreateGrammarPage.dart';
 import 'package:benkyou/services/api/cardRequests.dart';
 import 'package:benkyou/utils/colors.dart';
 import 'package:benkyou/widgets/GrammarPointWidget.dart';
@@ -105,20 +105,21 @@ class _GrammarCardListPageState extends State<GrammarCardListPage> {
                         }
                         print(cardSnap.data);
                         return Padding(
-                          padding: const EdgeInsets.only(left: 8.0, right: 8),
+                          padding: const EdgeInsets.only(
+                              left: 8.0, right: 8, bottom: 30),
                           child: ListView.separated(
                               itemBuilder: (BuildContext context, int index) {
                                 return GrammarPointCardWidget(
                                   card: cardSnap.data[index].card,
                                   grammarCard: cardSnap.data[index].grammarCard,
                                   onClick: () {
-                                    print("Je suis cliqué");
                                     Navigator.of(context).pushNamed(
-                                        GrammarCardEditionPage.routeName,
-                                        arguments:
-                                            GrammarCardEditionPageArguments(
-                                                cardId: cardSnap
-                                                    .data[index].card.id));
+                                        CreateGrammarCardPage.routeName,
+                                        arguments: CreateGrammarCardArguments(
+                                            deckId:
+                                                cardSnap.data[index].deck.id,
+                                            grammarCardId: cardSnap
+                                                .data[index].grammarCard.id));
                                   },
                                 );
                               },

@@ -207,6 +207,7 @@ class App extends StatelessWidget {
             builder: (context) {
               return CreateGrammarCardPage(
                 deckId: args.deckId,
+                grammarCardId: args.grammarCardId,
               );
             },
           );
@@ -302,10 +303,10 @@ void main() {
   runZoned(
     () => runApp(App(
 //          home: ThemeTinderWordPage(theme: new DeckTheme.fromJson({"id":21,"name":"Work","backgroundImg": null,"deck":{"id":59}})),
-      home: GrammarHomePage(),
-//      home: CreateCardPage(
-//        deckId: 127,
-//      ),
+      home: GrammarDeckPage(
+        deckId: 128,
+      ),
+//      home: GrammarCardListPage(),
     )),
     onError: (Object error, StackTrace stackTrace) {
       try {
