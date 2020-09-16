@@ -19,7 +19,9 @@ import 'package:benkyou/widgets/KanaTextForm.dart';
 import 'package:benkyou/widgets/Localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 
 class GrammarReviewPage extends StatefulWidget {
   static const routeName = '/grammar/review';
@@ -39,8 +41,10 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
   bool _isHintVisible = false;
   bool _isAnswerVisible = false;
   bool _isAnswerCorrect = false;
+  bool _isEditing = true;
   String _error;
   List<TextEditingController> _answerControllers;
+  List<TextEditingController> _possibleAnswers;
   List<Widget> gapWidgets = [];
   List<FocusNode> _focusNodes;
   List<UserCard> _remainingCards;
@@ -132,7 +136,6 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
         _answerControllers[i].text = correctAnswers[i];
       }
     });
-    //TODO show pop up
   }
 
   bool isAnswerCorrect(List<String> acceptedAnswers, String givenAnswer) {
@@ -201,13 +204,15 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
 
   //todo
   Widget renderGapUpdateWidget() {
+    print("_sentenceIndex $_sentenceIndex");
     if (gapWidgets.isEmpty) {
-      String gapSentence = _remainingCards[0].grammarCard.gapSentences[0];
+      String gapSentence =
+          _remainingCards[0].grammarCard.gapSentences[_sentenceIndex];
       RegExp regExp = new RegExp(r"{[^}]+}");
       Iterable<RegExpMatch> matches = regExp.allMatches(gapSentence);
       int i = 1;
       List<FocusNode> nodes = [];
-      List<TextEditingController> _possibleAnswers = [];
+      _possibleAnswers = [];
       for (var match in matches) {
         String desiredString =
             gapSentence.substring(match.start + 1, match.end - 1).trim();
@@ -246,22 +251,76 @@ class GrammarReviewPageState extends State<GrammarReviewPage> {
                 extentOffset: desiredString.length));
         i++;
       }
-      print(gapWidgets.length);
     }
+    GrammarPointCard grammarPointCard = _remainingCards[0].grammarCard;
     return Padding(
-      padding: const EdgeInsets.only(top: 20),
-      child: Container(
-        decoration: BoxDecoration(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'Possible answers:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+      padding: const EdgeInsets.only(top: 5),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: InkWell(
+              onTap: () {
+                setState(() {
+                  _isEditing = !_isEditing;
+                });
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Color(COLOR_ORANGE), shape: BoxShape.circle),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Icon(
+                    Icons.edit,
+                    size: 30,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
             ),
-            ...gapWidgets
-          ],
-        ),
+          ),
+          Visibility(
+            visible: _isEditing,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Possible answers:',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                ),
+                ...gapWidgets,
+                RaisedButton(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                  color: Color(COLOR_ANTRACITA),
+                  child: Text(
+                    "Update".toUpperCase(),
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () async {
+                    RegExp regExp = new RegExp(r"{[^}]+}");
+                    String newSentence =
+                        grammarPointCard.gapSentences[_sentenceIndex];
+                    for (var controller in _possibleAnswers) {
+                      newSentence = newSentence.replaceFirst(
+                          regExp, "{${controller.text}}");
+                    }
+                    List<String> gSentList = grammarPointCard.gapSentences;
+                    gSentList[_sentenceIndex] = newSentence;
+                    grammarPointCard.gapSentences = gSentList;
+                    await postGrammarCard(
+                        currentCard.deck.id, grammarPointCard.toJson());
+                    Get.snackbar(
+                        "Success", "Your card has correctly been updated");
+                    setState(() {
+                      _isEditing = false;
+                    });
+                  },
+                )
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

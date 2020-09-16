@@ -27,6 +27,18 @@ class DeckCard {
 
   DeckCard();
 
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'answers': answers,
+        'question': question,
+        'hint': hint,
+        'languageCode': languageCode,
+        'answerLanguageCode': answerLanguageCode,
+        'isReversible': isReversible,
+        'type': type,
+        'isActivated': isActivated,
+      };
+
   @override
   String toString() {
     return 'DeckCard{id: $id, type: $type, isActivated: $isActivated, answers: $answers, question: $question, hint: $hint, languageCode: $languageCode, answerLanguageCode: $answerLanguageCode, isReversible: $isReversible}';

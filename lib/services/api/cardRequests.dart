@@ -237,12 +237,20 @@ Future<DeckCard> postCard(int deckId, Map body) async {
 
 //TODO
 Future<GrammarPointCard> postGrammarCard(int deckId, Map body) async {
+  if (deckId != null) {
+    body.putIfAbsent('deck', () => deckId);
+  }
+  print(body);
   HttpClientResponse cardResponse =
       await getLocalePostRequestResponse("/grammar-cards", body);
+
   var cards = await getJsonFromHttpResponse(cardResponse);
+  print("JPEC");
+  print(cards);
   if (!isRequestValid(cardResponse.statusCode)) {
     return null;
   }
+  print("POSTED $cards");
   GrammarPointCard parsedCards = GrammarPointCard.fromJson(cards);
   return parsedCards;
 }

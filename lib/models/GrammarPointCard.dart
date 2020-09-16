@@ -12,6 +12,20 @@ class GrammarPointCard extends DeckCard {
         : [];
   }
 
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'answers': answers,
+        'question': question,
+        'hint': hint,
+        'languageCode': languageCode,
+        'answerLanguageCode': answerLanguageCode,
+        'isReversible': isReversible,
+        'isActivated': isActivated,
+        //TODO
+        'gapSentences': gapSentences,
+        'acceptedAnswers': acceptedAnswers,
+      };
+
   @override
   String toString() {
     return 'GrammarPointCard{gapSentences: $gapSentences, acceptedAnswers: $acceptedAnswers, ${super.toString()}';
